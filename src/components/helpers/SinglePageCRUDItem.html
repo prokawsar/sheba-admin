@@ -1,0 +1,115 @@
+<div class="columns">
+  <div class="column">
+    <form on:submit="save(item.id, event)">
+      <div class="field has-addons">
+        <div class="control is-expanded">
+          <input class="input" type="text" bind:value="item.name" disabled="{item.is_fixed? true:false}">
+        </div>
+        {#if !item.is_fixed}
+          <div class="control">
+            <SubmitButton classes="is-primary" icon_size="small" text="Save" bind:tracker></SubmitButton>
+          </div>
+        {/if}
+      </div>
+    </form>
+  </div>
+
+  <div class="column is-narrow">
+    {#if item.is_fixed}
+      <span class="help">Mandatory fixed item</span>
+    {:else}
+      <DeleteButton context="{item.id}" icon_only="{true}" on:erase on:erased></DeleteButton>
+    {/if}
+  </div>
+</div>
+
+
+
+<script>
+
+  import { DeleteButton, SubmitButton } from '@kws3/buttons';
+  export default {
+    components: {
+      SubmitButton,
+      DeleteButton,
+    },
+    data() {
+      return {
+        Model: null,
+        item: {},
+        tracker: {
+          saving: false,
+          saved: false,
+          error: false
+        }
+      }
+    },
+    oncreate() {
+
+      this.on('erase', (comp) => {
+        comp.doing();
+        this.get().Model.delete(comp.get().context)
+          .then((r) => {
+            comp.done();
+          })
+          .catch(() => {
+            comp.error();
+          });
+      });
+
+      this.on('erased', (comp) => {
+        this.fire('removed', this.get().item);
+      });
+    },
+    methods: {
+      save(id, event) {
+        event.preventDefault();
+        var item = this.get().item;
+
+        if(item.name.trim() == '') {
+          return;
+        }
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
+
+
+
+        this.get().Model.save(id, item)
+          .then((r) => {
+            this.set({
+              tracker: {
+                saving: false,
+                saved: true,
+                error: false
+              }
+            });
+            setTimeout(() => {
+              this.set({ tracker: { saved: false } });
+            }, 1000);
+
+          })
+          .catch((r) => {
+
+            this.set({
+              tracker: {
+                saving: false,
+                saved: false,
+                error: true
+              }
+            });
+
+            setTimeout(() => {
+              this.set({ tracker: { error: false } });
+            }, 3000);
+
+          });
+      }
+    }
+  };
+
+</script>

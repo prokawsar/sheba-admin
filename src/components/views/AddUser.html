@@ -1,0 +1,274 @@
+<div class="page-content">
+
+  <PageTitle page="{page}">
+    <a class="button is-info is-pulled-right" href="#users">
+      <Icon icon="long-arrow-left" size="small" />
+      <span>Back to All Users</span>
+    </a>
+  </PageTitle>
+
+  <ViewScaffold {is_loading} {is_error} {error_message}>
+
+    {#if tracker.error}
+    <Notification type="danger">
+      {error_message}
+    </Notification>
+    {/if}
+
+    {#if is_api_key}
+      <form on:submit="addNew(event)">
+        <Panel title="API Key Details">
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <p class="control">
+                  <label class="label">Role</label>
+                  <span class="select is-fullwidth">
+                    <select class="input" required bind:value="data.role">
+                      <option value="">Select Role</option>
+                      {#each Object.entries(roles) as role}
+                      <option value="{role[0]}">{role[1]}</option>
+                      {/each}
+                    </select>
+                  </span>
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <p class="control">
+                  <label class="label">Key Description</label>
+                  <input class="input" type="text" required bind:value="data.name" />
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <p class="control">
+                  <label class="label">&nbsp;</label>
+                  <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Create API Key" bind:tracker />
+                </p>
+              </div>
+            </div>
+          </div>
+        </Panel>
+      </form>
+    {:else}
+      <form on:submit="addNew(event)">
+        <Panel title="User Details">
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <p class="control">
+                  <label class="label">Role</label>
+                  <span class="select is-fullwidth">
+                    <select class="input" required bind:value="data.role">
+                      <option value="">Select Role</option>
+                      {#each Object.entries(roles) as role}
+                      <option value="{role[0]}">{role[1]}</option>
+                      {/each}
+                    </select>
+                  </span>
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">Name</label>
+                  <input class="input" type="text" required bind:value="data.name" />
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">Surname</label>
+                  <input class="input " type="text" bind:value="data.surname" />
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">Email</label>
+                  <input class="input" type="email" bind:value="data.email" />
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <p class="control">
+                  <label class="label">Username</label>
+                  <input class="input" type="text" required bind:value="data.username" autocomplete="off" />
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">Password</label>
+                  <input class="input {data.password && !valid ? 'is-danger' : ''}" type="password" required bind:value="data.password" autocomplete="off" />
+                  <PasswordValidator new_pass={data.password} bind:valid />
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">Confirm Password</label>
+                  <input class="input {data.password != confirm_password ? 'is-danger' : ''}" type="password" required bind:value="confirm_password"
+                  />
+                </p>
+              </div>
+              <!-- <div class="field">
+                <p class="control">
+                  <label class="checkbox">
+                      <input class="checkbox" type="checkbox" bind:checked="data.should_change_password" />
+                      Require this user to change their password on first login
+                  </label>
+                </p>
+              </div> -->
+              <div class="field">
+                <p class="control">
+                  <label class="label">&nbsp;</label>
+                  <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Create User" bind:tracker />
+                </p>
+              </div>
+            </div>
+          </div>
+        </Panel>
+      </form>
+    {/if}
+
+  </ViewScaffold>
+</div>
+
+<script>
+  import Model from '../../models/users';
+  import Router from '../../services/router';
+  import { Icon, Notification, Panel } from '@kws3/helpers';
+  import { SubmitButton } from '@kws3/buttons';
+  export default {
+    components: {
+      ViewScaffold: '../helpers/ViewScaffold.html',
+      PageTitle: '../helpers/PageTitle.html',
+      PasswordValidator:'../helpers/PasswordValidator.html',
+      Panel,
+      Icon,
+      Notification,
+      SubmitButton
+    },
+
+    data() {
+      return {
+        is_loading: false,
+        is_error: false,
+        error_message: '',
+        data: {
+          role: '',
+          name: '',
+          surname: '',
+          username: '',
+          email: '',
+          password: '',
+          // should_change_password:true
+        },
+        tracker: {
+          saving: false,
+          saved: false,
+          error: false,
+        },
+        confirm_password: '',
+        page: {
+          title: 'Add User',
+          icon: 'vcard-o',
+          icon_badge: 'plus'
+        },
+        roles: {},
+        valid:false
+      }
+    },
+    computed: {
+      user_role: ({ $user }) => $user && $user.role,
+      is_api_key: ({ data }) => ['AK'].indexOf(data.role) != -1
+    },
+    oncreate: function () {
+
+      this.loadRoles();
+    },
+    methods: {
+       loadRoles(){
+
+        this.set({
+          is_loading: true,
+          is_error: false
+        });
+
+        Model.authContext(this.get().user_role)
+        .then((r) => {
+          this.set({
+            is_loading: false,
+            roles: r.response
+          });
+        })
+        .catch((r) => {
+          var user_message = '';
+          if (typeof r.response != 'undefined' && typeof r.response.records != 'undefined'){
+            user_message = r.response.records.userMessage;
+          }
+          this.set({
+            is_error: true,
+            is_loading: false,
+            error_message: user_message
+          });
+        });
+      },
+      addNew(e) {
+        e.preventDefault();
+
+        var { data, confirm_password, valid }  = this.get();
+
+        if (data.password != confirm_password || !valid) return;
+
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
+
+        Model.create(data)
+        .then( (r) => {
+          r.response.password = '';
+          this.set({
+            tracker: {
+              saving: false,
+              saved: true,
+              error: false
+            },
+            data: r.response,
+            confirm_password:''
+          });
+
+          setTimeout( () => {
+            this.set({ tracker: { saved: false } });
+            Router.navigate('users');
+          }, 1500);
+
+        })
+        .catch( (r) => {
+          if (r.response.records.errorCode == '406') {
+            this.set({error_message: r.response.records.userMessage});
+          }else{
+            this.set({error_message: 'There was an error adding user'});
+          }
+          this.set({
+            tracker: {
+              saving: false,
+              saved: false,
+              error: true
+            }
+          });
+
+          setTimeout( () => {
+            this.set({ tracker: { error: false } });
+          }, 3000);
+
+        });
+      }
+    }
+  }
+
+</script>

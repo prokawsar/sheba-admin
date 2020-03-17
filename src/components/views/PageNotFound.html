@@ -1,0 +1,66 @@
+<div class="page-content">
+  <div class="inner-content">
+    <Transition type="fly" y="{20}">
+      <Message type="danger" size="large">
+        <h1 class="has-text-centered title has-text-danger">
+          <Icon size="large" icon="chain-broken"/>
+          <br>
+          404 Error
+        </h1>
+        <h4 class="has-text-centered subtitle has-text-danger">The page you requested could not be found.</h4>
+      </Message>
+    </Transition>
+  </div>
+</div>
+
+<script>
+  import { Icon, Message } from '@kws3/helpers';
+  import Transition from '@kws3/transitions';
+  import Router from '../../services/router';
+  export default {
+    components:{
+      Icon,
+      Message,
+      Transition
+    },
+    computed: {
+      has_transition({ $settings, transition }){
+        if(typeof transition != 'undefined'){
+          return transition;
+        }else{
+          return $settings.transition;
+        }
+      },
+      is_redirect: ({$user}) => {
+       if($user.should_change_password){
+          return true;
+        }
+        return false;
+      }
+    },
+    data: function () {
+      return {
+        is_redirect:false
+      }
+    },
+    onstate({ changed, current, previous }) {
+      var self = this;
+      if(changed.$user){
+        self.redirectToProfile();
+      }
+    },
+    oncreate:function(){
+      var self = this;
+    },
+    methods: {
+        redirectToProfile(){
+          var self = this;
+          var {is_redirect} = self.get();
+          if(is_redirect){
+            Router.navigate('profile');
+          }
+        }
+    }
+  }
+
+</script>

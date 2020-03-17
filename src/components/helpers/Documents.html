@@ -1,0 +1,77 @@
+<div class="columns is-multiline is-mobile" style="margin-top:-0.5rem">
+  {#if _docs != null && typeof _docs.length != 'undefined' && _docs.length > 0}
+    {#each _docs as d}
+      <div class="column is-paddingless is-12" style="margin-bottom:5px;">
+        <div class="field is-grouped site-image-item">
+        <figure class="control">
+          <a href="{d.file.url}" target="_blank" class="image is-4by3 image-thumbnail">
+            <img src="images/file_icon.png" alt="file"/>
+          </a>
+        </figure>
+        <div class="control is-expanded">
+          <div>
+            <a href="{d.file.url}" style="word-break: break-all;" target="_blank"><strong>{docType(d)}</strong></a>
+            {#if d.uploaded_by}
+              <small class="is-block">By {d.uploaded_by.name} {d.uploaded_by.surname}</small>
+            {:else}
+              <small class="is-block">System generated</small>
+            {/if}
+            <small class="is-block has-text-grey">On {niceDate(d.created, true)}</small>
+          </div>
+        </div>
+        <div class="control">
+          {#if d.uploaded_by}
+            <img src="{d.uploaded_by.avatarurl}" alt="User" class="user-avatar" />
+          {/if}
+        </div>
+      </div>
+      </div>
+    {/each}
+  {:else}
+    <div class="column is-paddingless is-12" style="margin-bottom:5px;">
+      <p class="has-text-centered">No documents yet</p>
+    </div>
+  {/if}
+</div>
+
+<script>
+  import niceDate from '../../utils/niceDate.js';
+
+  export default {
+    data(){
+      return {
+        docs:[],
+        user_type:''
+      }
+    },
+    computed:{
+      _docs({ docs, user_type }){
+        if(docs && typeof docs != 'undefined' && Object.keys(docs).length){
+          return docs.slice();
+        }
+      }
+    },
+    helpers: {
+      niceDate,
+      docType: (doc) => {
+        var types = {
+          'U': 'Unspecified',
+          'A': 'Aggregator Contract',
+          'S': 'Goods & Services Contract',
+          'P': 'Privacy Policy',
+          'W': 'Welcome Pack',
+          'C': 'Combined Welcome Pack',
+          'E': 'Electricity Welcome Pack',
+          'G': 'Gas Welcome Pack',
+          'M': 'Summary Presentation',
+          'F': 'Final Presentation',
+          'I': 'Indicative Quote'
+        };
+        if(doc.type == 'U'){
+          return doc.file.original_name;
+        }
+        return types[doc.type] || '';
+      }
+    }
+  }
+</script>

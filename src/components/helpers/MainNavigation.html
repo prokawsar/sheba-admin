@@ -1,0 +1,48 @@
+<div id="mainNav" data-cy="main-nav" class="has-custom-scrollbar">
+  <div class="tabs is-vertical has-block-icons">
+    <ul>
+    {#if $is_logged_in}
+      {#each sections as section, k (section.name)}
+        <li class="{$nav.activeTab == section.name ? 'is-active' : ''}">
+          <a href="#{section.url}" data-cy="{section.url}"><Icon icon="{section.icon}" size="medium" /> <span class="nav-item-name">{section.title}</span></a>
+        </li>
+      {/each}
+    {/if}
+    </ul>
+  </div>
+</div>
+
+<script>
+
+  import { Icon } from '@kws3/helpers';
+
+  export default {
+    components: {
+      Icon,
+    },
+    computed:{
+      sections({ $mainSections, $nav }){
+        var ret = [],
+        active = [];
+
+        for (var k in $mainSections) {
+          if ($mainSections.hasOwnProperty(k)) {
+            var element = $mainSections[k],
+            item = {
+              'name':k,
+              'title': element.title ? element.title : k,
+              'url':element.url,
+              'icon':element.icon,
+              'visible': element.visible
+            };
+            if(element.visible !== false){
+              ret.push(item);
+            }
+          }
+        }
+
+        return ret;
+      }
+    }
+  }
+</script>

@@ -1,0 +1,126 @@
+<div id="login" class="hero is-fullheight {show ? 'is-showing' : ''} {loading ? 'is-loading' : ''}" data-cy="login">
+  <div class="hero-body">
+    <div class="columns">
+
+      <div class="column is-half logo is-text-centered">
+        <div class="is-overlay" style="background-image: url({randomBackground});"></div>
+        <img alt="logo" src="images/logo.png">
+      </div>
+
+      <div class="column is-half login-box">
+        {#if has_error}
+          <div class="message is-danger">
+            <div class="message-body">{@html error_message}</div>
+          </div>
+        {:else}
+          <div class="form-holder {shaking ? 'is-shaking' : ''}">
+            <form on:submit="fire('login', event)">
+              <div class="field">
+                <div class="control has-icons-left">
+                  <input class="input is-medium" type="text" name="username" placeholder="Username" bind:value="username" data-cy="username">
+                  <Icon icon="user" icon_class="is-left" />
+                </div>
+                </div>
+              <div class="field">
+                <div class="control has-icons-left">
+                  <input class="input is-medium" type="password" name="password" placeholder="Password" bind:value="password" data-cy="password">
+                  <Icon icon="key" icon_class="is-left" />
+                </div>
+              </div>
+              <div class="field">
+                <div class="control">
+                  <button type="submit" class="button is-medium is-fullwidth is-primary {validating ? 'is-loading' : ''}" disabled="{ !isReady }" data-cy="login-button">
+                    Log In
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        {/if}
+        <p><span class="app-loader">Loading ...</span></p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+
+  import { Icon } from '@kws3/helpers';
+  export default {
+    components: {
+      Icon,
+    },
+    data(){
+      return {
+        validating: false,
+        shaking: false,
+        username: '',
+        password: '',
+        error_message: '',
+        has_error: false,
+        images:[
+          'bg11.jpg',
+          'bg1.jpg',
+          'bg2.jpg',
+          'bg3.jpg',
+          'bg4.jpg',
+          'bg5.jpg',
+          'bg6.jpg',
+          'bg7.jpg',
+          'bg8.jpg',
+          'bg9.jpg',
+          'bg10.jpg'
+        ]
+      }
+    },
+    computed:{
+      randomBackground({images}){
+        var min = 0,
+        max = images.length,
+        idx = Math.floor(Math.random() * (max - min + 1)) + min;
+        return '/images/' + images[idx];
+      },
+      show({ $is_logged_in, $is_loading }){
+        return (!$is_logged_in || $is_loading);
+      },
+      loading({ $is_loading }){
+        return $is_loading;
+      },
+      isReady({username, password, validating}) {
+        return (username != '' && password != '') || validating;
+      }
+    },
+    oncreate(){
+      this.on('login', (e) => {
+        e.preventDefault();
+        var { validating } = this.get();
+        if(!validating){
+          this.set({validating:true});
+          this.fire('validatelogin', this);
+        }
+      });
+    },
+    methods:{
+      valid(){
+        this.set({
+          validating: false,
+          username : '',
+          password : ''
+        });
+      },
+      invalid(){
+        this.set({
+          validating: false,
+          shaking : true
+        });
+        setTimeout(() => {
+          this.set({
+            shaking: false,
+            password : ''
+          })
+        }, 500);
+      }
+    }
+  };
+</script>

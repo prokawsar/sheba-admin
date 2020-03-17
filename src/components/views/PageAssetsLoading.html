@@ -1,0 +1,48 @@
+<div class="page-content">
+
+    <PageTitle {page}></PageTitle>
+
+    <ViewScaffold {is_loading}>
+      <Message color="danger">
+        <p>It seems like assets for this page could not be loaded.</p>
+        <p><br>You can wait a few seconds extra and see if it works.</p>
+        <p>If not, reload the admin panel, there may have been an update in the background.</p>
+      </Message>
+    </ViewScaffold>
+</div>
+
+<script>
+  import ViewScaffold from '../helpers/ViewScaffold.html';
+  import PageTitle from '../helpers/PageTitle.html';
+  import {Message} from '@kws3/helpers';
+  export default {
+    components:{
+      ViewScaffold, PageTitle, Message
+    },
+    data(){
+      return{
+        is_loading: true,
+        page: {
+          title: 'Loading Assets',
+          subtitle: 'Please wait...',
+          icon: 'dot-circle-o'
+        }
+      }
+    },
+    oncreate(){
+      this.timeout = setTimeout(() => {
+
+        let { is_loading, page } = this.get();
+
+        is_loading = false;
+        page.title = "Error";
+        page.subtitle = "Failed to load assets";
+
+        this.set({ is_loading, page })
+      }, 10000);
+    },
+    ondestroy(){
+      this && this.timeout && clearTimeout(this.timeout)
+    }
+  }
+</script>

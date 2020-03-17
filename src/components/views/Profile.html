@@ -1,0 +1,363 @@
+<div class="page-content">
+
+    <PageTitle {page}>
+      <a class="button is-info is-inverted is-pulled-right" href="#dashboard"><Icon icon="long-arrow-left" size="small" /> <span>Back to Dashboard</span></a>
+    </PageTitle>
+
+    <ViewScaffold {is_loading} {is_error} {error_message}>
+
+      {#if tracker.error}
+        <Notification type="danger">
+             {error_message}
+        </Notification>
+      {/if}
+
+      {#if should_change_password}
+        <Message type="danger">
+          <h2 class="title is-4 has-text-danger">Please change your password.</h2>
+          <h3 class="subtitle is-5 has-text-danger">You will not be able to access any other pages until you have changed your password.</h3>
+        </Message>
+      {/if}
+
+      <div class="columns">
+        <div class="column is-7">
+          <form on:submit="save(event)">
+            <Panel title="Update Details">
+              <div class="field">
+                <p class="control">
+                  <label class="label">Username</label>
+                  <input class="input {data.username == '' ? 'is-danger' : ''}" type="text" bind:value="data.username" />
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">Email</label>
+                  <input class="input {data.email == '' ? 'is-danger' : ''}" type="email" bind:value="data.email" data-cy="user-email"/>
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">Name</label>
+                  <input class="input {data.name == '' ? 'is-danger' : ''}" type="text" bind:value="data.name" data-cy="user-name"/>
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">Surname</label>
+                  <input class="input" type="text" bind:value="data.surname" />
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <SubmitButton icon_size="small" classes="is-primary is-pulled-right" bind:tracker cy="save-profile-button" />
+                </p>
+              </div>
+            </Panel>
+          </form>
+        </div>
+
+        <div class="column">
+          <Panel title="Update Avatar">
+            <div>
+              <div class="is-text-centered">
+                <figure class="image is-128x128" style="margin: 0 auto 20px auto">
+                   {#if data && data.avatarurl}<img src="{data.avatarurl}" alt="" />{/if}
+                </figure>
+              </div>
+              <FileUpload on:file_chosen max="1048579" allowed="{['png', 'jpg', 'jpeg']}" message="Upload new avatar..." />
+            </div>
+          </Panel>
+          <form on:submit="updatePassword(event)">
+            <Panel title="Update Password">
+              <div class="field">
+                <p class="control">
+                  <label class="label">New Password</label>
+                  <input class="input {new_pass && !valid ? 'is-danger' : ''}" type="password" bind:value="new_pass" data-cy="user-password"/>
+                  <PasswordValidator {new_pass} bind:valid />
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">Confirm Password</label>
+                  <input class="input {new_pass != confirm_pass ? 'is-danger' : ''}" type="password" bind:value="confirm_pass" data-cy="user-confirm-password" />
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <SubmitButton icon_size="small" classes="is-primary is-pulled-right" text="Update Password" bind:tracker="password_tracker" cy="save-password-button"/>
+                </p>
+              </div>
+            </Panel>
+          </form>
+        </div>
+
+      </div>
+
+    </ViewScaffold>
+
+</div>
+
+<script>
+
+import Model from '../../models/profile.js';
+import { Icon, Notification, Panel, Message } from '@kws3/helpers';
+import { SubmitButton } from '@kws3/buttons';
+
+export default {
+  components:{
+    ViewScaffold: '../helpers/ViewScaffold.html',
+    PageTitle: '../helpers/PageTitle.html',
+    PasswordValidator:'../helpers/PasswordValidator.html',
+    Panel,
+    Icon,
+    Notification,
+    Message,
+    SubmitButton,
+    FileUpload: '../helpers/FileUpload.html'
+  },
+  data(){
+    return {
+      is_loading: true,
+      is_error: false,
+      error_message: '',
+      data:{},
+      meta:{},
+      page: {
+        title: 'My Profile',
+        subtitle: 'Update my details',
+        icon: 'user-circle-o'
+      },
+      tracker:{
+        saving:false,
+        saved:false,
+        error:false
+      },
+      password_tracker:{
+        saving:false,
+        saved:false,
+        error:false
+      },
+      new_pass: '',
+      confirm_pass: '',
+      valid:false
+    }
+  },
+  computed: {
+    should_change_password: ({$user}) => {
+      if($user.should_change_password){
+        return true;
+      }
+      return false;
+    }
+  },
+  onstate({ changed, current, previous }) {
+
+    if (changed['$nav']) {
+      var { $nav } = current;
+      if ($nav.activeView == '_COMPONENT_') {
+        this.load();
+      }
+    }
+
+  },
+  oncreate(){
+    this.on('file_chosen', (comp) => {
+      var file = comp.getFile();
+      var size = file.size;
+      comp.progress(0);
+
+      Model.uploadAvatar(
+        file.file,
+        (e) => {
+          comp.progress(e.loaded);
+        }
+      ).then((r) => {
+        this.set({
+          data: r.response
+        });
+        //update state when profile is saved
+        this.fire('updateLoggedIn', {
+          name: r.response.name,
+          surname:r.response.surname,
+          username: r.response.username,
+          email:r.response.email,
+          avatar: r.response.avatarurl,
+          should_change_password:r.response.should_change_password,
+        });
+        comp.uploaded();
+      })
+      .catch((r) => {
+        var user_message = "Failed to upload!";
+        if (typeof r != 'undefined' && typeof r.response != 'undefined' && typeof r.response.records != 'undefined'){
+            user_message = r.response.records.userMessage;
+        }
+        comp.error(user_message);
+      });
+    });
+
+
+    this.load();
+
+  },
+  methods:{
+    load(){
+      this.set({
+        is_loading: true,
+        is_error: false
+      });
+      Model.getOne()
+      .then((r) => {
+        this.set({
+          is_loading: false,
+          meta: r._meta,
+          data: r.response
+        });
+      })
+      .catch((r) => {
+        var user_message = '';
+        if (typeof r != 'undefined' && typeof r.response != 'undefined' && typeof r.response.records != 'undefined'){
+            user_message = r.response.records.userMessage;
+        }
+        this.set({
+          is_error: true,
+          is_loading: false,
+          error_message: user_message
+        });
+      });
+    },
+    updatePassword(e){
+      e.preventDefault();
+
+      var { new_pass, confirm_pass, valid }  = this.get();
+
+      if(new_pass == ''){
+        return;
+      }
+      if(new_pass !== confirm_pass || !valid){
+        return;
+      }
+
+      this.set({
+        password_tracker:{
+          saving:true,
+          saved: false,
+          error:false
+        }
+      });
+
+      Model.save({password: new_pass})
+      .then((r) => {
+
+        //update state when profile is saved
+        this.fire('updateLoggedIn', {
+          name: r.response.name,
+          surname:r.response.surname,
+          username: r.response.username,
+          email:r.response.email,
+          avatar: r.response.avatarurl,
+          should_change_password:r.response.should_change_password,
+        });
+
+        this.set({
+          password_tracker:{
+            saving:false,
+            saved: true,
+            error:false,
+          },
+          new_pass: '',
+          confirm_pass: ''
+        });
+
+        setTimeout(() => {
+          this.set({password_tracker:{saved:false}});
+        }, 3000);
+
+      })
+      .catch((r) => {
+
+        this.set({
+          password_tracker:{
+            saving:false,
+            saved: false,
+            error:true,
+          }
+        });
+
+        setTimeout(() => {
+          this.set({password_tracker:{error:false}});
+        }, 3000);
+
+      });
+
+    },
+    save(e){
+      e.preventDefault();
+
+      var { data } = this.get();
+
+      if(data.name == ''){
+        return;
+      }
+      if(data.username == ''){
+        return;
+      }
+
+      this.set({
+        tracker:{
+          saving:true,
+          saved: false,
+          error:false
+        }
+      });
+
+      Model.save(data)
+      .then((r) => {
+
+        this.set({data:r.response});
+
+        this.set({
+          tracker:{
+            saving:false,
+            saved: true,
+            error:false
+          }
+        });
+
+        this.fire('updateLoggedIn', {
+          name: r.response.name,
+          surname: r.response.surname,
+          username: r.response.username,
+          email: r.response.email,
+          avatar: r.response.avatarurl,
+          should_change_password:r.response.should_change_password,
+        });
+
+        setTimeout(() => {
+          this.set({tracker:{saved:false}});
+        }, 3000);
+
+      })
+      .catch((r) => {
+        if (r.response.records.errorCode == '406') {
+          this.set({ error_message: ' The username you entered already exists, Please try another one' });
+        } else {
+          this.set({ error_message: 'There was an error updating profile' });
+        }
+        this.set({
+          tracker:{
+            saving:false,
+            saved: false,
+            error:true
+          }
+        });
+
+        setTimeout(() => {
+          this.set({tracker:{error:false}});
+        }, 3000);
+
+      });
+
+    }
+  }
+}
+</script>

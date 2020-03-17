@@ -1,0 +1,39 @@
+<div
+  class="toggle-button is-{color} {class} {on ? 'on' : ''} {disabled ? 'disabled' : ''}"
+  on:click="toggle()"
+>
+  <div class="track">
+    <p class="toggle-text">{on ? on_text : off_text}</p>
+    <div class="handle"></div>
+  </div>
+</div>
+
+<style>
+  .disabled {
+    opacity: 0.5;
+  }
+</style>
+
+<script>
+  export default {
+    data() {
+      return {
+        on: false,
+        disabled: false,
+        color: '',
+        class: '',
+        on_text: '',
+        off_text: ''
+      };
+    },
+
+    methods: {
+      toggle() {
+        let { on, disabled } = this.get();
+        if (disabled) return;
+        this.set({ on: !on });
+        this.fire('change');
+      }
+    }
+  };
+</script>

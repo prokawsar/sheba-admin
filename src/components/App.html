@@ -1,0 +1,179 @@
+<div id="mainApp">
+
+  <div id="updateReady" class="{$update_ready ? 'is-update-ready' : ''}">There is an update available, please reload window to activate updated version. &nbsp;&nbsp;&nbsp;
+    <button class="button is-small is-light {$update_ready ? 'is-pulsing' : ''}"
+      onclick="window.location.reload();">
+      <strong>Reload Now</strong>
+    </button>
+  </div>
+
+  <div id="mainContent" class="{$update_ready ? 'is-update-ready' : ''} {app_state.show_sidebar ? 'is-sidebar-showing' : ''}">
+
+
+
+    <div id="contentArea" on:scroll="scrolling(this)">
+      <div id="gradientHilight"></div>
+      {#if !$is_loading}
+        <RouteHandler on:updateLoggedIn on:hideSidebar />
+        <!-- <Dashboard /> -->
+
+      {/if}
+    </div>
+
+    <div id="header" class="level is-mobile {scrollTop > 30 ? 'has-content-under' : ''}">
+      <div class="level-left">
+        <div class="level-item logo-area">
+          <button class="button navbar-burger
+          is-hidden-tablet is-hidden-desktop is-hidden-widescreen is-hidden-fullhd {app_state.show_sidebar ? 'is-active' : ''}"
+            on:click="fire('toggleSidebar')">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <div class="logo-holder">
+            <img class="logo" src="images/logo.png" alt="logo">
+            <span class="env-marker">{$ENV_MARKER}</span>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="level-right">
+        <div class="level-item" style="margin-right:-0.5rem">
+
+          <div class="dropdown is-hoverable is-right">
+            <div class="dropdown-trigger">
+
+              <div class="media">
+                <div class="media-left">
+                  {#if $user && $user.avatar}
+                  <figure class="image is-32x32">
+                    <img alt="" src="{$user && $user.avatar}">
+                  </figure>
+                  {/if}
+                </div>
+                <div class="media-content" style="overflow: hidden">
+                  <span class="is-block" style="line-height:1.3rem" data-cy="user-name-header">{$user && $user.name} {$user && $user.surname}</span>
+                  <small class="is-block" data-cy="user-role">
+                    {userRoleName}
+                  </small>
+                </div>
+                <div class="media-right">
+                  <Icon icon="angle-down" />
+                </div>
+              </div>
+
+            </div>
+
+            <div class="dropdown-menu">
+              <div class="dropdown-content">
+                <a href="#settings/" class="dropdown-item">
+                  <Icon icon="cog" />
+                  <span>Settings</span>
+                </a>
+                <a href="#profile/" class="dropdown-item" data-cy="profile">
+                  <Icon icon="user-circle-o" />
+                  <span>My Profile</span>
+                </a>
+
+                <hr class="dropdown-divider">
+
+                <a href="#logout" class="dropdown-item" on:click="fire('logout', event)" data-cy="logout">
+                  <Icon icon="sign-out" />
+                  <span>Log out</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+
+    <MainNavigation />
+
+    <div id="modals">
+      <div class="modal {app_state.show_duplicate_login_modal ? 'is-active' : ''}">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+          <div class="box">
+            <h2 class="subtitle is-4">You have logged in on another device</h2>
+            <p>Your session is no longer valid on this device.
+              <br>
+              <br>
+            </p>
+            <p>
+              <small>
+                <em>You may only log in from one device at a time.
+                  <br> If you log in on this device, you will be logged out of the other device.</em>
+              </small>
+            </p>
+
+            <hr class="is-small" />
+
+            <div class="field is-grouped is-grouped-right">
+              <div class="control">
+                <button class="button is-info is-pulled-right" on:click="fire('logout', event)">Log back in</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<Login on:validatelogin />
+
+<script>
+  import RouteHandler from './helpers/RouteHandler.html';
+  import { Icon } from '@kws3/helpers';
+  import Login from './helpers/Login.html';
+  import MainNavigation from './helpers/MainNavigation.html';
+  import Dashboard from './views/Dashboard.html';
+
+  export default {
+    components: {
+      RouteHandler, Login, Icon, MainNavigation, Dashboard
+    },
+    data(){
+      return {
+        app_state: {
+          show_duplicate_login_modal: false,
+          show_sidebar: false
+        },
+        scrollTop: 0
+      }
+    },
+    computed: {
+      userRoleName({ $user }) {
+        if ($user && $user.role) {
+          switch ($user.role) {
+            case 'SA':
+              return 'Super Admin';
+              break;
+            case 'SU':
+              return 'Super User';
+              break;
+          }
+        }
+        return '';
+      }
+    },
+    oncreate() {
+      var self = this;
+      self.on('logout', function(e){
+        e.preventDefault();
+        self.fire('logout');
+      });
+    },
+    methods:{
+      scrolling(el){
+        this.set({scrollTop: el.scrollTop})
+      }
+    }
+  };
+</script>

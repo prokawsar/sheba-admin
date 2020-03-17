@@ -1,0 +1,80 @@
+<div class="modal {is_active ? 'is-active' : ''}">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <form on:submit="confirm()">
+      <header class="modal-card-head">
+        <p class="modal-card-title">
+          {#if title_image}
+            <img class="logo" src="images/{title_image}"/>
+          {:else}
+            {title}
+          {/if}
+        </p>
+        <button class="delete" on:click="fire('close')" aria-label="close"></button>
+      </header>
+      <section class="modal-card-body">
+        <slot></slot>
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button {doing ? 'is-success is-loading' : (error ? 'is-danger' : 'is-success')}" type="submit" style="width:6rem">{done ? 'Saved' : (error ? 'Error' : 'Submit')}</button>
+        <span class="button" on:click="fire('close')" style="width:6rem">Cancel</span>
+      </footer>
+    </form>
+  </div>
+</div>
+
+<script>
+  import { fade } from 'svelte-transitions';
+
+  export default {
+    transitions: {
+      fade
+    },
+    components: { Icon },
+    data(){
+      return {
+        title:'',
+        title_image:'',
+        is_active:false,
+        doing: false,
+        done: false,
+        error: false
+      }
+    },
+    methods: {
+      confirm(){
+        this.fire('confirm', this);
+      },
+      doing(){
+        this.set({
+          doing: true,
+          done: false,
+          error: false
+        });
+      },
+      done(){
+        this.set({
+          doing: false,
+          done: true,
+          error: false
+        });
+
+        setTimeout(() => {
+          this.set({done:false});
+          this.fire('close', this);
+        }, 1500);
+      },
+      error(){
+        this.set({
+          done: false,
+          doing: false,
+          error: true
+        });
+
+        setTimeout(() => {
+          this.set({error:false});
+        }, 1500);
+      }
+    }
+  }
+</script>

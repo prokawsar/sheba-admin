@@ -1,0 +1,140 @@
+<div class="pagination_frame" data-cy="pagination-frame">
+  <div class="level">
+    <div class="level-left">
+      {#if showTotal}
+        <strong>Total {meta.total} {entityName}</strong>
+      {:elseif showCurrent}
+        {#if meta.total > 0}Showing {(meta.offset * 1) + 1} to {(meta.offset * 1) + (meta.count * 1)}{/if}
+      {/if}
+    </div>
+    {#if showCurrent && showTotal}
+    <div class="level-item pagination-showing">
+      {#if meta.total > 0}Showing {(meta.offset * 1) + 1} to {(meta.offset * 1) + (meta.count * 1)}{/if}
+    </div>
+    {/if}
+    <div class="level-right">
+      {#if meta.total > 0}
+      <nav class="pagination is-centered {size ? 'is-'+size : ''}">
+        <a href="#prev" on:click="prev(event)" class="pagination-previous {meta.offset == 0 ? 'is-disabled' : ''}">
+          <Icon size="{size}" icon="chevron-left" />
+        </a>
+        <a href="#next" on:click='next(event)' class="pagination-next {((currentPage + 1) == totalPages) ? 'is-disabled' : ''}">
+          <Icon size="{size}" icon="chevron-right" />
+        </a>
+        <ul class="pagination-list" data-cy="pagination-list">
+          {#each pages as page}
+            {#if page.p == 'sep'}
+              <li>
+                <span class="pagination-ellipsis">&hellip;</span>
+              </li>
+            {:else}
+              <li>
+                <a href="#{page.p+1}" class="pagination-link {page.p == currentPage ? 'is-current' : ''}" on:click='goto(event,page.p+1)'>{page.p+1}</a>
+              </li>
+            {/if}
+          {/each}
+        </ul>
+      </nav>
+      {/if}
+    </div>
+  </div>
+</div>
+
+<script>
+  import { Icon } from '@kws3/helpers';
+  export default {
+    components:{
+       Icon,
+    },
+    data() {
+      return {
+        meta:{
+          limit:0,
+          total:0,
+          count:0,
+          offset:0,
+          status:''
+        },
+        showTotal: true,
+        showCurrent: true,
+        breakThreshold: 10,
+        entityName: 'entries',
+        size:'small'
+      }
+    },
+    computed:{
+      pages({ totalPages, currentPage, breakThreshold }){
+        var pages = new Array(totalPages || 0),
+        total = pages.length,
+        ret = [];
+
+        for (var i = 0; i < total; i++){
+          if(total > breakThreshold){
+            if(i < 3){
+              ret.push({p: i});
+            }else if(i > (total - 4)){
+              ret.push({p: i});
+            }else if( i == Math.floor(total / 2)){
+              ret.push({p: i});
+            }else if(i == currentPage || i == (currentPage - 1) || i == (currentPage + 1)){
+              ret.push({p: i});
+            }
+          }else{
+            ret.push({p: i});
+          }
+        };
+
+        var prev = 0, items = [];
+        if(total > breakThreshold){
+          for(var j = 0; j < ret.length; j++){
+            var page = ret[j].p;
+            if(page != (prev + 1) && page != 0 ){
+              items.push({p:'sep'});
+            }
+            items.push(ret[j]);
+            prev = page;
+          }
+        }else{
+          items = ret;
+        }
+
+        return items;
+      },
+      currentPage({ meta }){
+        return Math.floor(meta.offset / meta.limit)
+      },
+      totalPages({ meta }){
+        return Math.ceil(meta.total / (meta.limit || 1));
+      }
+    },
+    methods:{
+      goto(event,pagenum){
+        event.preventDefault();
+        event.stopPropagation();
+        var { meta } = this.get(),
+        limit = meta.limit,
+        i = pagenum - 1,
+        offset = limit * i;
+        if(offset >= 0 && offset != meta.offset && offset < meta.total){
+          this.fire('paginate', {offset: offset, limit: limit});
+        }
+      },
+      prev(event){
+        event.preventDefault();
+        event.stopPropagation();
+        this.goto(event, this.get().currentPage);
+      },
+      next(event){
+        event.preventDefault();
+        event.stopPropagation();
+        this.goto(event, this.get().currentPage + 2);
+      },
+      first(){
+        this.goto(event, 1);
+      },
+      last(){
+        this.goto(event, this.get().totalPages);
+      }
+    }
+  }
+</script>

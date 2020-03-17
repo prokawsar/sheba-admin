@@ -1,0 +1,124 @@
+
+<div class="page-content">
+
+  <PageTitle page="{page}"></PageTitle>
+
+  <ViewScaffold {is_loading} {is_error} {error_message}>
+
+
+      <DataList
+        view_type="tile"
+        per_row="3"
+
+        {Model}
+        {View}
+        {entity_name}
+        {route_prefix}
+        {has_additional_buttons}
+        {search_placeholder}
+        bind:is_loading
+        bind:is_error
+        bind:error_message
+        bind:data
+        bind:meta
+        {columns}
+        {searchStringTransformer}
+        {valueTransformers}
+        {classTransformers}
+        {styleTransformers}
+        {tileItemComponent}
+      >
+        <a slot="additionalButtons" href="#users/add" class="button is-success" data-cy="add-user" ><Icon size="small" icon="plus-circle" /> <span>Add User</span></a>
+      </DataList>
+
+    </ViewScaffold>
+
+</div>
+
+<script>
+
+  import Model from '../../models/users';
+  import { Icon } from '@kws3/helpers';
+  import TileViewItem from '../helpers/TileViewItem.html';
+  export default {
+    components:{
+      DataList: '../helpers/DataList.html',
+      ViewScaffold: '../helpers/ViewScaffold.html',
+      Icon,
+      PageTitle: '../helpers/PageTitle.html'
+    },
+    data(){
+      return {
+        tileItemComponent: TileViewItem,
+        is_loading: true,
+        is_error: false,
+        error_message: '',
+        meta:{},
+        data:[],
+        Model: Model,
+        View: '_COMPONENT_',
+        entity_name: 'Users',
+        route_prefix: 'users/',
+        has_additional_buttons: true,
+        search_placeholder:'Name, surname or email',
+        columns:'',
+        page:{
+          title: '_COMPONENT_',
+          icon: 'vcard-o',
+          subtitle: 'All users in the system'
+        },
+        searchStringTransformer: (q) => {
+
+          var qparts = q.split('~'),
+          query = [];
+
+          if(qparts[0] != ''){
+            query.push('name[lk]:'+qparts[0]+',surname[lk]|:'+qparts[0]+',email[lk]|:'+qparts[0]+',username[lk]|:'+qparts[0]);
+          }
+
+          qparts.shift();
+          for(var i = 0; i < qparts.length; i++){
+            var _q = qparts[i],
+            qpp = _q.split(':');
+            if(_q != '' && typeof qpp[1] != 'undefined' && qpp[1] != ''){
+              query.push(qpp[0] + '[eq]:' + qpp[1]);
+            }
+          }
+
+          return query.join(',');
+        },
+        valueTransformers:{
+          title(v, row){
+            if(!row.surname) row.surname = ''
+            return row.name + ' ' + row.surname;
+          },
+          subtitle(v, row){
+            return row.username;
+          },
+          description(v, row) {
+            var roles = {
+              'SA': 'Administrator',
+              'SU': 'User',
+            }
+            return roles[row.role] ? roles[row.role] : '';
+          },
+          link(v, row){
+            return '#users/view/'+row.id;
+          },
+          img(v, row){
+            return row.avatarurl;
+          },
+          icon(v, row){
+            return false;
+          }
+        },
+        classTransformers:{
+          subtitle(){
+            return 'subtitle is-6';
+          }
+        },
+        styleTransformers:{}
+      }
+    }
+  }
+</script>

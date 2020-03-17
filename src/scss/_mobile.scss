@@ -1,0 +1,220 @@
+//metrics
+$header_height: 50px;
+$footer_height: 20px;
+$tabs_height: 49px;
+$left_sidebar_width:100px;
+$right_sidebar_width:360px;
+
+@include mobile{
+
+  .pagination_frame{
+    .level{
+      display: flex;
+      flex-wrap: wrap;
+      .level-right{
+        margin-top:0.75rem;
+        flex-basis:100%;
+      }
+    }
+    .pagination-showing{
+      margin-bottom:0;
+    }
+    .pagination{
+      .pagination-previous, .pagination-next, .pagination-link, .pagination-ellipsis{
+        margin:0.25rem;
+      }
+    }
+  }
+
+
+  #login{
+    .columns{
+      margin:0;
+    }
+    .column{
+      height: 50%;
+      width:100%;
+    }
+    .logo, .login-box{
+      width:100%;
+    }
+    .logo {
+      height:15%;
+      img{
+        max-width:70%;
+      }
+    }
+
+    .login-box{
+      max-width:440px;
+      margin:0 auto;
+      height:85%
+    }
+  }
+
+  #updateReady{
+    height:90px;
+    top: -90px;
+    .button{
+      margin-top:0;
+    }
+    &.is-update-ready{
+      top:0;
+    }
+  }
+
+  #mainContent{
+    &.is-update-ready{
+      top:90px;
+    }
+  }
+
+  #header{
+    height: $header_height;
+    max-height: $header_height;
+    .logo-area{
+      margin-left:-0.5rem;
+      .navbar-burger{
+        border:none;
+        box-shadow:none;
+        background: transparent;
+        -webkit-tap-highlight-color: transparent;
+        span{
+          background: var(--primaryInverted);
+          height:2px;
+        }
+        &.is-active{
+          span{
+            background: var(--infoInverted);
+          }
+        }
+      }
+      .logo-holder{
+          width:100px;
+          padding: 0.75rem 0.75rem 0.5rem 0rem;
+      }
+    }
+    .media{
+      .media-left{
+        margin-right:0;
+      }
+      .media-content, .media-right{
+        display: none;
+      }
+      .image{
+        img{
+          border:1px solid $grey-lighter;
+        }
+      }
+    }
+
+    .dropdown-content{
+      a{
+        padding-top:0.5rem;
+        padding-bottom:0.5rem;
+      }
+    }
+  }
+
+  #mainNav{
+    top:$header_height;
+    left:0;
+    width:$left_sidebar_width;
+    transform: 0.4s $easeOutCustom;
+    transform: translate3d(-110%, 0, 0);
+  }
+
+  #contentArea{
+    top:$header_height;
+    left:0;
+    padding-left: 0;
+    transition: transform 0.4s $easeOutCustom;
+    transform: translate3d(0, 0, 0);
+    .page-title{
+      padding: 0 1rem;
+      .media{
+        .media-left{
+          margin-right:0.25em;
+          .icon .fa{
+            font-size:2.25em;
+          }
+          .icon_badge{
+            font-size:0.5em;
+          }
+        }
+      }
+      .title{
+        font-size:1.2rem;
+      }
+      .subtitle{
+        font-size:1rem;
+      }
+
+      .button{
+        padding-left:2rem;
+        padding-right:1.5rem;
+        border:none !important;
+        box-shadow: none !important;
+        span:not(.icon){
+          display: none;
+        }
+        &:not([slot=center]){
+          span.icon{
+            //margin-right: calc(-0.375em - 1px);
+            &:after{
+              content: "Back";
+              display: inline-block;
+              margin-left:0.375em;
+              line-height: 1;
+            }
+          }
+        }
+      }
+
+      .tabbar{
+        .tabs{
+          ul.dropdown-content{
+            box-shadow:0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
+            li{
+              a{
+                padding-top:1rem;
+                padding-bottom:1rem;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .page-content{
+      .inner-content{
+        padding:1rem;
+      }
+    }
+
+    .search-area{
+      display: flex;
+      flex-direction: column-reverse;
+      .is-narrow{
+        .button{
+          width:100%;
+        }
+      }
+    }
+
+    .data-table{
+      overflow: auto;
+    }
+  }
+
+  #mainContent{
+    &.is-sidebar-showing{
+      #mainNav{
+        transform: translate3d(0,0,0);
+      }
+      #contentArea{
+        transform: translate3d($left_sidebar_width, 0, 0);
+      }
+    }
+  }
+}

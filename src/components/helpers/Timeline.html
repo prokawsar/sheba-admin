@@ -1,0 +1,56 @@
+<div>
+  {#if _history != null && typeof _history.length != 'undefined' && _history.length > 0}
+    <ul class="timeline">
+      {#each _history as item}
+        <li>
+          {#if item.user}<img class="avatar" src="{item.avatar}" alt="" />{/if}
+          <small class="date is-block">{item.date}</small>
+          <span class="description">
+            <strong>{item.description}</strong>
+            <br>
+            <span class="user">by {item.user || 'System'}</span>
+          </span>
+        </li>
+      {/each}
+    </ul>
+    {#if hasMoreItems}
+    <div class="columns">
+      <div class="column">
+        <hr>
+        <button class="button is-info is-small is-fullwidth" type="button" on:click="showAll()"><Icon icon="chevron-down" /> <span>Show <strong>{history.length - visible}</strong> more items</span></button>
+      </div>
+    </div>
+    {/if}
+  {/if}
+</div>
+
+<script>
+import { Icon } from '@kws3/helpers';
+
+export default {
+  components:{
+    Icon
+  },
+  data(){
+    return {
+      history: [],
+      visible: 5,
+      showAll: false
+    }
+  },
+  computed:{
+    _history({history, visible, showAll}){
+      var _history = (history || []).slice();
+      return (!showAll && (_history.length > (visible + 1))) ? _history.slice(0, visible) : _history;
+    },
+    hasMoreItems({history, visible, showAll}){
+      return ((!showAll && (history.length - (visible + 1))) > 0);
+    }
+  },
+  methods:{
+    showAll(){
+      this.set({showAll: true});
+    }
+  }
+}
+</script>

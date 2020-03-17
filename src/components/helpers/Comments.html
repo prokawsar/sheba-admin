@@ -1,0 +1,62 @@
+<div class="comments-list">
+  {#if _comments != null && typeof _comments.length != 'undefined' && _comments.length > 0}
+    {#each _comments as comment}
+      <Message color="{typeof comment.color != 'undefined' ? comment.color : 'dark'}">
+          {#if comment.avatar}
+              <figure class="image is-24x24 is-pulled-right">
+                  <img src="{comment.avatar}" alt="" />
+              </figure>
+          {/if}
+          <blockquote>{@html nl2br(comment.comment)}</blockquote>
+          <p class="citation">
+              <small><strong class="has-text-grey">{comment.user || 'System'}</strong></small>
+              <small class="is-pulled-right has-text-grey">{comment.date}</small>
+          </p>
+      </Message>
+    {/each}
+    {#if hasMoreItems}
+      <div class="columns">
+        <div class="column">
+          <hr>
+          <button class="button is-info is-small is-fullwidth" type="button" on:click="showAll()"><Icon icon="chevron-down" /> <span>Show <strong>{comments.length - visible}</strong> more {entityName}</span></button>
+        </div>
+      </div>
+    {/if}
+  {/if}
+</div>
+
+<script>
+import { Icon, Message } from '@kws3/helpers';
+import {nl2br} from '../../utils/templateHelpers.js';
+
+export default {
+  components:{
+    Icon, Message
+  },
+  data: function(){
+    return {
+      comments:[],
+      visible: 5,
+      showAll: false,
+      entityName: 'comments'
+    }
+  },
+  helpers:{
+    nl2br
+  },
+  computed:{
+    _comments({comments, visible, showAll}){
+      var _comments = (comments || []).slice();
+      return (!showAll && (_comments.length > (visible + 1))) ? _comments.slice(0, visible) : _comments;
+    },
+    hasMoreItems({comments, visible, showAll}){
+      return ((!showAll && (comments.length - (visible + 1))) > 0);
+    }
+  },
+  methods:{
+    showAll(){
+      this.set({showAll: true});
+    }
+  }
+}
+</script>

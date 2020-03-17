@@ -1,0 +1,395 @@
+<div class="page-content">
+
+  <PageTitle page="{page}">
+    <a class="button is-info is-pulled-right" href="#users">
+      <Icon icon="long-arrow-left" size="small" />
+      <span>Back to All Users</span>
+    </a>
+  </PageTitle>
+
+  <ViewScaffold {is_loading} {is_error} {error_message}>
+
+    {#if tracker.error}
+    <Notification type="danger">
+      {error_message}
+    </Notification>
+    {/if}
+
+    {#if is_api_key}
+      <Panel title="API Key Details">
+        <div slot="toolbar">
+          <DeleteButton text="Delete API Key" on:erase on:erased></DeleteButton>
+        </div>
+
+        <table class="table">
+          <tr>
+            <th>Key type</th>
+            <td>{roles[data.role]}</td>
+          </tr>
+          <tr>
+            <th>API Key</th>
+            <td>{data.username}</td>
+          </tr>
+          <tr>
+            <th>Description</th>
+            <td>{data.name}</td>
+          </tr>
+        </table>
+
+      </Panel>
+    {:else}
+      <div class="columns">
+        <div class="column is-7">
+          <form on:submit="save(event)">
+            <Panel title="Update Details">
+              <div slot="toolbar">
+                <DeleteButton text="Delete User" on:erase on:erased></DeleteButton>
+              </div>
+              <div class="columns is-multiline">
+                <div class="column is-6">
+                  <div class="field">
+                    <p class="control">
+                      <label class="label">Role</label>
+                      <span class="select is-fullwidth">
+                        <select class="input {data.role == '' ? 'is-danger' : ''}" bind:value="data.role" {disabled}>
+                          <option value="">Select Role</option>
+                          {#each Object.entries(roles) as role}
+                            <option value="{role[0]}">{role[1]}</option>
+                          {/each}
+                        </select>
+                      </span>
+                    </p>
+                  </div>
+                  <div class="field">
+                    <p class="control">
+                      <label class="label">Username</label>
+                      <input class="input" type="text" required bind:value="data.username" {disabled}/>
+                    </p>
+                  </div>
+                  <div class="field">
+                    <p class="control">
+                      <label class="label">Email</label>
+                      <input class="input" type="email" bind:value="data.email" />
+                    </p>
+                  </div>
+                </div>
+                <div class="column is-6">
+                  <div class="field">
+                    <p class="control">
+                      <label class="label">Name</label>
+                      <input class="input" type="text" required bind:value="data.name" {disabled}/>
+                    </p>
+                  </div>
+                  <div class="field">
+                    <p class="control">
+                      <label class="label">Surname</label>
+                      <input class="input " type="text" bind:value="data.surname" />
+                    </p>
+                  </div>
+                  <div class="field">
+                    <p class="control">
+                      <label class="label">&nbsp;</label>
+                      <SubmitButton classes="is-primary is-pulled-right" bind:tracker />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Panel>
+          </form>
+        </div>
+
+        <div class="column">
+          <Panel title="Update Avatar">
+            <div>
+              <div class="is-text-centered">
+                <figure class="image is-128x128" style="margin: 0 auto 20px auto">
+                  {#if data && data.avatarurl}
+                  <img src="{data.avatarurl}" alt="" />{/if}
+                </figure>
+              </div>
+              <FileUpload on:file_chosen max="1048579" allowed="{['png', 'jpg', 'jpeg']}" message="Upload new avatar..." />
+            </div>
+          </Panel>
+          <form on:submit="updatePassword(event)">
+            <Panel title="Update Password">
+              <div class="field">
+                <p class="control">
+                  <label class="label">New Password</label>
+                  <input class="input {new_pass && !valid ? 'is-danger' : ''}" type="password" bind:value="new_pass" />
+                  <PasswordValidator {new_pass} bind:valid />
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">Confirm Password</label>
+                  <input class="input {new_pass != confirm_pass ? 'is-danger' : ''}" type="password" bind:value="confirm_pass" />
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <SubmitButton icon_size="small" classes="is-primary is-pulled-right" text="Update Password" bind:tracker="password_tracker"
+                  />
+                </p>
+              </div>
+            </Panel>
+          </form>
+        </div>
+      </div>
+    {/if}
+
+  </ViewScaffold>
+</div>
+
+<script>
+  import Model from '../../models/users';
+  import Router from '../../services/router';
+  import { Icon, Notification, Panel } from '@kws3/helpers';
+  import { DeleteButton, SubmitButton } from '@kws3/buttons';
+
+  export default {
+    components: {
+      ViewScaffold: '../helpers/ViewScaffold.html',
+      PageTitle: '../helpers/PageTitle.html',
+      PasswordValidator:'../helpers/PasswordValidator.html',
+      Panel,
+      Icon,
+      Notification,
+      DeleteButton,
+      SubmitButton,
+      FileUpload: '../helpers/FileUpload.html'
+    },
+
+    data() {
+      return {
+        is_loading: true,
+        is_error: false,
+        error_message: '',
+        data: {
+          role: '',
+          name: '',
+          surname: '',
+          email: '',
+          password: ''
+        },
+        meta: {},
+        tracker: {
+          saving: false,
+          saved: false,
+          error: false,
+        },
+        new_pass: '',
+        confirm_pass: '',
+        page: {
+          title: 'View User',
+          subtitle: 'Change user details',
+          icon: 'vcard-o',
+          icon_badge: 'pencil'
+        },
+        password_tracker:'',
+        roles: {},
+        valid:false
+      }
+    },
+    computed: {
+      entityId({ $nav }) {
+        return $nav && $nav.params[0];
+      },
+      user_role: ({ $user }) => $user && $user.role,
+      is_api_key: ({ data }) => ['AK'].indexOf(data.role) != -1
+    },
+    onstate({ changed, current, previous }) {
+      var self = this;
+
+      if (changed['$nav']) {
+        var { $nav } = current;
+        if ($nav.activeView == '_COMPONENT_') {
+          self.load();
+        }
+      }
+    },
+    oncreate() {
+
+      this.on('erase',  (comp) => {
+        comp.doing();
+        Model.delete(this.get().entityId)
+          .then( (r) => {
+            comp.done();
+          })
+          .catch( () => {
+            comp.error();
+          });
+      });
+
+      this.on('erased', (comp) => {
+        Router.navigate('users');
+      });
+
+      this.on('file_chosen', (comp) => {
+        var file = comp.getFile();
+        var size = file.size;
+        comp.progress(0);
+
+        Model.uploadAvatar(
+          this.get().entityId,
+          file.file,
+          (e) => {
+            comp.progress(e.loaded);
+          }
+        ).then( (r) => {
+          this.set({
+            data: r.response
+          });
+          comp.uploaded();
+        })
+          .catch( (r) => {
+            var user_message = "Failed to upload!";
+            if (typeof r != 'undefined' && typeof r.response != 'undefined' && typeof r.response.records != 'undefined') {
+              user_message = r.response.records.userMessage;
+            }
+            comp.error(user_message);
+          });
+      });
+
+      this.load();
+    },
+    methods: {
+      load() {
+        var uid = this.get().entityId;
+
+        this.set({
+          'is_loading': true,
+          'is_error': false
+        });
+
+        Model && Model.getOne(uid, this.get().user_role)
+          .then( (r) => {
+            this.set({
+              'is_loading': false,
+              'meta': r[1]._meta,
+              'roles':r[0].response,
+              'data': r[1].response
+            });
+          })
+          .catch( (r) => {
+            var user_message = '';
+            if (typeof r != 'undefined' && typeof r.response != 'undefined' && typeof r.response.records != 'undefined') {
+              user_message = r.response.records.userMessage;
+            }
+            this.set({
+              'is_error': true,
+              'is_loading': false,
+              'error_message': user_message
+            });
+          });
+      },
+      updatePassword(e) {
+        e.preventDefault();
+
+        var { new_pass, confirm_pass, entityId, valid} = this.get();
+
+        if (new_pass == '') {
+          return;
+        }
+        if (new_pass !== confirm_pass || !valid) {
+          return;
+        }
+
+        this.set({
+          password_tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
+
+        Model.save( entityId , { password: new_pass })
+          .then( (r) => {
+
+            this.set({
+              password_tracker: {
+                saving: false,
+                saved: true,
+                error: false,
+              },
+              new_pass: '',
+              confirm_pass: ''
+            });
+
+            setTimeout( () => {
+              this.set({ password_tracker: { saved: false } });
+            }, 3000);
+
+          })
+          .catch( (r) => {
+
+            this.set({
+              password_tracker: {
+                saving: false,
+                saved: false,
+                error: true,
+              }
+            });
+
+            setTimeout( () => {
+              this.set({ password_tracker: { error: false } });
+            }, 3000);
+
+          });
+
+      },
+      save(e) {
+        e.preventDefault();
+
+        var { data, entityId } = this.get();
+
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
+
+        Model.save(entityId, data)
+          .then( (r) => {
+
+            this.set({ data: r.response });
+
+            this.set({
+              tracker: {
+                saving: false,
+                saved: true,
+                error: false
+              }
+            });
+
+            setTimeout( () => {
+              this.set({ tracker: { saved: false } });
+            }, 3000);
+
+          })
+          .catch( (r) => {
+            if (r.response.records.errorCode == '406') {
+              this.set({ error_message: ' The username you entered already exists, Please try another one' });
+            } else {
+              this.set({ error_message: 'There was an error adding user' });
+            }
+            this.set({
+              tracker: {
+                saving: false,
+                saved: false,
+                error: true
+              }
+            });
+
+            setTimeout( () => {
+              this.set({ tracker: { error: false } });
+            }, 3000);
+
+          });
+
+      }
+    }
+  }
+
+</script>

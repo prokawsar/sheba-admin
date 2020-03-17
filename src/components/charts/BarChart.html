@@ -1,0 +1,43 @@
+<Chart
+  options={_options}
+  series={_data}
+  {height} {width}
+></Chart>
+
+<script>
+  import Chart from './Chart.html';
+  import {barChartOptions, setsToSingleAxis, normalizeBarChartData} from '../../utils/chartUtils.js';
+
+  export default {
+    setup(comp){
+      comp.noPreserveState = true;
+    },
+    components:{
+      Chart
+    },
+    data(){
+      return {
+        data:[],
+        xAxis:[],
+        sets:[],
+        formatter: undefined,
+        tickAmount: 4,
+        width:'100%',
+        height:'auto',
+        sparkline: false,
+        opts:{}
+      }
+    },
+    computed:{
+      _data({sets, data}){
+        return normalizeBarChartData(sets, data);
+      },
+      yAxis({sets, formatter, tickAmount}){
+         return setsToSingleAxis(tickAmount, formatter);
+      },
+      _options({ xAxis, yAxis, sparkline, opts }){
+        return Object.assign(barChartOptions(xAxis, yAxis, sparkline), opts);
+      }
+    }
+  }
+</script>

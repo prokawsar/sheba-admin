@@ -1,0 +1,35 @@
+<Chart
+  options={_options}
+  series={data}
+  {height} {width}
+  on:dataPointSelection
+></Chart>
+
+<script>
+  import Chart from './Chart.html';
+  import {stackedColumnOptions} from '../../utils/chartUtils.js';
+
+  export default {
+    setup(comp){
+      comp.noPreserveState = true;
+    },
+    components:{
+      Chart
+    },
+    data(){
+      return {
+        data:[],
+        xAxis:[],
+        tickAmount: 4,
+        width:'100%',
+        height:'auto',
+        opts:{}
+      }
+    },
+    computed:{
+      _options({ xAxis, tickAmount, opts}){
+        return Object.assign(stackedColumnOptions(xAxis, tickAmount), opts);
+      }
+    }
+  }
+</script>

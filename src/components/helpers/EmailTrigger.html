@@ -1,0 +1,40 @@
+{#if trigger_id}
+
+  <a class="email-template-trigger" href="javascript:void(0)" on:click="openTemplate()" data-tooltip="{trigger_id}" >
+    <Icon icon="envelope-open" size="small" />
+  </a>
+
+{/if}
+
+
+<script>
+  import url from '../../config/endpoint.js';
+  import { Icon, Panel, Message } from "@kws3/helpers";
+
+  export default {
+    components: {
+      Icon,
+      Message
+    },
+    data(){
+      return {
+        trigger_id: null
+      }
+    },
+    methods:{
+      openTemplate(e){
+        e && e.preventDefault();
+        var {trigger_id} = this.get();
+        var h = 800;
+        var w = 700;
+        var l = (window.screen.width/2)-(w/2),
+        t = (window.screen.height/2)-(h/2);
+        window.open(
+          url + '/emails/' + trigger_id,
+          'template_viewer',
+          "width="+w+",height="+h+",resizable=1,scrollbars=1,toolbar=0,status=0,left="+l+",top="+t+""
+        );
+      }
+    }
+  }
+</script>

@@ -1,0 +1,37 @@
+{#if has_data}
+  {data}
+{:else}
+  {#if is_error}
+    <p class="is-block has-text-danger" style="margin-bottom:5px">{error_message}</p>
+  {/if}
+  <button type="button" class="button is-primary is-small {is_error ? 'is-danger' : ''} {is_loading ? 'is-loading' : ''}" on:click="loadItem()">
+    {#if is_error}
+      Retry
+    {:else}
+      Load Info
+    {/if}
+  </button>
+{/if}
+
+<script>
+    export default {
+      data() {
+        return {
+          is_loading: false,
+          is_error: false,
+          error_message:'',
+          has_data: false,
+          data: '',
+          dru_id: '',
+          data_type: '',
+          state_type: ''
+        };
+      },
+      methods: {
+        loadItem() {
+          var {dru_id, state_type, data_type} = this.get();
+          this.fire('loadItem', this);
+        }
+      }
+    };
+</script>

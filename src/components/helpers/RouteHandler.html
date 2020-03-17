@@ -1,0 +1,98 @@
+<div ref:routeOutput class="app-content">
+  <svelte:component this={views[$nav.activeView]} on:updateLoggedIn on:hideSidebar  />
+</div>
+
+
+<script>
+
+  import Routes from '../../config/routes.js';
+  import Router from '../../services/router.js';
+
+  import PageNotFound from '../views/PageNotFound.html';
+  import PageAssetsLoading from '../views/PageAssetsLoading.html';
+
+  import Dashboard from '../views/Dashboard.html';
+
+  export default {
+    data(){
+      return {
+        views: {
+          PageNotFound,
+          Dashboard,
+          PageAssetsLoading
+        },
+        lazyViews:{
+          Profile: () => import('../views/Profile.html'),
+          Settings: () => import('../views/Settings.html'),
+
+          Users: () => import('../views/Users.html'),
+          AddUser: () => import('../views/AddUser.html'),
+          ViewUser: () => import('../views/ViewUser.html'),
+        }
+      }
+    },
+    oncreate(){
+      this.init();
+    },
+    methods:{
+      loadQueuedView(view){
+        var { lazyViews } = this.get();
+        if(typeof lazyViews[view] != 'undefined'){
+          var viewPromise = lazyViews[view];
+          viewPromise()
+          .then((mod) => {
+            var { views } = this.get();
+            views[view] = mod.default ? mod.default : mod;
+            //set it for later navigations to samepage
+            this.set({views});
+
+            //check if we are still on same page
+            var { nav } = this.store.get();
+            if(nav.shouldBeView == view){
+              nav.activeView = view;
+              //update the page, as we are still on the same page
+              this.store.set({nav});
+            }
+          })
+          .catch((e) => {
+            console.log(e, 'Module for '+view+' not found');
+          })
+        }
+      },
+      init(){
+        this.on('routeChange', (r) => {
+          var view = r.view,
+          { nav } = this.store.get(),
+          { views, lazyViews } = this.get(),
+          currentView = nav.activeView,
+          shouldBeView = view;
+
+          if(view == '404'){
+            view = 'PageNotFound';
+          }else if(typeof views[view] == 'undefined'){
+            if(typeof lazyViews[view] == 'undefined'){
+              view = 'PageNotFound';
+            }else{
+              this.loadQueuedView(view);
+              view = 'PageAssetsLoading';
+            }
+          }
+
+          nav = {
+            activeView: view,
+            shouldBeView: shouldBeView,
+            activeTab: r.section ? r.section : view,
+            params: r.params
+          };
+
+          this.store.set({ nav });
+
+          this.fire('hideSidebar');
+        });
+
+        Router.init(this, Routes, 'dashboard');
+      }
+    }
+  }
+
+</script>

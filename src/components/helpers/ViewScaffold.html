@@ -1,0 +1,64 @@
+<div class="inner-content">
+  <div style="position: relative">
+    {#if is_loading}
+      <Loader large_loader="true" />
+    {:else}
+      {#if is_error}
+        <Message type="danger">
+          There was an error while fetching data from the server.<br>
+          {#if error_message}The server returned <code>{error_message}</code>{/if}
+        </Message>
+      {:else}
+        <Transition
+          transition="{has_transition}"
+          type="{transition_options.type}"
+          x="{transition_options.x}"
+          y="{transition_options.y}"
+          delay="{transition_options.delay}"
+          duration="{transition_options.duration}"
+          easing="{transition_options.easing}"
+        >
+          <div>
+            <slot></slot>
+          </div>
+        </Transition>
+      {/if}
+    {/if}
+  </div>
+</div>
+<script>
+
+  import {Loader, Message} from '@kws3/helpers';
+  import Transition from '@kws3/transitions';  
+  export default {
+    components: {
+      Loader,
+      Message,
+      Transition
+    },
+    data(){
+      return {
+        is_loading:true,
+        is_error:false,
+        transition_options:{
+          type:'fly',
+          x:0,
+          y:20,
+          delay:0,
+          duration:300,
+          easing: null
+        },
+        error_message:''
+      }
+    },
+    computed: {
+      has_transition({ $settings, transition }){
+        if(typeof transition != 'undefined'){
+          return transition;
+        }else{
+          return $settings.transition;
+        }
+      }
+    }
+  }
+</script>

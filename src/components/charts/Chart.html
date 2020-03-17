@@ -1,0 +1,97 @@
+<div ref:canvas>
+
+</div>
+
+<script>
+  import ApexCharts from 'apexcharts';
+
+  export default {
+    data(){
+      return {
+        options:{},
+        type:'bar',
+        series:[],
+        width:'100%',
+        height:'auto'
+      }
+    },
+    onstate({changed, current}){
+      if(changed.options){
+        if(!this.chart){
+          this.init();
+        }else{
+          if(typeof current.options.chart.events != 'undefined'){
+            current.options.chart.events = this.patchEvents(current.options.chart.events);
+          }
+          this.chart.updateOptions(current.options, true);
+        }
+      }
+
+      if(changed.series){
+        if(!this.chart){
+          this.init();
+        }else{
+          this.chart.updateSeries(current.series, true);
+        }
+      }
+
+      if(changed.width || changed.height || changed.type){
+        this.refresh();
+      }
+    },
+    oncreate(){
+      this.init();
+    },
+    ondestroy(){
+      this.chart && this.chart.destroy();
+    },
+    methods:{
+      patchEvents(evs){
+        const events = {};
+        if(typeof evs != 'undefined'){
+          for(var type in evs){
+            events[type] = (a, b, c) => {this.fire(type, [a, b, c])}
+          }
+        }
+        return events;
+      },
+      init(){
+        //support hmr by destroying old instance
+        this.chart && this.chart.destroy();
+
+        var {type, height, width, series, options} = this.get();
+
+        const newOptions = {
+          chart: {
+            type,
+            height,
+            width,
+          },
+          type,
+          series
+        }
+
+        var events = {};
+
+        if(typeof options.chart.events != 'undefined'){
+          events = this.patchEvents(options.chart.events);
+          options.chart.events = {};
+        }
+
+        const config = ApexCharts.merge(options, newOptions);
+
+        if(this.refs.canvas){
+          config.chart.events = events;
+          this.chart = new ApexCharts(this.refs.canvas, config)
+          this.chart.render();
+        }
+
+      },
+      refresh(){
+        this.chart && this.chart.destroy();
+        this.init();
+      }
+    }
+  }
+
+</script>

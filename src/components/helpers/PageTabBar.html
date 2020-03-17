@@ -1,0 +1,173 @@
+<div class="tabbar" ref:tabbar>
+  <div class="tabs is-right is-toggle ">
+    <ul ref:tabs>
+
+      <slot></slot>
+
+      <li class="more-link dropdown is-right {_show_dropdown ? 'is-active' : ''} {_show_more_link ? '' : 'is-hidden'}">
+        <a class="dropdown-trigger" on:click="fire('showDropdown', event)" href="show">
+          <Icon size="small" icon="chevron-down" />&nbsp;
+        </a>
+        <div class="dropdown-menu">
+          <ul class="dropdown-content" ref:overflow>
+
+          </ul>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+</div>
+
+<script>
+  import { Icon } from '@kws3/helpers';
+  import rAF from '../../utils/rAF';
+
+  export default {
+    components: {
+      Icon
+    },
+    data() {
+      return {
+        _show_dropdown: false,
+        _show_more_link: false,
+        getTotalSpace(tabbar) {
+          var totalSpace = tabbar.parentNode.parentNode.parentNode.parentNode.clientWidth;
+          return totalSpace;
+        },
+        getAvailableSpace(tabbar, totalSpace) {
+          var mainParent = tabbar.parentNode.parentNode.parentNode.parentNode,
+          availableSpace = totalSpace,
+          middleItemWidth = mainParent.children[1].clientWidth;
+
+          availableSpace -= mainParent.children[0].clientWidth;
+          availableSpace -= middleItemWidth > 50 ? middleItemWidth : 50;
+          return availableSpace;
+        }
+      }
+    },
+    oncreate() {
+      this.pollForRender();
+    },
+    methods: {
+      pollForRender(){
+        if(this.refs.tabs && typeof this.refs.tabs != 'undefined'){
+          this.init()
+        }else{
+          setTimeout(() => {
+            this.pollForRender();
+          }, 200);
+        }
+      },
+      init(){
+        this.tabbar = this.refs.tabbar;
+        this.tabs = this.refs.tabs;
+        if(this.tabs && typeof this.tabs != 'undefined'){
+          this.tab_items = [].slice.call(this.tabs.querySelectorAll('li:not(.more-link)'));
+
+          for (var i = this.tab_items.length - 1; i >= 0; i--) {
+            var el = this.tab_items[i];
+            this.attachClickEvents(el);
+          }
+
+          var {getTotalSpace, getAvailableSpace} = this.get();
+
+          this.overflow = this.refs.overflow;
+
+          this.totalSpace = getTotalSpace(this.tabbar);
+
+          this.windowResizeHandler = () => {
+            rAF(() => {
+              if(!this.tabbar.parentNode) return;
+              //hide tabs while doing calculations to avoid flickering
+              this.tabs.style.visibility = 'hidden';
+
+              //runs when window is being sized up
+              var totalSpace = getTotalSpace(this.tabbar);
+              if (totalSpace > this.totalSpace) {
+                //we are resizing up, so show all hidden tabs to start with
+                var tab_items = [].slice.call(this.tabs.querySelectorAll('li:not(.more-link)'));
+                for (var i = tab_items.length - 1; i >= 0; i--) {
+                  var el = tab_items[i];
+                  el.classList.remove('is-hidden');
+                }
+                this.set({ _show_more_link: false });
+              }
+
+              //store current width for next check
+              this.totalSpace = getTotalSpace(this.tabbar);
+
+              var usedSpace = this.tabs.clientWidth;
+              var availableSpace = getAvailableSpace(this.tabbar, getTotalSpace(this.tabbar));
+              if (usedSpace > availableSpace) {
+                this.set({ _show_more_link: true });
+                var found = false;
+                for (var i = this.tab_items.length - 1; i >= 0; i--) {
+                  var el = this.tab_items[i];
+                  if (!el.classList.contains('is-hidden')) {
+                    el.classList.add('is-hidden');
+                    found = true;
+                    break;
+                  }
+                }
+
+                //populate the dropdown menu with hidden tabs
+                this.populateOverflow();
+
+                if (found) { //loop if there are more tabs
+                  this.windowResizeHandler();
+                }
+              }
+
+              //show tabs after all calculations and movements
+              this.tabs.style.visibility = 'visible';
+
+            });
+          }
+
+          this.outsideClickHandler = (event) => {
+            var isClickInside = this.overflow.contains(event.target);
+            if (!isClickInside && this.get()._show_dropdown) {
+              this.set({ _show_dropdown: false });
+              window.removeEventListener('click', this.outsideClickHandler);
+            }
+          }
+
+
+          window.addEventListener('resize', this.windowResizeHandler, false);
+          this.windowResizeHandler();
+
+          this.on('showDropdown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            window.addEventListener('click', this.outsideClickHandler, false);
+            this.set({ _show_dropdown: true });
+          });
+
+          this.on('destroy', () => {
+            window.removeEventListener('resize', this.windowResizeHandler);
+            window.removeEventListener('click', this.outsideClickHandler);
+          });
+        }
+      },
+      populateOverflow() {
+        this.overflow.innerHTML = "";
+        var hiddens = [].slice.call(this.tabs.querySelectorAll('li:not(.more-link).is-hidden'));
+        for (var i = 0; i < hiddens.length; i++) {
+          var clone = hiddens[i].cloneNode(true);
+          clone.classList.remove('is-hidden');
+          this.overflow.appendChild(clone);
+          this.attachClickEvents(clone, true);
+        }
+      },
+      attachClickEvents(elem, set){
+        elem.addEventListener('click', () => {
+          if(!elem.classList.contains('is-active')){
+            set && this.set({ _show_dropdown: false });
+            setTimeout(() => this.windowResizeHandler(), 1);
+          }
+        });
+      }
+    }
+  }
+</script>

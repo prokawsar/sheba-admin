@@ -1,0 +1,219 @@
+<div class="statistics" >
+  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0"
+     width="100%" height="212px" viewBox="-20 0 950 750" enable-background="new 0 0 950 750" xml:space="preserve">
+     <filter id="pv-status-glow" x="-5000%" y="-5000%" width="10000%" height="10000%">
+      <feFlood result="flood" flood-color="#F28B18" flood-opacity="1"></feFlood>
+      <feComposite in="flood" result="mask" in2="SourceGraphic" operator="in"></feComposite>
+      <feMorphology in="mask" result="dilated" operator="dilate" radius="4"></feMorphology>
+      <feGaussianBlur in="dilated" result="blurred" stdDeviation="8"></feGaussianBlur>
+      <feMerge>
+          <feMergeNode in="blurred"></feMergeNode>
+          <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <filter id="load-status-glow" x="-5000%" y="-5000%" width="10000%" height="10000%">
+      <feFlood result="flood" flood-color="#6094CA" flood-opacity="1"></feFlood>
+      <feComposite in="flood" result="mask" in2="SourceGraphic" operator="in"></feComposite>
+      <feMorphology in="mask" result="dilated" operator="dilate" radius="8"></feMorphology>
+      <feGaussianBlur in="dilated" result="blurred" stdDeviation="5"></feGaussianBlur>
+      <feMerge>
+          <feMergeNode in="blurred"></feMergeNode>
+          <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <filter id="grid-status-glow" x="-5000%" y="-5000%" width="10000%" height="10000%">
+      <feFlood result="flood" flood-color="#20AF53" flood-opacity="1"></feFlood>
+      <feComposite in="flood" result="mask" in2="SourceGraphic" operator="in"></feComposite>
+      <feMorphology in="mask" result="dilated" operator="dilate" radius="8"></feMorphology>
+      <feGaussianBlur in="dilated" result="blurred" stdDeviation="5"></feGaussianBlur>
+      <feMerge>
+          <feMergeNode in="blurred"></feMergeNode>
+          <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+    <filter id="battery-status-glow" x="-5000%" y="-5000%" width="10000%" height="10000%">
+      <feFlood result="flood" flood-color="#C1238B" flood-opacity="1"></feFlood>
+      <feComposite in="flood" result="mask" in2="SourceGraphic" operator="in"></feComposite>
+      <feMorphology in="mask" result="dilated" operator="dilate" radius="8"></feMorphology>
+      <feGaussianBlur in="dilated" result="blurred" stdDeviation="5"></feGaussianBlur>
+      <feMerge>
+          <feMergeNode in="blurred"></feMergeNode>
+          <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+
+    <g>
+      <g  id="dashed-line" stroke-width="3">
+        <g class="solar-line" stroke="#F28B18">
+          <path  d="M520,292 L520,118.3 M521.5,117.4 L344.1,117 " stroke="{ pv.power ? '#FFFFFF' : '#F28B18'}" filter="{ pv.power ? 'url(#pv-status-glow)' : ''}" id="svg_2" />
+        </g>
+      
+        {#if pv.power}
+          <polygon points="0,-10 0,10 -15,0" class="triangle" fill="#FFFFFF" filter="{ pv.power ? 'url(#pv-status-glow)' : ''}">
+            <animateMotion dur="{pv.speed}" begin="0" rotate="{pv.direction == 'out' ? 'auto' : 'auto-reverse'}" fill="freeze" repeatCount="indefinite"
+                      keyPoints="{pv.direction == 'out' ? '1;0' : '0;1'}" keyTimes="0;1" calcMode="linear">
+                <mpath xlink:href="#svg_2"/>
+            </animateMotion>
+          </polygon>
+        {/if}
+
+
+        <path stroke="{ load.power ? '#FFFFFF' : '#6094CA'}" filter="{ load.power ? 'url(#load-status-glow)' : ''}" d="M280,363.3 L393.3,364.1 " id="svg_7"  />
+
+        {#if load.power}
+          <polygon points="0,-10 0,10 -15,0" class="triangle" fill="#FFFFFF" filter="{ load.power ? 'url(#load-status-glow)' : ''}">
+            <animateMotion dur="{load.speed}" begin="0" rotate="{load.direction == 'in' ? 'auto' : 'auto-reverse'}" fill="freeze" repeatCount="indefinite"
+                      keyPoints="{load.direction == 'in' ? '1;0' : '0;1'}" keyTimes="0;1" calcMode="linear">
+                <mpath xlink:href="#svg_7"/>
+            </animateMotion>
+          </polygon>
+        {/if}
+
+
+
+        <path stroke="{ battery.level ? '#FFFFFF' : '#C1238B'}" filter="{ battery.level ? 'url(#battery-status-glow)' : ''}" d="M551.6,364.1 L668.3,364.9 " id="svg_9"  />
+
+        {#if battery.level}
+          <polygon points="0,-10 0,10 -15,0" class="triangle" fill="#FFFFFF" filter="{ battery.level ? 'url(#battery-status-glow)' : ''}">
+            <animateMotion dur="{battery.speed}" begin="0" rotate="{battery.direction == 'out' ? 'auto' : 'auto-reverse'}" fill="freeze" repeatCount="indefinite"
+                          keyPoints="{battery.direction == 'out' ? '1;0' : '0;1'}" keyTimes="0;1" calcMode="linear">
+                <mpath xlink:href="#svg_9"/>
+            </animateMotion>
+          </polygon>
+        {/if}
+
+        <g class="grid-line">
+          <path stroke="{ grid.power ? '#FFFFFF' : '#20AF53'}" filter="{ grid.power ? 'url(#grid-status-glow)' : ''}"  d="M450,440.8 L450,583.3 M450,582.4L614.1,581.6" id="svg_35" />
+        </g>
+
+        {#if grid.power}
+          <polygon points="0,-10 0,10 -15,0" class="triangle" fill="#FFFFFF" filter="{ grid.power ? 'url(#grid-status-glow)' : ''}">
+            <animateMotion dur="{grid.speed}" begin="0" rotate="{grid.direction == 'out' ? 'auto' : 'auto-reverse'}" fill="freeze" repeatCount="indefinite"
+                          keyPoints="{grid.direction == 'out' ? '1;0' : '0;1'}" keyTimes="0;1" calcMode="linear">
+                <mpath xlink:href="#svg_35"/>
+            </animateMotion>
+          </polygon>
+        {/if}
+      </g>
+
+      <g x="20" y="90" id="se-logo">
+        <polyline fill="transparent" stroke-width="4" stroke="url(#SVGID_55_)" points="402,430 402,315 473,270 545,315 545,430 402,430" />
+        <g id="svg_5">
+          <linearGradient id="SVGID_55_" x1="-3.3" y1="-3.2" x2="-1.6" y2="-4.4"  >
+            <stop offset="0" stop-color="#EF7E24"/><stop offset=".204" stop-color="#EB5E50"/>
+            <stop offset=".379" stop-color="#E73D63"/><stop offset=".463" stop-color="#E62968"/>
+            <stop offset="1" stop-color="#4C3C8F"/>
+          </linearGradient>
+         <rect x="430" y="317" fill="url(#SVGID_55_)" width="90" height="93" rx="25" id="svg_6"/>
+        </g>
+        <path fill="#FFFFFF" d="m445.6,375.7l3.3,-5.8c2.1,2.1 6.5,4.2 10.1,4.2c3.3,0 4.9,-1.3 4.9,-3.2c0,-4.9 -17.4,-0.8 -17.4,-12.9c0,-5.1 4.2,-9.6 12.0,-9.6c4.9,0 8.9,1.7 11.8,4.1l-3.1,5.6c-1.7,-1.8 -5.1,-3.5 -8.7,-3.5c-2.8,0 -4.6,1.2 -4.6,2.9c0,4.4 17.5,0.6 17.5,13.0c0,5.6 -4.6,9.7 -12.8,9.7c-5.1,0.0 -10.0,-1.7 -13.1,-4.7" />
+        <path opacity="0.7" fill="#FFFFFF" d="m473.4,368.2c-1.9,-8.6 2.7,-17.0 11.3,-19.1c8.6,-2.0 15.8,3.2 18.0,12.8l0.4,1.8l-21.3,5.1c1.3,3.5 4.8,5.8 9.7,4.6c2.4,-0.5 5.5,-2.4 6.9,-4.7l4.5,4.3c-2.2,3.3 -6.4,5.8 -10.9,6.9c-8.7,2.0 -16.7,-2.4 -18.8,-11.9m12.8,-12.7c-4.7,1.1 -5.9,4.9 -5.6,8.0l14.1,-3.3c-0.8,-2.7 -3.5,-5.8 -8.5,-4.6" />
+       </g>
+  
+       <g id="pv-status">
+  
+        <path fill="{ pv.power ? '#FFFFFF' : '#F28B18'}" filter="{ pv.power ? 'url(#pv-status-glow)' : ''}" d="m257.2,154.7c-1.1,0 -2.0,-0.9 -2.0,-2.1l0,-6.6c0,-1.2 0.9,-2.1 2.0,-2.1l26.4,0l0,-13.4l-41.7,0c-0.6,0 -1.2,-0.3 -1.6,-0.8c-0.3,-0.5 -0.5,-1.2 -0.3,-1.9l14.4,-55.6c0.2,-0.9 1.0,-1.6 1.9,-1.6l65.7,0c0.9,0 1.7,0.6 1.9,1.6l13.2,55.6c0.1,0.6 0.0,1.3 -0.3,1.8c-0.3,0.5 -0.9,0.8 -1.6,0.8l-41.7,0l0,13.4l26.4,0c1.1,0 2.0,0.9 2.0,2.1l0,6.6c0,1.2 -0.9,2.1 -2.0,2.1l-62.8,0l0,-0.0zm60.8,-4.3l0,-2.2l-58.7,-0.0l0,2.3l58.7,0l0,-0.0zm-28.4,-6.6l0.0,-13.4l-1.8,0l-0.0,13.4l1.8,0zm43.2,-17.8l-2.3,-9.7l-10.0,0l1.6,9.7l10.7,0zm-14.9,0l-1.6,-9.7l-10.2,0l0.9,9.7l10.9,0zm-15.0,0l-0.9,-9.7l-11.1,0l0,9.7l12.0,0zm-16.1,0l0,-9.7l-11.0,0l-0.9,9.7l11.9,0zm-16.0,0l0.9,-9.7l-10.2,0l-1.6,9.7l10.9,0zm-15.1,0l1.6,-9.7l-9.9,0l-2.5,9.7l10.8,0zm74.0,-14.1l-2.2,-9.2l-9.0,0l1.5,9.2l9.7,0zm-13.9,0l-1.5,-9.2l-9.2,0l0.8,9.2l9.9,0zm-14.0,0l-0.8,-9.2l-9.8,0l0,9.2l10.7,0zm-14.8,0l0,-9.2l-9.7,0l-0.8,9.2l10.6,0zm-14.7,0l0.8,-9.2l-9.2,0l-1.5,9.2l9.9,0zm-14.1,0l1.5,-9.2l-8.6,0l-2.4,9.2l9.5,0zm68.4,-13.6l-2.1,-8.8l-8.1,0l1.4,8.8l8.7,0zm-12.9,0l-1.4,-8.8l-8.3,0l0.8,8.8l8.9,0zm-13.0,0l-0.8,-8.8l-8.6,0l0,8.8l9.4,0zm-13.5,0l0,-8.8l-8.5,0l-0.8,8.8l9.3,0zm-13.4,0l0.8,-8.8l-8.3,0l-1.4,8.8l8.9,0zm-13.1,0l1.4,-8.8l-7.4,0l-2.3,8.8l8.2,0zm62.9,-13.2l-2.4,-10.1l-7.0,-0.0l1.6,10.1l7.8,0l0,-0.0zm-11.9,0l-1.6,-10.1l-7.2,0l0.9,10.1l8.0,0zm-12.0,0l-0.9,-10.1l-7.2,0l0,10.1l8.2,0zm-12.3,0l0,-10.1l-7.1,0l-0.9,10.1l8.1,0zm-12.2,0l0.9,-10.1l-7.2,-0.0l-1.6,10.1l8.0,0l0,-0.0zm-12.1,0l1.6,-10.1l-6.0,0l-2.6,10.1l6.9,0z" />
+  
+        <text x="225" y="115" fill="#ffffff" font-size="50" alignment-baseline="middle" text-anchor="end">{pv.power} W</text>
+      </g>
+  
+  
+      <g id="grid-status">
+  
+        <path fill="{ grid.power ? '#FFFFFF' : '#20AF53'}" filter="{ grid.power ? 'url(#grid-status-glow)' : ''}" d="M628.4,622.6 l-0.5,-0.1 l-0.1,-0.0 l0.6,-1.4 l-0.8,1.3 l-0.0,-0.0 l-0.3,-0.2 l-0.1,-0.1 l-0.1,-0.2 l-0.0,-0.0 l-0.2,-0.3 l-0.0,-0.0 c-0.2,-0.6 -0.2,-1.4 -0.0,-2.1 l0.0,-0.1 l14.7,-36.7 h-9.2 v3.0 c0,1.6 -1.2,2.9 -2.6,2.9 c-1.4,0 -2.6,-1.3 -2.6,-2.9 v-3.0 h-2.0 c-1.4,0 -2.6,-1.2 -2.6,-2.9 c0,-1.6 1.2,-2.9 2.6,-2.9 h18.0 v-14.9 h-10.6 v3.0 c0,1.6 -1.2,2.9 -2.6,2.9 c-1.4,0 -2.6,-1.3 -2.6,-2.9 v-3.0 h-2.0 c-1.4,0 -2.6,-1.3 -2.6,-2.9 c0,-1.6 1.2,-2.9 2.6,-2.9 h19.1 l7.1,-14.3 v-0.0 l0.4,-0.7 l0.1,-0.2 l0.2,-0.2 l0.2,-0.1 l0.1,-0.0 l0.3,-0.1 l0.3,-0.0 l0.2,-0.0 h0.5 l0.4,0.1 l0.2,0.0 l0.3,0.1 l0.4,0.3 l0.3,0.3 l0.2,0.3 l0.0,0.1 l7.3,14.6 l19.1,-0.0 c1.4,0 2.6,1.3 2.6,2.9 c0,1.6 -1.2,2.9 -2.6,2.9 h-2.0 v3.0 c0,1.6 -1.2,2.9 -2.6,2.9 h-0.0 c-0.7,0 -1.3,-0.2 -1.8,-0.8 c-0.5,-0.5 -0.7,-1.2 -0.7,-2.0 v-3.0 h-10.5 v14.9 l18.0,-0.0 c1.4,0 2.6,1.3 2.6,2.9 c0,1.6 -1.2,2.9 -2.6,2.9 h-2.0 v3.0 c0,1.6 -1.2,2.9 -2.6,2.9 c-1.4,0 -2.6,-1.3 -2.6,-2.9 v-3.0 l-9.1,-0.0 l14.7,36.7 l0.1,0.4 l0.0,0.2 l0.0,0.4 l-0.0,0.5 l-0.1,0.5 l-0.1,0.2 l-0.0,0.2 l-0.2,0.2 l-0.2,0.2 l-0.2,0.1 l-0.2,0.1 l-0.1,0.0 l-0.3,0.1 l-0.3,0.1 L677.9,622.5 h-0.2 l-0.2,-0.0 l-0.2,-0.0 l-0.2,-0.0 l-0.2,-0.1 l-0.3,-0.1 l-22.8,-17.3 l-23.0,17.4 l-0.4,0.2 l-0.5,0.1 l-0.2,0.0 l-0.3,0.0 L628.4,622.6 zM635.2,611.4 l13.5,-10.2 l-7.2,-5.4 L635.2,611.4 zM671.5,611.3 l-6.2,-15.6 l-7.1,5.4 L671.5,611.3 zM653.4,597.6 l9.6,-7.3 l-3.3,-8.4 h-12.6 l-3.3,8.4 L653.4,597.6 zM658.8,560.9 h-10.7 v14.9 h10.7 V560.9 zM657.0,555.1 l-3.5,-7.1 l-3.5,7.1 H657.0 z"/>
+  
+        <text x="710" y="590" fill="#ffffff" font-size="50" alignment-baseline="middle" text-anchor="start" >{grid.power} W</text>
+      </g>
+  
+      <g id="battery-status">
+        <rect x="685.4" y="326.0" fill-rule="evenodd" clip-rule="evenodd" fill="{battery.level <= 15 ? '#D73D69' : '#FFFFFF'}" width="38.1" height="69.0" />
+        <rect x="685.4" y="326.0" fill-rule="evenodd" clip-rule="evenodd" fill="#162335" width="38.1" height="{battery.bar}"/>
+        <path fill="{battery.level <= 15 ? '#D73D69' : '#FFFFFF'}" filter="{ battery.level <= 15 ? '' : 'url(#battery-status-glow)'}" d="M719.5,329.4 h-31.3 c-1.3,0 -2.3,1.3 -2.3,2.7 v59.7 c0,1.3 0.9,2.2 2.3,2.2 h31.3 c1.4,0 2.8,-0.8 2.8,-2.2 v-59.7 C722.3,330.8 720.9,329.4 719.5,329.4 M688.1,323.6 h7.4 v-2.2 c0,-1.3 0.9,-2.6 2.3,-2.6 h11.7 c1.4,0 2.8,1.3 2.8,2.6 v2.2 h7.0 c4.6,0 8.4,4.0 8.4,8.5 v59.7 c0,4.4 -3.7,8.0 -8.4,8.0 h-31.3 c-4.6,0 -8.4,-3.5 -8.4,-8.0 v-59.7 C679.7,327.6 683.5,323.6 688.1,323.6 L688.1,323.6 z"/>
+        <text x="750" y="370" fill="#ffffff" font-size="50" alignment-baseline="middle" text-anchor="start" >{battery.level} %</text>
+      </g>
+  
+      <g id="load-status">
+  
+        <path  fill="{ load.power ? '#FFFFFF' : '#6094CA'}" filter="{ load.power ? 'url(#load-status-glow)' : ''}" d="m261.3,362.5c0,6.4 -6.4,11.6 -14.4,11.6l0,0c-7.9,0 -14.4,-5.2 -14.4,-11.6l0,0l0,-17.4l28.8,0l0,17.4zm8.7,-23.3l-8.8,0l0,-14.5c0,-1.6 -1.6,-2.9 -3.6,-2.9c-1.9,0 -3.6,1.3 -3.6,2.9l0,14.5l-14.4,0l0,-14.5c0,-1.6 -1.6,-2.9 -3.6,-2.9c-1.9,0 -3.6,1.3 -3.6,2.9l0,14.5l-8.7,0c-1.1,0 -2,0.7 -2,1.6l0,2.5c0,0.9 0.9,1.6 2,1.6l1.5,0l0,17.4l0,0c0,8.6 7.8,15.8 18,17.2l0,16.5c0,0.6 0.6,1.2 1.5,1.2l4.1,0c0.8,0 1.5,-0.5 1.5,-1.2l0,-16.5c10.2,-1.3 18,-8.5 18,-17.2l0,-17.4l1.5,0c1.1,0 2,-0.7 2,-1.6l0,-2.5c0,-0.9 -0.9,-1.6 -2,-1.6" />
+  
+        <text x="205" y="365" fill="#ffffff" font-size="50" alignment-baseline="middle" text-anchor="end"  >{load.power} W</text>
+  
+  
+      </g>
+    </g>
+
+    
+
+
+
+  </svg>
+
+  {#if !timestampMilliseconds}
+    <div class="is-overlay">
+      <Loader size="large" color="info" />
+    </div>
+  {/if}
+</div>
+
+<script>
+
+  import {Loader} from '@kws3/helpers';
+
+  const getSpeed = function(value) {
+      return Math.abs(value) <= 1 ? "0s" : 5 / Math.log(Math.abs(value)) + "s"
+  }
+
+
+  export default {
+    components:{ Loader },
+    data() {
+      return {
+        batteryChargingPower: 0,
+        batteryDischargingPower: 0,
+        druState:0,
+        energyManagerId:0,
+        frequencyHz:50,
+        gridIncomingPower:0,
+        gridOutgoingPower:0,
+        loadPower:0,
+        powerAvailableHigh: 0,
+        powerAvailableLow:0,
+        powerDispatched:0,
+        pvPower:0,
+        soc:0,
+        timestampMilliseconds: 0
+      }
+    },
+    computed: {
+      battery ({ batteryChargingPower, batteryDischargingPower, soc }) {
+        const bar = soc <= 100 ? ~~(70 - ((soc * 70) / 100)) : 0,
+        level = Math.round(soc),
+        direction = (batteryDischargingPower || 0) > (batteryChargingPower || 0) ? 'out' : 'in',
+        speed = getSpeed(direction == 'in' ? batteryChargingPower : batteryDischargingPower);
+
+        return { bar, level, direction, speed };
+      },
+      grid ({ gridIncomingPower, gridOutgoingPower }) {
+        const direction = (gridIncomingPower || 0) > (gridOutgoingPower || 0) ? 'out' : 'in',
+        power = Math.abs(gridOutgoingPower - gridIncomingPower),
+        speed = getSpeed(power);
+
+        return { direction, power, speed };
+      },
+      load ({ loadPower }) {
+        const direction = 'in',
+        power = loadPower,
+        speed = getSpeed(power);
+
+        return { direction, power, speed };
+      },
+      pv ({ pvPower }) {
+        const direction = 'out',
+        power = pvPower,
+        speed = getSpeed(power);
+
+        return { direction, power, speed };
+      }
+    }
+  }
+</script>

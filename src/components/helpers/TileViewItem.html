@@ -1,0 +1,64 @@
+<div class="card" data-cy="card-item">
+  <div class="card-content">
+    {#if isVisible('link')}
+    <a class="edit-icon {classNames('link', row)}" href="{transforms('link', row)}" style="{styles('link', row)}" data-cy="edit-icon">
+      <Icon size="small" icon="pencil" />
+    </a>
+    {/if}
+    <div class="media">
+      {#if isVisible('img')}
+      <div class="media-left">
+        {#if transforms('icon', row)}
+          <Icon icon={transforms('icon', row)} size="large" />
+        {:else}
+          <figure class="image is-64x64">
+            <img src="{transforms('img', row)}" alt="" style="{styles('img', row)}" class="{classNames('img', row)}">
+          </figure>
+        {/if}
+      </div>
+      {/if}
+      <div class="media-content">
+        {#if isVisible('title')}
+        <p class="{classNames('title', row)}" style="{styles('title', row)}">{@html transforms('title', row)}</p>
+        {/if}
+        {#if isVisible('subtitle')}
+        <p class="{classNames('subtitle', row)}" style="margin-bottom:1px;{styles('subtitle', row)}">{@html transforms('subtitle', row)}</p>
+        {/if}
+        {#if isVisible('description')}
+        <p>
+          <small class="{classNames('description', row)}" style="{styles('description', row)}">{@html transforms('description', row)}</small>
+        </p>
+        {/if}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .card-content {
+    position: relative;
+  }
+  .edit-icon {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+  }
+</style>
+
+<script>
+  import { Icon } from '@kws3/helpers';
+  export default {
+    components:{
+      Icon,
+    },
+    data(){
+      return {
+        row:{},
+        isVisible:{},
+        transforms:{},
+        classNames:{},
+        styles:{}
+      }
+    }
+  }
+</script>

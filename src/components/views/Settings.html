@@ -1,0 +1,244 @@
+<div class="page-content">
+  <PageTitle page="{page}">
+    <PageTabBar>
+      <li class="is-active" >
+        <a href="#settings">
+          <Icon size="small" icon="cogs" />
+          <span>Settings</span>
+        </a>
+      </li>
+      {#if is_site_img_allowed}
+        <li>
+            <a href="#site_images">
+            <Icon size="small" icon="image" />
+            <span>Site Images</span>
+            </a>
+        </li>
+      {/if}
+      {#if is_objection_reason_allowed}
+        <li>
+            <a href="#objection_reasons">
+            <Icon size="small" icon="ban" />
+            <span>Objection Reasons</span>
+            </a>
+        </li>
+      {/if}
+      {#if is_supplier_mp_idz_allowed}
+        <li>
+          <a href="#supplier_mpids">
+            <Icon size="small" icon="industry" />
+            <span>Supplier Ids</span>
+          </a>
+        </li>
+      {/if}
+      {#if is_smet_appoinment_uploads_allowed}
+        <li>
+          <a href="#smet_appointments">
+            <Icon size="small" icon="upload" />
+            <span>Smet appointment uploads</span>
+          </a>
+        </li>
+      {/if}
+      <!-- {#if is_complaint_sub_allowed}
+        <li>
+            <a href="#complaint_categories">
+            <Icon size="small" icon="book" />
+            <span>Complaint Categories</span>
+            </a>
+        </li>
+      {/if} -->
+    </PageTabBar>
+  </PageTitle>
+
+  <ViewScaffold {is_loading} {is_error} {error_message}>
+
+      {#if tracker.error}
+        <Notification type="danger">
+            There was an error updating settings
+        </Notification>
+      {/if}
+
+    <form on:submit="save(event)">
+      <Panel title="Update Settings">
+        {#if !data.length}
+        <div class="message is-primary">
+          <div class="message-body">
+            No settings to modify.
+          </div>
+        </div>
+        {:else}
+        <div class="columns is-multiline">
+
+          {#each displayed_settings as setting}
+            <div class="column is-6">
+              <div class="field">
+                <label class="label">{setting.display_name}</label>
+                <p class="control">
+                  <input class="input" type="text" bind:value="setting.value" />
+                </p>
+                <p class="help">{setting.description}</p>
+              </div>
+            </div>
+          {/each}
+
+          {#if is_site_img_allowed}
+            <div class="column is-6">
+              <Message color="grey">
+                <p class="menu-label">VAT disclaimer</p>
+
+                <p>
+                    Setting your new solar VAT rate should be done inline with government guidance
+                    (<a href="https://www.gov.uk/guidance/vat-on-energy-saving-materials-and-heating-equipment-notice-7086">link to guidance document</a>).
+                  </p>
+
+                  <p style="margin-top: 10px;">
+                    Social Energy do not take any responsibility for incorrectly charged or
+                    undercharged VAT or any implications that it may have on you and/or your
+                    customers.
+                  </p>
+              </Message>
+            </div>
+          {/if}
+
+          <div class="column">
+            <div class="field">
+              <label class="label">&nbsp;</label>
+              <p class="control">
+                <SubmitButton icon_size="small" classes="is-primary is-pulled-right" bind:tracker />
+              </p>
+            </div>
+          </div>
+
+        </div>
+        {/if}
+      </Panel>
+    </form>
+  </ViewScaffold>
+</div>
+
+<script>
+import Model from '../../models/settings';
+import { Message, Notification, Panel, Icon } from '@kws3/helpers';
+import { SubmitButton } from '@kws3/buttons';
+import PageTabBar from '../helpers/PageTabBar.html';
+export default {
+  components:{
+    ViewScaffold: '../helpers/ViewScaffold.html',
+    PageTitle: '../helpers/PageTitle.html',
+    SubmitButton,
+    Notification,
+    Panel,
+    Icon,
+    PageTabBar,
+    Message
+  },
+  data:function(){
+    return {
+      is_loading: true,
+      is_error: false,
+      error_message: '',
+      data:[],
+      page:{
+        title: 'Settings',
+        icon: 'cog',
+        subtitle: 'Modify application and user specific settings'
+      },
+      tracker:{
+        saving:false,
+        saved:false,
+        error:false
+      }
+    }
+  },
+  computed: {
+    is_site_img_allowed: ({ $role }) => $role == 'DA' || $role == 'DU',
+    is_complaint_sub_allowed: ({ $role }) => $role == 'A' || $role == 'U',
+    is_objection_reason_allowed: ({ $role }) => $role == 'A' || $role == 'U',
+    is_supplier_mp_idz_allowed:({ $role }) => $role == 'A' || $role == 'U',
+    is_smet_appoinment_uploads_allowed:({ $role }) => $role == 'A' || $role == 'U',
+
+    displayed_settings: ({ data }) => data ? data.filter(setting => (setting.id.toString()).indexOf("show_default_") !== 0) : []
+  },
+  oncreate(){
+    var self = this;
+    self.model = Model;
+    self.load();
+  },
+  methods:{
+    load(){
+      var self = this;
+
+      self.set({
+        'is_loading': true,
+        'is_error': false
+      });
+
+      self.model.getAll({limit:1000})
+      .then(function(r){
+        self.set({
+          'is_loading': false,
+          'meta': r._meta,
+          'data': r.response
+        });
+      })
+      .catch(function(r){
+        var user_message = '';
+        if (typeof r != 'undefined' && typeof r.response != 'undefined' && typeof r.response.records != 'undefined'){
+            user_message = r.response.records.userMessage;
+        }
+        self.set({
+          'is_error': true,
+          'is_loading': false,
+          'error_message': user_message
+        });
+      });
+    },
+    save: function(e){
+      var self = this;
+      e.preventDefault();
+
+      self.set({
+        tracker:{
+          saving:true,
+          saved: false,
+          error:false
+        }
+      });
+
+      self.model.save('', self.get().data)
+      .then(function(r){
+        self.set({
+          tracker:{
+            saving:false,
+            saved: true,
+            error:false,
+            data: r.response
+          }
+        });
+
+        setTimeout(function(){
+          self.set({tracker:{saved:false}});
+        }, 3000);
+
+      })
+      .catch(function(r){
+
+        self.set({
+          tracker:{
+            saving:false,
+            saved: false,
+            error:true
+          }
+        });
+
+        setTimeout(function(){
+          self.set({tracker:{error:false}});
+        }, 3000);
+
+      });
+
+
+    }
+  }
+};
+</script>

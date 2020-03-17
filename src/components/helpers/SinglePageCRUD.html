@@ -1,0 +1,162 @@
+<div>
+  <div class="columns">
+    <div class="column is-8">
+      <Panel title="Existing {page.title}">
+        {#if is_loading}
+          <Loader size="small" type="inline" />
+        {:else}
+          {#if data.length && data.length > 0}
+            {#each data as item}
+              <Transition transition="{has_transition}" type="fly" x="{20}">
+                <SinglePageCRUDItem {item} {Model} on:removed/>
+              </Transition>
+            {/each}
+          {:else}
+            <p class="is-text-centered"><strong>No {page.entityName} present.<br> Please add one using the form on the right.</strong></p>
+          {/if}
+        {/if}
+      </Panel>
+    </div>
+    <div class="column">
+      <Panel title="Add {page.entityNameSingular}">
+        <form on:submit="add(event)">
+          <Transition transition="{has_transition}" type="fly" y="{20}">
+            <div class="field has-addons">
+              <div class="control is-expanded">
+                <input class="input" type="text" bind:value="new_item_name" placeholder="{page.entityNameSingular} Name" disabled="{is_loading || tracker.saving}">
+              </div>
+              <div class="control">
+                <SubmitButton bind:disabled="tracker.saving" classes="is-primary" icon="plus" icon_size="small" text="Add" bind:tracker></SubmitButton>
+              </div>
+            </div>
+          </Transition>
+        </form>
+      </Panel>
+    </div>
+  </div>
+</div>
+
+<script>
+  import {Loader, Panel} from '@kws3/helpers';
+  import { SubmitButton } from '@kws3/buttons';
+  import Transition from '@kws3/transitions';
+
+  export default {
+    components: {
+      Panel,
+      Loader,
+      SubmitButton,
+      SinglePageCRUDItem: './SinglePageCRUDItem.html',
+      Transition
+
+    },
+    data() {
+      return {
+        is_loading: false,
+        new_item_name: '',
+        Model: null,
+        data: [],
+        tracker: {
+          saving: false,
+          saved: false,
+          error: false
+        }
+      }
+    },
+    computed: {
+      has_transition({ $settings, transition }){
+        typeof transition != 'undefined' ? transition : $settings.transition
+      }
+    },
+    oncreate() {
+      this.set({
+          'is_loading': true,
+          'is_error': false
+        });
+
+        this.get().Model.getAll()
+        .then((r) => {
+          if(r.response && typeof r.response.length == 'undefined'){
+            r.response = [];
+          }
+          this.set({
+            'is_loading': false,
+            'meta': r._meta,
+            'data': r.response
+          });
+        })
+        .catch((r) => {
+          var user_message = '';
+          if (typeof r.response != 'undefined' && typeof r.response.records != 'undefined') {
+            user_message = r.response.records.userMessage;
+          }
+          this.set({
+            'is_error': true,
+            'is_loading': false,
+            'error_message': user_message
+          });
+        });
+
+        this.on('removed', (item) => {
+          var data = this.get().data.filter(dt => dt.id != item.id)
+          this.set({data});
+        });
+    },
+    methods: {
+      add(e) {
+        e.preventDefault();
+
+        var name = this.get().new_item_name;
+
+        if(name.trim() == '') {
+          return;
+        }
+
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
+
+        this.get().Model.create({ name: name })
+          .then((r) => {
+            this.set({
+              tracker: {
+                saving: false,
+                saved: true,
+                error: false
+              },
+              new_item_name: '',
+            });
+            setTimeout(() => {
+              this.set({ tracker: { saved: false } });
+              var { data } = this.get();
+              data.push(r.response);
+              this.set({data});
+            }, 1000);
+
+          })
+          .catch((r) => {
+
+            this.set({
+              tracker: {
+                saving: false,
+                saved: false,
+                error: true
+              }
+            });
+
+            setTimeout(() => {
+              this.set({ tracker: { error: false } });
+            }, 3000);
+
+          });
+
+
+      }
+     }
+  };
+
+</script>

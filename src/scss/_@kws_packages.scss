@@ -1,0 +1,89 @@
+@import '../../node_modules/@kws3/transitions/styles';
+
+$kws-panel-background: $card-background-color;
+$kws-panel-box-shadow: $card-shadow;
+$kws-panel-title-color: $panel-heading-color;
+$kws-panel-title-weight: $panel-heading-weight;
+$kws-panel-caret-open-color: $panel-heading-color;
+$kws-panel-caret-closed-color: $link;
+@import '../../node_modules/@kws3/helpers/components/Panel/styles';
+
+
+$kws-loader-width: 1.4rem;
+$kws-loader-height: 1.4rem;
+$kws-loader-width-large: ($kws-loader-width * 3);
+$kws-loader-height-large: ($kws-loader-height * 3);
+$kws-loader-color: var(--primary);
+$kws-loader-overlay-background: rgba(0,0,0,0.45);
+@import '../../node_modules/@kws3/helpers/components/Loader/styles';
+
+//datagrid
+$kws-pagination-item-background: $card-background-color;
+$kws-pagination-item-hover-border: 1px solid lighten($border, 10%);
+$kws-pagination-item-disabled-background: $background;
+$kws-pagination-item-disabled-color: $grey;
+$kws-pagination-item-ellipsis-background: $background;
+$kws-pagination-item-ellipsis-border-color: $background;
+$kws-pagination-item-active-background: var(--primary);
+$kws-pagination-item-active-color: var(--primaryInverted);
+@import "../../node_modules/@kws3/datagrid/components/Pagination/styles";
+
+
+$kws-gridview-box-shadow: $card-shadow;
+$kws-gridview-th-background: var(--primary);
+$kws-gridview-th-color: var(--primaryInverted);
+@import "../../node_modules/@kws3/datagrid/components/GridView/styles";
+
+//searchable select
+$kws-ss-item-selecting-bg-color: rgba(206, 206, 206, 0.5);
+$kws-ss-item-selecting-text-color: $text;
+$kws-ss-item-selected-bg-color: $info;
+$kws-ss-item-selected-text-color: findColorInvert($info);
+$kws-ss-caret-color: $link;
+@import '../../node_modules/@kws3/searchable-select/styles';
+
+@import '../../node_modules/@kws3/colorpicker/styles';
+
+//datepicker
+@import "../../node_modules/flatpickr/dist/flatpickr";
+$kws-datepicker-arrow-top-color: var(--info);
+$kws-datepicker-arrow-bottom-color: var(--info);
+
+$kws-datepicker-month-color: $white;
+$kws-datepicker-month-bg-color: var(--info);
+$kws-datepicker-month-fill-color: $white;
+$kws-datepicker-month-boder-radius: 3px 3px 0 0;
+
+$kws-datepicker-weekdays-bg-color: var(--info);
+$kws-datepicker-weekday-bg-color: var(--info);
+$kws-datepicker-weekday-color: var(--infoInverted);
+
+$kws-datepicker-prev-next-hover-color: $background;
+$kws-datepicker-prev-next-hover-svg-color: $background;
+
+$kws-datepicker-days-border-radius: 0 0 3px 3px;
+
+$kws-datepicker-left-border: 1px solid var(--info);
+$kws-datepicker-right-border: 1px solid var(--info);
+
+$kws-datepicker-day-bg-color: var(--primary);
+$kws-datepicker-day-border-color: var(--primary);
+
+$kws-datepicker-inner-container-border-radius: 3px 3px 0 0;
+$kws-datepicker-inner-container-border-bottom-color: 1px solid var(--info);
+@import "../../node_modules/@kws3/datepicker/styles";
+
+//timepicker
+$kws-timepicker-border-radius: 3px 3px !default;
+$kws-timepicker-border: 1px solid var(--primary) !default;
+$kws-timepicker-am-pm-color: var(--primary) !default;
+@import "../../node_modules/@kws3/timepicker/styles";
+
+.flatpickr-day.nextMonthDay, .flatpickr-day.prevMonthDay{
+  color:rgba(0,0,0,0.5);
+}
+.flatpickr-day.disabled{
+  opacity: 0.4;
+  color:rgba(57,57,57,0.3);
+  border-radius: 0;
+}

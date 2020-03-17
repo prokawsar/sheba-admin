@@ -1,0 +1,56 @@
+//Primary colors
+$primary: #7956ef;
+$info: #00aced;
+$success: $green;
+$warning: rgb(184, 152, 36);
+$danger: $red;
+
+$light: #f1f4f9;
+$dark: #4a545f;
+
+$background: #fafbfd;
+
+//Link colors
+$link: #0049c5;
+
+
+$chart-colors: (1: #1B998B, 2: #D7263D, 3: #F46036, 4: #E2C044, 5: #C5D86D, 6: #03A9F4);
+$gradient-start-color: $primary;
+$gradient-end-color: $info;
+
+$family-primary: $family-sans-serif;
+$family-headings: #{'Asap'}, #{$family-sans-serif};
+
+$text: #454950;
+$text-strong: #454950;
+
+
+$title-color: $text;
+$title-strong-color: $text;
+$title-weight: $weight-normal;
+$subtitle-color: $text;
+$subtitle-strong-color: $text;
+$subtitle-weight: $weight-normal;
+
+$card-color: $text;
+$card-background-color: $white;
+$card-shadow: 2px 2px 10px rgba(43, 43, 43, 0.2);
+
+$panel-heading-background-color: transparent;
+$panel-heading-color: $text;
+$panel-heading-weight: 500;
+
+$table-striped-row-even-background-color: $white-bis;
+$dropdown-content-shadow: $card-shadow;
+
+//metrics
+$header_height: 50px;
+$footer_height: 20px;
+$tabs_height: 49px;
+$left_sidebar_width:100px;
+$right_sidebar_width:360px;
+//easings
+$easeOutQuad: cubic-bezier(0.250, 0.460, 0.450, 0.940);
+$easeOutSine: cubic-bezier(0.390, 0.575, 0.565, 1.000);
+$easeOutBack: cubic-bezier(0.175, 0.885, 0.320, 1.275);
+$easeOutCustom: cubic-bezier(0.100, 0.820, 0.250, 1.000);

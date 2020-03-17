@@ -1,0 +1,72 @@
+<div class="page-title">
+  <div class="level is-mobile">
+
+    <div class="level-left">
+
+      <div class="level-item">
+
+          <div class="media">
+
+            <div>
+              {#if page.icon}
+                <Transition transition="{has_transition}" type="scale" classes="media-left">
+                  <Icon size="large" icon="{page.icon}" />
+                    {#if page.icon_badge}
+                      <Icon size="small" icon="{page.icon_badge}" icon_class="icon_badge has-text-{page.badge_color ? page.badge_color : 'warning'}"/>
+                    {/if}
+                </Transition>
+              {/if}
+            </div>
+
+            <div class="media-content" data-cy="page-title" style="overflow:visible">
+              <Transition transition="{has_transition}" type="fly" x="{-50}" delay="{100}" duration="{400}" classes="title">{page.title}</Transition>
+              {#if page.subtitle}
+                <Transition transition="{has_transition}" type="fly" x="{-50}" delay="{300}" duration="{400}" classes="subtitle"><span>{@html page.subtitle}</span></Transition>
+              {/if}
+            </div>
+
+          </div>
+      </div>
+
+    </div>
+
+    <div class="level-item">
+      <Transition transition="{has_transition}" type="fade" delay="{500}">
+        <slot name="center"></slot>
+      </Transition>
+    </div>
+
+    <div class="level-right">
+      <div class="level-item">
+        <Transition transition="{has_transition}" type="fly" y="{10}" delay="{300}" easing="circOut">
+          <slot></slot>
+        </Transition>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { Icon } from '@kws3/helpers';
+  import Transition from '@kws3/transitions';
+  export default {
+    components:{
+      Icon,
+      Transition
+     },
+    data(){
+      return {
+        page: {}
+      }
+    },
+    computed: {
+      has_transition({ $settings, transition }){
+        if(typeof transition != 'undefined'){
+          return transition;
+        }else{
+          return $settings.transition;
+        }
+      }
+    }
+  }
+</script>
