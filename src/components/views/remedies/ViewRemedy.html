@@ -15,21 +15,45 @@
 
     {#if !is_loading}
       <form on:submit="fire('save', event)">
-        <div class="columns">
-          <div class="column is-6">
-            <Panel title="Remedy Details">
+        <Panel title="Remedy Details">
+          <div class="columns">
+            <div class="column">
 
-            </Panel>
+              <div class="field">
+                <p class="control">
+                  <label class="label">Name</label>
+                  <input class="input" type="text" required bind:value="data.name" />
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div class="column is-6">
-            <Panel title="Remedy Hours">
-              <form on:submit="fire('save', event)">
-
-              </form>
-            </Panel>
+          <p class="title is-4">Symptoms</p>
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <p class="control">
+                  <label class="label">Head</label>
+                  <textarea class="textarea" placeholder="Head.."></textarea>
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <p class="control">
+                  <label class="label">Mind</label>
+                  <textarea class="textarea" placeholder="Mind.."></textarea>
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">&nbsp;</label>
+                  <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Add Remedy" bind:tracker />
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
+        </Panel>
       </form>
     {/if}
 
@@ -39,15 +63,14 @@
 <script>
   import Model from '../../../models/remedies';
   import {Icon, Notification, Panel, Message} from '@kws3/helpers';
+  import { SubmitButton } from '@kws3/buttons';
 
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
-      Notification,
-      Icon,
-      Panel,
-      Message,
       PageTitle: '../../helpers/PageTitle.html',
+      Notification, SubmitButton,
+      Icon, Panel, Message,
 
     },
     data() {
