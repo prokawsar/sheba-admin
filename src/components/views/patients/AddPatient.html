@@ -1,0 +1,155 @@
+<div class="page-content">
+
+  <PageTitle page="{page}">
+    <a class="button is-info is-pulled-right" href="#patients">
+      <Icon icon="long-arrow-left" size="small" />
+      <span>Back to All Patients</span>
+    </a>
+  </PageTitle>
+
+  <ViewScaffold {is_loading} {is_error} {error_message}>
+
+    {#if tracker.error}
+    <Notification type="danger">
+      {error_message}
+    </Notification>
+    {/if}
+
+      <form on:submit="addNew(event)">
+        <Panel title="Patient Details">
+          <div class="columns">
+            <div class="column">
+
+              <div class="field">
+                <p class="control">
+                  <label class="label">Name</label>
+                  <input class="input" type="text" required bind:value="data.name" />
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <p class="title is-4">Symptoms</p>
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <p class="control">
+                  <label class="label">Head</label>
+                  <textarea class="textarea" placeholder="Head.."></textarea>
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <p class="control">
+                  <label class="label">Mind</label>
+                  <textarea class="textarea" placeholder="Mind.."></textarea>
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">&nbsp;</label>
+                  <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Add Patient" bind:tracker />
+                </p>
+              </div>
+            </div>
+          </div>
+        </Panel>
+      </form>
+
+
+  </ViewScaffold>
+</div>
+
+<script>
+  import Model from '../../../models/patients';
+  import Router from '../../../services/router';
+  import { Icon, Notification, Panel } from '@kws3/helpers';
+  import { SubmitButton } from '@kws3/buttons';
+
+  export default {
+    components: {
+      ViewScaffold: '../../helpers/ViewScaffold.html',
+      PageTitle: '../../helpers/PageTitle.html',
+      Panel, Icon, Notification, SubmitButton
+    },
+
+    data() {
+      return {
+        is_loading: false,
+        is_error: false,
+        error_message: '',
+        data: {
+          name: '',
+        },
+        tracker: {
+          saving: false,
+          saved: false,
+          error: false,
+        },
+        page: {
+          title: 'Add Remedy',
+          icon: 'vcard-o',
+          icon_badge: 'plus'
+        },
+        valid:false
+      }
+    },
+    computed: {
+      user_role: ({ $user }) => $user && $user.role,
+    },
+    methods: {
+      addNew(e) {
+        e.preventDefault();
+
+        var { data, valid }  = this.get();
+
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
+
+        Model.create(data)
+        .then( (r) => {
+          this.set({
+            tracker: {
+              saving: false,
+              saved: true,
+              error: false
+            },
+            data: r.response,
+          });
+
+          setTimeout( () => {
+            this.set({ tracker: { saved: false } });
+            Router.navigate('patients');
+          }, 1500);
+
+        })
+        .catch( (r) => {
+          if (r.response.records.errorCode == '406') {
+            this.set({error_message: r.response.records.userMessage});
+          }else{
+            this.set({error_message: 'There was an error adding patient'});
+          }
+          this.set({
+            tracker: {
+              saving: false,
+              saved: false,
+              error: true
+            }
+          });
+
+          setTimeout( () => {
+            this.set({ tracker: { error: false } });
+          }, 3000);
+
+        });
+      }
+    }
+  }
+
+</script>

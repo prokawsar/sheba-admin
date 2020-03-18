@@ -20,12 +20,13 @@ var Access = function(){
     'Users'               : {icon:'vcard-o', url:'users'},
     'Profile'             : {visible: false },
     'Remedies'              : {icon: 'user', url: 'remedies'},
+    'Patients'              : {icon: 'user', url: 'patients'},
   },
   allowedMap = {},
   allowedSections  = {};
 
   allowedMap[ROLE.CONTEXT_ADMIN] = [
-    'Dashboard', 'Users', 'Profile', 'Remedies'
+    'Dashboard', 'Users', 'Profile', 'Remedies', 'Patients'
   ];
   allowedMap[ROLE.CONTEXT_USER] = [
     'Dashboard', 'Profile'

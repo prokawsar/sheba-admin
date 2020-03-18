@@ -25,4 +25,11 @@ routeMap['remedies'] = [
   { 'pattern': '/add', 'view': 'AddRemedy' }
 ];
 
+routeMap['patients'] = [
+  { 'pattern': '/', 'view': 'Patients' },
+  { 'pattern': '/(\\d+)/?([^/]*)?/?([^/]*)?/?$', 'view': 'Patients', 'type': 'regex' },
+  { 'pattern': '/view/(\\d+)$', 'view': 'ViewPatient', 'type': 'regex' },
+  { 'pattern': '/add', 'view': 'AddPatient' }
+];
+
 export default routeMap;
