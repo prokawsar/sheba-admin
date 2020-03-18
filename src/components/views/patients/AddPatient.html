@@ -15,47 +15,61 @@
     </Notification>
     {/if}
 
-      <form on:submit="addNew(event)">
-        <Panel title="Patient Details">
-          <div class="columns">
-            <div class="column">
+    <form on:submit="addNew(event)">
+      <Panel title="Patient Details">
+        <div class="columns">
+          <div class="column">
 
-              <div class="field">
-                <p class="control">
-                  <label class="label">Name</label>
-                  <input class="input" type="text" required bind:value="data.name" />
-                </p>
+            <div class="field">
+              <p class="control">
+                <label class="label">Name</label>
+                <input class="input" type="text" required bind:value="data.name" />
+              </p>
+            </div>
+            <div class="field">
+              <p class="control">
+                <label class="label">Phone</label>
+                <input class="input" type="text" bind:value="data.phone" />
+              </p>
+            </div>
+
+            <div class="field">
+              <div class="control">
+
+                <label class="label">Gender</label>
+                <label class="radio">
+                  <input type="radio" value="m"> Male
+                </label>
+                <label class="radio">
+                  <input type="radio" value="f"> Female
+                </label>
               </div>
+            </div>
+
+          </div>
+          <div class="column">
+            <div class="field">
+              <p class="control">
+                <label class="label">Age</label>
+                <input class="input" type="number" required bind:value="data.age" autocomplete="off" />
+              </p>
+            </div>
+            <div class="field">
+              <p class="control">
+                <label class="label">Address</label>
+                <input class="input" type="text" bind:value="data.address" autocomplete="off" />
+              </p>
+            </div>
+            <div class="field">
+              <p class="control">
+                <label class="label">&nbsp;</label>
+                <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Create Patient" bind:tracker />
+              </p>
             </div>
           </div>
-
-          <p class="title is-4">Symptoms</p>
-          <div class="columns">
-            <div class="column">
-              <div class="field">
-                <p class="control">
-                  <label class="label">Head</label>
-                  <textarea class="textarea" placeholder="Head.."></textarea>
-                </p>
-              </div>
-            </div>
-            <div class="column">
-              <div class="field">
-                <p class="control">
-                  <label class="label">Mind</label>
-                  <textarea class="textarea" placeholder="Mind.."></textarea>
-                </p>
-              </div>
-              <div class="field">
-                <p class="control">
-                  <label class="label">&nbsp;</label>
-                  <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Add Patient" bind:tracker />
-                </p>
-              </div>
-            </div>
-          </div>
-        </Panel>
-      </form>
+        </div>
+      </Panel>
+    </form>
 
 
   </ViewScaffold>
@@ -81,6 +95,9 @@
         error_message: '',
         data: {
           name: '',
+          phone: '',
+          address: '',
+          gender: ''
         },
         tracker: {
           saving: false,
@@ -88,7 +105,7 @@
           error: false,
         },
         page: {
-          title: 'Add Remedy',
+          title: 'Add Patient',
           icon: 'vcard-o',
           icon_badge: 'plus'
         },
