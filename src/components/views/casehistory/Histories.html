@@ -1,0 +1,102 @@
+
+<div class="page-content">
+
+  <PageTitle page="{page}"></PageTitle>
+
+  <ViewScaffold {is_loading} {is_error} {error_message}>
+
+      <DataList
+      {Model}
+      {View}
+      {entity_name}
+      {route_prefix}
+      {has_additional_buttons}
+      {search_placeholder}
+      bind:is_loading
+      bind:is_error
+      bind:error_message
+      bind:data
+      bind:meta
+      {columns}
+      {searchStringTransformer}
+      {valueTransformers}
+      {classTransformers}
+      {styleTransformers}
+      >
+      </DataList>
+
+  </ViewScaffold>
+
+</div>
+
+<script>
+
+  import Model from '../../../models/histories';
+  import { Icon } from '@kws3/helpers';
+
+  export default {
+    components:{
+      ViewScaffold: '../../helpers/ViewScaffold.html',
+      DataList: '../../helpers/DataList.html',
+      PageTitle: '../../helpers/PageTitle.html',
+      Icon,
+    },
+    data(){
+      return {
+        model_set: false,
+        is_loading: true,
+        is_error: false,
+        error_message: '',
+        meta:{},
+        data:[],
+        Model,
+        View: '_COMPONENT_',
+        entity_name: 'History',
+        route_prefix: 'history/',
+        has_additional_buttons: false,
+        columns:{
+          'id':'ID',
+          'name': 'Name',
+          'link': ''
+        },
+        search_placeholder: 'Name',
+        page:{
+          title: 'Case Histories',
+          icon: 'building-o',
+          subtitle: 'Case Histories in this System'
+        },
+        searchStringTransformer: (q) => {
+          var qparts = q.split('~'),
+          query = [];
+
+          if(qparts[0] != ''){
+            query.push('name[lk]:'+qparts[0]);
+          }
+
+          qparts.shift();
+          for(var i = 0; i < qparts.length; i++){
+            var _q = qparts[i],
+            qpp = _q.split(':');
+            if(_q != '' && typeof qpp[1] != 'undefined' && qpp[1] != ''){
+              query.push(qpp[0] + '[eq]:' + qpp[1]);
+            }
+          }
+
+          return query.join(',');
+        },
+        valueTransformers:{
+          link(v, row) {
+            return '<a href="#history/view/'  + row.id + '"><span class="icon"><i class="fa fa-pencil"></i></span></a>';
+          },
+        },
+        classTransformers:{
+          link(){
+            return 'is-icon';
+          }
+        },
+        styleTransformers:{},
+      }
+    },
+    computed: {}
+  }
+</script>
