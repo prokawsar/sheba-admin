@@ -6,24 +6,27 @@
   <ViewScaffold {is_loading} {is_error} {error_message}>
 
       <DataList
-        {Model}
-        {View}
-        {entity_name}
-        {route_prefix}
-        {is_editable}
-        {has_additional_buttons}
-        bind:is_loading
-        bind:is_error
-        bind:error_message
-        bind:data
-        bind:meta
-        {search_placeholder}
-        {columns}
-        {searchStringTransformer}
-        {valueTransformers}
-        {classTransformers}
-        {styleTransformers}
+      {Model}
+      {View}
+      {entity_name}
+      {route_prefix}
+      {has_additional_buttons}
+      {search_placeholder}
+      bind:is_loading
+      bind:is_error
+      bind:error_message
+      bind:data
+      bind:meta
+      {columns}
+      {searchStringTransformer}
+      {valueTransformers}
+      {classTransformers}
+      {styleTransformers}
       >
+
+      <a  slot="additionalButtons" href="#remedies/add" class="button is-success">
+        <Icon size="small" icon="plus-circle" /><span>Add Remedy</span>
+      </a>
       </DataList>
 
   </ViewScaffold>
@@ -33,12 +36,14 @@
 <script>
 
   import Model from '../../../models/remedies';
+  import { Icon } from '@kws3/helpers';
 
   export default {
     components:{
       ViewScaffold: '../../helpers/ViewScaffold.html',
       DataList: '../../helpers/DataList.html',
-      PageTitle: '../../helpers/PageTitle.html'
+      PageTitle: '../../helpers/PageTitle.html',
+      Icon,
     },
     data(){
       return {
@@ -52,7 +57,7 @@
         View: '_COMPONENT_',
         entity_name: 'Remedies',
         route_prefix: 'remedies/',
-        has_additional_buttons: false,
+        has_additional_buttons: true,
         columns:{
           'id':'ID',
           'name': 'Name',
