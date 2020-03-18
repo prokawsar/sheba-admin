@@ -11,6 +11,10 @@ routeMap['dashboard'] = [
   { 'pattern': '/', 'view': 'Dashboard' }
 ];
 
+routeMap['search'] = [
+  { 'pattern': '/', 'view': 'Search' }
+];
+
 routeMap['users'] = [
   { 'pattern': '/', 'view': 'Users' },
   { 'pattern': '/(\\d+)/?([^/]*)?/?([^/]*)?/?$', 'view': 'Users', 'type': 'regex' },
