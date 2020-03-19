@@ -33,11 +33,11 @@
             <div class="column">
               <div class="field">
                 <span class="select is-fullwidth">
-                  <select class="input" bind:value="selected_symptom" on:change="load_symptom()" >
+                  <select class="input" bind:value="selected_symptom" >
                     <option value="">Select Type</option>
                     {#each Object.entries(data) as [key, value], i}
                       {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
-                      <option value="{key}">{key}</option>
+                        <option value="{key}">{key}</option>
                       {/if}
                     {/each}
                   </select>
@@ -52,13 +52,13 @@
               </div>
             </div>
             <div class="column">
-              <!-- <div class="field">
+              <div class="field">
                 <span class="select is-fullwidth">
-                  <select class="input">
+                  <select class="input" bind:value="selected_symptom2">
                     <option value="">Select Type</option>
                     {#each Object.entries(data) as [key, value]}
                       {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
-                      <option value="{key}">{key}</option>
+                        <option value="{key}">{key}</option>
                       {/if}
                     {/each}
                   </select>
@@ -66,10 +66,10 @@
               </div>
               <div class="field">
                 <p class="control">
-                  <label class="label">Mind</label>
-                  <textarea class="textarea" placeholder="Mind.."></textarea>
+                  <label class="label" style="text-transform: capitalize;">{selected_symptom2}</label>
+                  <textarea class="textarea" placeholder="..." bind:value="data[selected_symptom2]"></textarea>
                 </p>
-              </div> -->
+              </div>
               <div class="field">
                 <p class="control">
                   <label class="label">&nbsp;</label>
@@ -104,6 +104,7 @@
         is_error: false,
         error_message: '',
         selected_symptom: '',
+        selected_symptom2: '',
         data: {},
         meta: {},
         tracker: {
