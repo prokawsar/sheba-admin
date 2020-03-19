@@ -28,7 +28,7 @@ var Access = function(){
   allowedSections  = {};
 
   allowedMap[ROLE.CONTEXT_ADMIN] = [
-    'Dashboard', 'Users', 'Profile', 'Remedies', 'Patients', 'Search', 'History'
+    'Dashboard', 'Profile', 'Remedies', 'Patients', 'History', 'Search', 'Users',
   ];
   allowedMap[ROLE.CONTEXT_USER] = [
     'Dashboard', 'Profile'
