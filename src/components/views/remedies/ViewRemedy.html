@@ -32,19 +32,44 @@
           <div class="columns">
             <div class="column">
               <div class="field">
+                <span class="select is-fullwidth">
+                  <select class="input" bind:value="selected_symptom" on:change="load_symptom()" >
+                    <option value="">Select Type</option>
+                    {#each Object.entries(data) as [key, value], i}
+                      {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
+                      <option value="{key}">{key}</option>
+                      {/if}
+                    {/each}
+                  </select>
+                </span>
+              </div>
+
+              <div class="field">
                 <p class="control">
-                  <label class="label">Head</label>
-                  <textarea class="textarea" placeholder="Head.."></textarea>
+                  <label class="label" style="text-transform: capitalize;">{selected_symptom}</label>
+                  <textarea class="textarea" placeholder="..." bind:value="data[selected_symptom]"></textarea>
                 </p>
               </div>
             </div>
             <div class="column">
+              <!-- <div class="field">
+                <span class="select is-fullwidth">
+                  <select class="input">
+                    <option value="">Select Type</option>
+                    {#each Object.entries(data) as [key, value]}
+                      {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
+                      <option value="{key}">{key}</option>
+                      {/if}
+                    {/each}
+                  </select>
+                </span>
+              </div>
               <div class="field">
                 <p class="control">
                   <label class="label">Mind</label>
                   <textarea class="textarea" placeholder="Mind.."></textarea>
                 </p>
-              </div>
+              </div> -->
               <div class="field">
                 <p class="control">
                   <label class="label">&nbsp;</label>
@@ -78,6 +103,7 @@
         is_loading: true,
         is_error: false,
         error_message: '',
+        selected_symptom: '',
         data: {},
         meta: {},
         tracker: {
@@ -94,7 +120,7 @@
       }
     },
     computed: {
-      entityId: ({ $nav }) => $nav && $nav.params[0]
+      entityId: ({ $nav }) => $nav && $nav.params[0],
     },
     oncreate() {
       var { entityId } = this.get();
@@ -122,6 +148,10 @@
       this.load();
     },
     methods: {
+      load_symptom(){
+        let {selected_symptom, data} = this.get();
+
+      },
       load() {
         var { entityId } = this.get();
 
