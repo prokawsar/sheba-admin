@@ -61,6 +61,7 @@
         columns:{
           'id':'ID',
           'name': 'Name',
+          'singleview': '',
           'link': ''
         },
         search_placeholder: 'Name',
@@ -89,11 +90,17 @@
           return query.join(',');
         },
         valueTransformers:{
+          singleview(v, row){
+            return '<a href="#remedies/singleview/'  + row.id + '"><span class="icon"><i class="fa fa-eye"></i></span></a>' ;
+          },
           link(v, row) {
             return '<a href="#remedies/view/'  + row.id + '"><span class="icon"><i class="fa fa-pencil"></i></span></a>';
           },
         },
         classTransformers:{
+          singleview(){
+            return 'is-icon';
+          },
           link(){
             return 'is-icon';
           }
