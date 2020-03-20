@@ -15,7 +15,17 @@
 
     {#if !is_loading}
       <form on:submit="fire('save', event)">
-        <Panel title="Remedy Details">
+        <Panel title="Remedy Details" has_toolbar={true}>
+          <div slot='toolbar'>
+            <div class="field">
+              <div class="control">
+                <a href="#remedies/singleview/{entityId}" class="button is-success">
+                  <Icon size="small" icon="eye" /><span>View on single page</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
           <div class="columns">
             <div class="column">
 

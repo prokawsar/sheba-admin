@@ -1,0 +1,140 @@
+<div class="page-content">
+
+  <PageTitle page="{page}">
+    <a class="button is-info is-inverted is-pulled-right" href="#remedies">
+      <Icon icon="long-arrow-left" size="small" />
+      <span>Back to All Remedies</span>
+    </a>
+  </PageTitle>
+
+  <ViewScaffold {is_loading} {is_error} {error_message}>
+
+    {#if tracker.error}
+      <Notification type="danger">{error_message}</Notification>
+    {/if}
+
+    {#if !is_loading}
+      <form on:submit="fire('save', event)">
+        <Panel title="Remedy Details" has_toolbar={true}>
+
+          <div class="columns">
+            <div class="column">
+
+              <div class="field">
+                <p class="control">
+                  <label class="label">Name</label>
+                  <input class="input is-medium" type="text" required bind:value="data.name" readonly />
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="columns is-6">
+            <div class="column">
+              {#each Object.entries(data) as [key, value]}
+                {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
+                  <div class="columns">
+                    <div class="column">
+                      <p class="title is-5" style="text-transform: capitalize;">{key}</p>
+                    </div>
+                    <div class="column">
+                      <Message color="is-light">
+                        <p class="is-3">{value ? value : 'No data'}</p>
+                      </Message>
+                    </div>
+                  </div>
+                {/if}
+              {/each}
+            </div>
+          </div>
+        </Panel>
+      </form>
+    {/if}
+
+  </ViewScaffold>
+</div>
+
+<script>
+  import Model from '../../../../models/remedies';
+  import {Icon, Notification, Panel, Message} from '@kws3/helpers';
+  import { SubmitButton } from '@kws3/buttons';
+
+  export default {
+    components: {
+      ViewScaffold: '../../../helpers/ViewScaffold.html',
+      PageTitle: '../../../helpers/PageTitle.html',
+      Notification, SubmitButton,
+      Icon, Panel, Message,
+
+    },
+    data() {
+      return {
+        is_loading: true,
+        is_error: false,
+        error_message: '',
+        data: {},
+        meta: {},
+        tracker: {
+          saving: false,
+          saved: false,
+          error: false,
+        },
+        page: {
+          title: 'View Remedy',
+          subtitle: 'Modify Remedy details',
+          icon: 'building-o',
+          icon_badge: 'pencil'
+        },
+      }
+    },
+    computed: {
+      entityId: ({ $nav }) => $nav && $nav.params[0],
+    },
+    oncreate() {
+      var { entityId } = this.get();
+
+      this.on('state', ({ changed, current, previous }) => {
+        if (changed['$nav']) {
+          var { $nav } = current;
+          if ($nav.activeView == '_COMPONENT_') {
+            this.load();
+          }
+        }
+      });
+
+      this.load();
+    },
+    methods: {
+      load() {
+        var { entityId } = this.get();
+
+        this.set({
+          'is_loading': true,
+          'is_error': false
+        });
+
+        Model.getOne(entityId)
+        .then((r) => {
+
+          this.set({
+            'is_loading': false,
+            'meta': r._meta,
+            'data': r.response
+          });
+
+        })
+        .catch((r) => {
+          var user_message = '';
+          if (typeof r != 'undefined' && typeof r.response != 'undefined' && typeof r.response.records != 'undefined') {
+            user_message = r.response.records.userMessage;
+          }
+          this.set({
+            'is_error': true,
+            'is_loading': false,
+            'error_message': user_message
+          });
+        });
+      },
+    }
+  }
+</script>
