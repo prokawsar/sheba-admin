@@ -20,57 +20,76 @@
           <div class="columns">
             <div class="column">
 
-              <div class="field">
+              <!-- <div class="field">
                 <p class="control">
                   <label class="label">Name</label>
                   <input class="input" type="text" required bind:value="data.name" />
                 </p>
-              </div>
+              </div> -->
             </div>
           </div>
 
           <div class="columns">
             <div class="column">
-              <div class="field">
-                <p class="control">
-                  <label class="label">Head</label>
-                  <textarea class="textarea" placeholder="Head.."></textarea>
-                </p>
-              </div>
-            </div>
-            <div class="column">
-              <div class="field">
-                <p class="control">
-                  <label class="label">Mind</label>
-                  <textarea class="textarea" placeholder="Mind.."></textarea>
-                </p>
-              </div>
-              <div class="field">
-                <p class="control">
-                  <label class="label">&nbsp;</label>
-                  <SubmitButton classes="is-primary is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
-                </p>
+              <div class="buttons">
+              {#each Object.entries(buttons) as [key, value], i }
+                  <button class="button is-info" on:click="open_modal()" >{key}</button>
+              {/each}
               </div>
             </div>
           </div>
+
+          <!-- <div class="columns">
+            <div class="column">
+              {#each Object.entries(data) as [key, value], i }
+                  <div class="field">
+                    <p class="control">
+                      <label class="label" style="text-transform:capitalize;">{key}</label>
+                      <textarea class="textarea" placeholder="{key}.." bind:value="data[key]"></textarea>
+                    </p>
+                  </div>
+                {/each}
+              </div>
+              <div class="column">
+                {#each Object.entries(data2) as [key, value], i }
+                    <div class="field">
+                      <p class="control">
+                        <label class="label" style="text-transform:capitalize;">{key}</label>
+                        <textarea class="textarea" placeholder="{key}.." bind:value="data2[key]" ></textarea>
+                      </p>
+                  </div>
+                {/each}
+                <div class="field">
+                  <p class="control">
+                    <label class="label">&nbsp;</label>
+                    <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Add Remedy" bind:tracker />
+                  </p>
+                </div>
+              </div>
+          </div> -->
         </Panel>
       </form>
 
+      <!-- <CaseHistory
+        bind:is_active="is_active_case_modal"
+        on:close
+      /> -->
 
   </ViewScaffold>
 </div>
 
 <script>
-  import Model from '../../../models/remedies';
+  import Model from '../../../models/histories';
   import Router from '../../../services/router';
   import { Icon, Notification, Panel } from '@kws3/helpers';
   import { SubmitButton } from '@kws3/buttons';
+  import CaseHistory from './helpers/CaseHistory.html';
 
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
-      Panel, Icon, Notification, SubmitButton
+      Panel, Icon, Notification, SubmitButton, CaseHistory
     },
 
     data() {
@@ -78,8 +97,78 @@
         is_loading: false,
         is_error: false,
         error_message: '',
+        is_active_case_modal: false,
         data: {
-          name: '',
+          face: '',
+          mind: '',
+          built: '',
+          hair: '',
+          tongue: '',
+          pulse: '',
+          breathing: '',
+          anaemia: '',
+          cyanosis: '',
+          dehydration: '',
+          dehydration: '',
+          jaundice: '',
+          skin: '',
+          sensation: '',
+          temperature_and_weather: '',
+          thermals: '',
+          susceptibility: '',
+          bathing: '',
+          vision: '',
+          hearing: '',
+          smelling: '',
+          taste: '',
+          thirst: '',
+          appetite: '',
+          hunger: '',
+          desires: '',
+          aversions: '',
+          intolerable: '',
+          ameliorable: '',
+          indigestion: '',
+          eructation: '',
+          nausia: '',
+          vomiting: '',
+          sweating_perspiration: '',
+          sleep: '',
+        },
+        data2: {
+          dreams: '',
+          discharges: '',
+          stool: '',
+          urine: '',
+          menstruation: '',
+          leucorrhoea: '',
+          habit: '',
+          hobby: '',
+          addicted: '',
+          birth_history: '',
+          milestones: '',
+          mood_and_affect: '',
+          speech: '',
+          thought: '',
+          attention_and_concentration: '',
+          consciousness: '',
+          appearance_and_behavior: '',
+          memory: '',
+          intelligency: '',
+          judgement: '',
+          insight: '',
+          temperament: '',
+          alone_and_darkness: '',
+          frightness: '',
+          constitution: '',
+          diathesis: '',
+          miasm: '',
+          ailments_from: '',
+          attacks_and_time: '',
+          side: '',
+          past_medical_history: '',
+          family_medical_history: '',
+          rare_peculiar_symptoms: ''
         },
         tracker: {
           saving: false,
@@ -96,8 +185,23 @@
     },
     computed: {
       user_role: ({ $user }) => $user && $user.role,
+      buttons: ({ data, data2}) => {
+        let _buttons = {...data, ...data2}
+        return _buttons
+      }
+    },
+    oncreate(){
+      this.on('close', (flag) => {
+        this.set({
+          is_active_case_modal: false,
+        });
+
+      });
     },
     methods: {
+      open_modal(){
+        this.set({ is_active_case_modal: true })
+      },
       search(e) {
         e.preventDefault();
 
