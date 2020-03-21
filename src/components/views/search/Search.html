@@ -15,71 +15,71 @@
     </Notification>
     {/if}
 
-        <Panel title="Symptoms Name" has_toolbar={true} >
-          <div slot='toolbar'>
-            <button class="button is-danger" on:click="reset()" >Reset</button>
-          </div>
+    <form on:submit="search(event)">
+      <Panel title="Case Taking" has_toolbar={true} >
+        <div slot='toolbar'>
+          <button type="button" class="button is-danger" on:click="reset()" >Reset</button>
+        </div>
 
-          <div class="columns">
-            <div class="column">
-
-              <!-- <div class="field">
-                <p class="control">
-                  <label class="label">Name</label>
-                  <input class="input" type="text" required bind:value="data.name" />
-                </p>
-              </div> -->
+        <div class="columns">
+          <div class="column">
+            <div class="buttons">
+            {#each Object.entries(data) as [key, value], i }
+              <button type="button" class="button is-medium is-{ (data[key] != '') || key == selected_symptom ? '' : 'info'}" on:click="select_symptom(key)" style="text-transform: capitalize;">
+                {#if data[key] != ''}
+                  <span class="icon is-small"><i class="fa fa-check"></i></span>
+                {/if}
+                <span>{key}</span>
+              </button>
+            {/each}
             </div>
           </div>
 
-          <div class="columns">
-            <div class="column">
-              <div class="buttons">
-              {#each Object.entries(data) as [key, value], i }
-                <button class="button is-medium is-{ (data[key] != '') || key == selected_symptom ? '' : 'info'}" on:click="select_symptom(key)" style="text-transform: capitalize;">
-                  {#if data[key] != ''}
-                    <span class="icon is-small"><i class="fa fa-check"></i></span>
-                  {/if}
-                  <span>{key}</span>
-                </button>
-              {/each}
-              </div>
+          <div class="column">
+            <p class="title is-4">Details</p>
+            <div class="field">
+              <span class="select is-fullwidth">
+                <select class="input" bind:value="selected_symptom" >
+                  <option value="">Select Type</option>
+                  {#each Object.entries(data) as [key, value], i}
+                    {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
+                      <option value="{key}">{key}</option>
+                    {/if}
+                  {/each}
+                </select>
+              </span>
             </div>
+
+            <div class="field">
+              <p class="control">
+                <label class="label" style="text-transform: capitalize;">{selected_symptom}</label>
+                <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="data[selected_symptom]" style="height:18.671rem;"></textarea>
+              </p>
+            </div>
+
+            <div class="field">
+              <p class="control">
+                <label class="label">&nbsp;</label>
+                <SubmitButton classes="is-primary is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
+              </p>
+            </div>
+            <!-- <div class="buttons">
+            {#each Object.entries(data) as [key, value], i }
+              <button class="button is-medium is-{ (data[key] != '') || key == selected_symptom ? '' : 'info'}" on:click="select_symptom(key)" style="text-transform: capitalize;">
+                {#if data[key] != ''}
+                  <span class="icon is-small"><i class="fa fa-check"></i></span>
+                {/if}
+                <span>{key}</span>
+              </button>
+            {/each}
+            </div> -->
           </div>
+        </div>
 
-          <!-- <div class="columns">
-            <div class="column">
-              {#each Object.entries(data) as [key, value], i }
-                  <div class="field">
-                    <p class="control">
-                      <label class="label" style="text-transform:capitalize;">{key}</label>
-                      <textarea class="textarea" placeholder="{key}.." bind:value="data[key]"></textarea>
-                    </p>
-                  </div>
-                {/each}
-              </div>
-              <div class="column">
-                {#each Object.entries(data2) as [key, value], i }
-                    <div class="field">
-                      <p class="control">
-                        <label class="label" style="text-transform:capitalize;">{key}</label>
-                        <textarea class="textarea" placeholder="{key}.." bind:value="data2[key]" ></textarea>
-                      </p>
-                  </div>
-                {/each}
-                <div class="field">
-                  <p class="control">
-                    <label class="label">&nbsp;</label>
-                    <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Add Remedy" bind:tracker />
-                  </p>
-                </div>
-              </div>
-          </div> -->
-        </Panel>
+      </Panel>
+    </form>
 
-
-      <br>
-      <form on:submit="search(event)">
+      <!-- <form on:submit="search(event)">
         <Panel title="Symptoms Details" has_toolbar={true} >
 
           <div class="columns is-centered">
@@ -113,7 +113,8 @@
             </div>
           </div>
         </Panel>
-      </form>
+      </form> -->
+
       <!-- <CaseHistory
         bind:is_active="is_active_case_modal"
         on:close
