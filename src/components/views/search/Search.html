@@ -25,8 +25,8 @@
           <div class="column">
             <div class="buttons">
             {#each Object.entries(data) as [key, value], i }
-              <button type="button" class="button is-medium is-{ (data[key] != '') || key == selected_symptom ? '' : 'info'}" on:click="select_symptom(key)" style="text-transform: capitalize;">
-                {#if data[key] != ''}
+              <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize;">
+                {#if data[key] }
                   <span class="icon is-small"><i class="fa fa-check"></i></span>
                 {/if}
                 <span>{key}</span>
