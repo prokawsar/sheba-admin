@@ -35,7 +35,7 @@
           <div class="columns">
             <div class="column">
               <div class="buttons">
-              {#each Object.entries(buttons) as [key, value], i }
+              {#each Object.entries(data) as [key, value], i }
                 <button class="button is-medium is-{ (data[key] != '') || key == selected_symptom ? '' : 'info'}" on:click="select_symptom(key)" style="text-transform: capitalize;">
                   {#if data[key] != ''}
                     <span class="icon is-small"><i class="fa fa-check"></i></span>
@@ -229,10 +229,7 @@
     },
     computed: {
       user_role: ({ $user }) => $user && $user.role,
-      buttons: ({ data, data2}) => {
-        let _buttons = {...data, ...data2}
-        return _buttons
-      }
+
     },
     oncreate(){
       this.on('close', (flag) => {
