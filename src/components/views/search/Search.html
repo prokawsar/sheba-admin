@@ -70,6 +70,42 @@
         </Panel>
       </form>
 
+      <br>
+      <form on:submit="search(event)">
+        <Panel title="Symptoms Details">
+
+          <div class="columns is-centered">
+            <div class="column is-8">
+              <div class="field">
+                <span class="select is-fullwidth">
+                  <select class="input" bind:value="selected_symptom" >
+                    <option value="">Select Type</option>
+                    {#each Object.entries(data) as [key, value], i}
+                      {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
+                        <option value="{key}">{key}</option>
+                      {/if}
+                    {/each}
+                  </select>
+                </span>
+              </div>
+
+              <div class="field">
+                <p class="control">
+                  <label class="label" style="text-transform: capitalize;">{selected_symptom}</label>
+                  <textarea class="textarea" placeholder="..." bind:value="data[selected_symptom]"></textarea>
+                </p>
+              </div>
+
+              <div class="field">
+                <p class="control">
+                  <label class="label">&nbsp;</label>
+                  <SubmitButton classes="is-primary is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
+                </p>
+              </div>
+            </div>
+          </div>
+        </Panel>
+      </form>
       <!-- <CaseHistory
         bind:is_active="is_active_case_modal"
         on:close
@@ -98,6 +134,7 @@
         is_error: false,
         error_message: '',
         is_active_case_modal: false,
+        selected_symptom: '',
         data: {
           face: '',
           mind: '',
@@ -188,6 +225,9 @@
       buttons: ({ data, data2}) => {
         let _buttons = {...data, ...data2}
         return _buttons
+      },
+      data: ({data, data2}) => {
+        return {...data, ...data2}
       }
     },
     oncreate(){
@@ -214,6 +254,16 @@
             error: false
           }
         });
+
+        setTimeout( () => {
+          this.set({
+            tracker: {
+              saving: false,
+              saved: true,
+              error: false
+            }
+          })
+        }, 1000)
 
 
       }
