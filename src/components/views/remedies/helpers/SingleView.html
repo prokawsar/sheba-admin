@@ -29,23 +29,24 @@
             </div>
           </div>
 
-          <div class="columns is-6">
+          <div class="columns">
             <div class="column">
               {#each Object.entries(data) as [key, value]}
                 {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
                   <div class="columns">
-                    <div class="column">
+                    <div class="column is-3">
                       <p class="title is-5" style="text-transform: capitalize;">{key}</p>
                     </div>
                     <div class="column">
                       <Message color="is-light">
-                        <p class="is-3">{value ? value : 'No data'}</p>
+                        <p class="subtitle is-5">{value ? value : 'No data'}</p>
                       </Message>
                     </div>
                   </div>
                 {/if}
               {/each}
             </div>
+
           </div>
         </Panel>
       </form>
