@@ -16,6 +16,9 @@
     {#if !is_loading}
       <form on:submit="fire('save', event)">
         <Panel title="Remedy Details" has_toolbar={true}>
+          <div slot='toolbar' class="is-pulled-right">
+            <a class="button is-primary" href="#remedies/view/{entityId}"><span class="icon"><i class="fa fa-pencil"></i></span> <span>Edit</span></a>
+          </div>
 
           <div class="columns">
             <div class="column">
