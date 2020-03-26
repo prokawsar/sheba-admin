@@ -49,7 +49,9 @@
           <div class="field">
             <p class="control">
               <label class="label" style="text-transform: capitalize;">{selected_symptom} Saved in System</label>
-              <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="data[selected_symptom]" style="height: 16rem;"></textarea>
+
+                <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="loadSymptoms[selected_symptom]" style="height: 16rem;"></textarea>
+
             </p>
           </div>
 
@@ -94,6 +96,8 @@
 
 <script>
   import Model from '../../../models/histories';
+  import Remedies from '../../../models/remedies';
+
   import Router from '../../../services/router';
   import { Icon, Notification, Panel } from '@kws3/helpers';
   import { SubmitButton } from '@kws3/buttons';
@@ -112,6 +116,7 @@
         error_message: '',
         is_active_case_modal: false,
         selected_symptom: '',
+        remedies: {},
         data: {
           face: '',
           mind: '',
@@ -151,7 +156,7 @@
 
           dreams: '',
           discharges: '',
-          stool: '',
+          stools: '',
           urine: '',
           menstruation: '',
           leucorrhoea: '',
@@ -198,17 +203,43 @@
     },
     computed: {
       user_role: ({ $user }) => $user && $user.role,
+      loadSymptoms: ({remedies}) => {
+        let symptoms = {}
 
+        for(let item in remedies){
+          let single = remedies[item];
+
+          Object.entries(single).forEach(([key, value]) => {
+            if(value){
+              symptoms[key] = (symptoms[key] ? symptoms[key] : '') + ', ' + value;
+            }
+          })
+
+        }
+
+        return symptoms
+      }
     },
     oncreate(){
       this.on('close', (flag) => {
         this.set({
           is_active_case_modal: false,
         });
-
       });
+
+      this.loadRemedies();
     },
     methods: {
+      loadRemedies(){
+        Remedies.getAll({limit:1000})
+        .then( (r) => {
+          // console.log(r)
+          this.set({ remedies: r.response })
+        })
+        .catch( (r) => {
+          console.log(r)
+        })
+      },
       reset(){
         this.set({ data: this.getDataObj() })
       },
