@@ -5,4 +5,9 @@ export default new class extends baseModel {
     super();
     this.apiEndpoint = '/remedies';
   }
+
+  search(payload) {
+    return this.create(payload, this.apiEndpoint + '/search');
+  }
+
 };

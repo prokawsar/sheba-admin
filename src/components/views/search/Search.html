@@ -16,12 +16,13 @@
     {/if}
 
 
+  <form on:submit="search(event)">
     <Panel title="" has_toolbar={true} >
 
       <div class="columns">
         <div class="column">
-
         <p class="title is-5">Patient Symptoms</p>
+
           <div class="field">
             <span class="select is-fullwidth">
               <select class="input" bind:value="selected_symptom" >
@@ -64,9 +65,9 @@
         </div>
       </div>
     </Panel>
+  </form>
     <br>
 
-    <form on:submit="search(event)">
       <Panel title="Cases" has_toolbar={true} >
         <div slot='toolbar'>
           <button type="button" class="button is-danger" on:click="reset()" >Reset</button>
@@ -89,7 +90,6 @@
         </div>
 
       </Panel>
-    </form>
 
   </ViewScaffold>
 </div>
@@ -259,7 +259,7 @@
           }
         });
 
-        Model.create(data)
+        Remedies.search(data)
         .then( (r) => {
           this.set({
             tracker: {
