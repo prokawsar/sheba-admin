@@ -87,36 +87,6 @@
 
           </div>
 
-          <!-- <div class="columns is-centered">
-            <div class="column is-8">
-              <div class="field">
-                <span class="select is-fullwidth">
-                  <select class="input" bind:value="selected_symptom" >
-                    <option value="">Select Type</option>
-                    {#each Object.entries(data) as [key, value], i}
-                      {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
-                        <option value="{key}">{key}</option>
-                      {/if}
-                    {/each}
-                  </select>
-                </span>
-              </div>
-
-              <div class="field">
-                <p class="control">
-                  <label class="label" style="text-transform: capitalize;">{selected_symptom}</label>
-                  <textarea class="textarea" placeholder="..." bind:value="data[selected_symptom]"></textarea>
-                </p>
-              </div>
-
-              <div class="field">
-                <p class="control">
-                  <label class="label">&nbsp;</label>
-                  <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Update Remedy" bind:tracker />
-                </p>
-              </div>
-            </div>
-          </div> -->
         </Panel>
       </form>
     {/if}
