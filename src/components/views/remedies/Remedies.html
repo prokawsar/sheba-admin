@@ -59,8 +59,8 @@
         route_prefix: 'remedies/',
         has_additional_buttons: true,
         columns:{
-          'id':'ID',
-          'name': 'Name',
+          // 'id':'ID',
+          'name': 'Remedy Name',
           'singleview': '',
           'link': ''
         },
@@ -98,6 +98,9 @@
           },
         },
         classTransformers:{
+          name(){
+            return 'title is-4'
+          },
           singleview(){
             return 'is-icon';
           },
