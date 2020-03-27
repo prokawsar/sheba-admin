@@ -1,0 +1,41 @@
+<table class="table is-narrow">
+  <thead>
+    <tr>
+      <th>Symptoms</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {#if selected_symptom != ''}
+      {#each loadSymptoms[selected_symptom] as data}
+        {#if Array.isArray(data)}
+          {#each data as symp}
+            <tr>
+              <td>{symp}</td>
+              <td class="is-icon" ><span class="icon" style="cursor: pointer;" ><i class="fa fa-arrow-right"></i></span>
+              </td>
+            </tr>
+          {/each}
+        {:else}
+        <tr class="transible">
+          <td class="" >{data}</td>
+          <td class="is-icon" ><span class="icon" style="cursor: pointer;" ><i class="fa fa-arrow-right"></i></span>
+          </td>
+        </tr>
+        {/if}
+      {/each}
+    {/if}
+  </tbody>
+</table>
+
+<script>
+
+  export default {
+    data(){
+      return {
+        selected_symptom: '',
+        loadSymptoms: []
+      }
+    }
+  }
+</script>

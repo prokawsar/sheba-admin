@@ -50,9 +50,8 @@
           <div class="field">
             <p class="control">
               <label class="label" style="text-transform: capitalize;">{selected_symptom} Saved in System</label>
-
-                <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="loadSymptoms[selected_symptom]" style="height: 16rem;"></textarea>
-
+                <SearchResult {selected_symptom} {loadSymptoms} />
+                <!-- <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="loadSymptoms[selected_symptom]" style="height: 16rem;"></textarea> -->
             </p>
           </div>
 
@@ -101,12 +100,13 @@
   import Router from '../../../services/router';
   import { Icon, Notification, Panel } from '@kws3/helpers';
   import { SubmitButton } from '@kws3/buttons';
+  import SearchResult from './helpers/SearchResult.html';
 
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
-      Panel, Icon, Notification, SubmitButton
+      Panel, Icon, Notification, SubmitButton, SearchResult
     },
 
     data() {
@@ -205,19 +205,31 @@
       user_role: ({ $user }) => $user && $user.role,
       loadSymptoms: ({remedies}) => {
         let symptoms = {}
+        let _symp = []
+
+        for(let i in remedies){
+          Object.entries(remedies[i]).forEach(([key, value]) => {
+          _symp[key] = []
+          })
+          break;
+        }
+        // console.log(_symp)
 
         for(let item in remedies){
           let single = remedies[item];
 
           Object.entries(single).forEach(([key, value]) => {
             if(value){
+              if(typeof value == 'string'){
+                _symp[key].push(value.split(','))
+              }
               symptoms[key] = (symptoms[key] ? symptoms[key] : '') + ', ' + value;
             }
           })
 
         }
-
-        return symptoms
+        console.log(_symp)
+        return _symp
       }
     },
     oncreate(){
