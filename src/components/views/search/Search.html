@@ -244,7 +244,21 @@
       },
       searchable_symp({loadSymptoms}){
         let final = []
+        for(let item in loadSymptoms){
+          let one = loadSymptoms[item];
 
+            for(let i in one){
+              if(Array.isArray(one[i])){
+                for(let ind in one[i]){
+                  console.log(one[i][ind])
+                }
+              }else{
+                console.log(one[i])
+              }
+            }
+          }
+          // console.log(loadSymptoms[item] )
+        // console.log(loadSymptoms)
       }
     },
     oncreate(){
