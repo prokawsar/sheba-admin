@@ -52,7 +52,7 @@
               <label class="label" style="text-transform: capitalize;">{selected_symptom} Saved in System</label>
                 <!-- <SearchResult {selected_symptom} {loadSymptoms} /> -->
                 <SearchableSelect
-                  data="{brands}"
+                  data="{searchable_symp}"
                   placeholder="Choose..."
                   bind:value="selected_"
                   searchKey="name"
@@ -127,7 +127,7 @@
         selected_symptom: '',
         selected_: '',
         remedies: {},
-        brands: [
+        sample: [
           { id: 1, name: 'LG'},
           { id: 2, name: 'Samsung'},
           { id: 3, name: 'Xiaomi'},
@@ -243,22 +243,23 @@
         return _symp
       },
       searchable_symp({loadSymptoms}){
-        let final = []
+        let final = [], total = 0;
         for(let item in loadSymptoms){
           let one = loadSymptoms[item];
 
             for(let i in one){
               if(Array.isArray(one[i])){
                 for(let ind in one[i]){
-                  console.log(one[i][ind])
+                  final.push({ id: total++, name: one[i][ind] })
+                  // console.log(one[i][ind])
                 }
               }else{
                 console.log(one[i])
               }
             }
           }
-          // console.log(loadSymptoms[item] )
-        // console.log(loadSymptoms)
+        // console.log(final)
+        return final
       }
     },
     oncreate(){
