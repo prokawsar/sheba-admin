@@ -50,7 +50,14 @@
           <div class="field">
             <p class="control">
               <label class="label" style="text-transform: capitalize;">{selected_symptom} Saved in System</label>
-                <SearchResult {selected_symptom} {loadSymptoms} />
+                <!-- <SearchResult {selected_symptom} {loadSymptoms} /> -->
+                <SearchableSelect
+                  data="{brands}"
+                  placeholder="Choose..."
+                  bind:value="selected_"
+                  searchKey="name"
+                  searchValue="id"
+                />
                 <!-- <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="loadSymptoms[selected_symptom]" style="height: 16rem;"></textarea> -->
             </p>
           </div>
@@ -101,12 +108,14 @@
   import { Icon, Notification, Panel } from '@kws3/helpers';
   import { SubmitButton } from '@kws3/buttons';
   import SearchResult from './helpers/SearchResult.html';
+  import SearchableSelect from '@kws3/searchable-select';
 
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
-      Panel, Icon, Notification, SubmitButton, SearchResult
+      Panel, Icon, Notification, SubmitButton, SearchResult,
+      SearchableSelect
     },
 
     data() {
@@ -116,7 +125,13 @@
         error_message: '',
         is_active_case_modal: false,
         selected_symptom: '',
+        selected_: '',
         remedies: {},
+        brands: [
+          { id: 1, name: 'LG'},
+          { id: 2, name: 'Samsung'},
+          { id: 3, name: 'Xiaomi'},
+        ],
         data: {
           face: '',
           mind: '',
@@ -213,8 +228,6 @@
           })
           break;
         }
-        // console.log(_symp)
-
         for(let item in remedies){
           let single = remedies[item];
 
@@ -226,10 +239,12 @@
               symptoms[key] = (symptoms[key] ? symptoms[key] : '') + ', ' + value;
             }
           })
-
         }
-        console.log(_symp)
         return _symp
+      },
+      searchable_symp({loadSymptoms}){
+        let final = []
+
       }
     },
     oncreate(){
