@@ -53,18 +53,7 @@
                 <SearchableSelect
                   data="{searchable_withkey[selected_symptom]}"
                   placeholder="Choose..."
-                  bind:value="selected_symp"
-                  searchKey="name"
-                  searchValue="id"
-                />
-              <br>
-
-              <label class="label" style="text-transform: capitalize;">All Symptoms in the System</label>
-                <!-- <SearchResult {selected_symptom} {loadSymptoms} /> -->
-                <SearchableSelect
-                  data="{searchable_symp}"
-                  placeholder="Choose..."
-                  bind:value="selected_"
+                  bind:_name="selected_keyed_symp"
                   searchKey="name"
                   searchValue="id"
                 />
@@ -72,6 +61,19 @@
             </p>
           </div>
 
+          <div class="field">
+            <p class="control">
+              <label class="label" style="text-transform: capitalize;">All Symptoms in the System</label>
+                <!-- <SearchResult {selected_symptom} {loadSymptoms} /> -->
+                <SearchableSelect
+                  data="{searchable_symp}"
+                  placeholder="Choose..."
+                  bind:_name="selected_symp"
+                  searchKey="name"
+                  searchValue="id"
+                />
+            </p>
+          </div>
           <div class="field">
             <p class="control">
               <label class="label">&nbsp;</label>
@@ -135,7 +137,8 @@
         error_message: '',
         is_active_case_modal: false,
         selected_symptom: '',
-        selected_: '',
+        selected_symp: '',
+        selected_keyed_symp: '',
         remedies: {},
         data: {
           face: '',
@@ -280,10 +283,13 @@
       }
     },
     oncreate(){
-      this.on('close', (flag) => {
-        this.set({
-          is_active_case_modal: false,
-        });
+
+      this.on('state', ({ changed, current, previous }) => {
+        if(current.selected_ != previous.selected_){
+          // got it selected symptom
+          console.log(current.selected_)
+        }
+
       });
 
       this.loadRemedies();
