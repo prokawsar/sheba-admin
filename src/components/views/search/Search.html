@@ -49,7 +49,17 @@
 
           <div class="field">
             <p class="control">
-              <label class="label" style="text-transform: capitalize;">{selected_symptom} Saved in System</label>
+              <label class="label" style="text-transform: capitalize;">{selected_symptom} Symptoms in the System</label>
+                <SearchableSelect
+                  data="{searchable_withkey[selected_symptom]}"
+                  placeholder="Choose..."
+                  bind:value="selected_symp"
+                  searchKey="name"
+                  searchValue="id"
+                />
+              <br>
+
+              <label class="label" style="text-transform: capitalize;">All Symptoms in the System</label>
                 <!-- <SearchResult {selected_symptom} {loadSymptoms} /> -->
                 <SearchableSelect
                   data="{searchable_symp}"
@@ -127,11 +137,6 @@
         selected_symptom: '',
         selected_: '',
         remedies: {},
-        sample: [
-          { id: 1, name: 'LG'},
-          { id: 2, name: 'Samsung'},
-          { id: 3, name: 'Xiaomi'},
-        ],
         data: {
           face: '',
           mind: '',
@@ -242,6 +247,22 @@
         }
         return _symp
       },
+      searchable_withkey({loadSymptoms}){
+        let final = [], total = 0;
+
+        Object.entries(loadSymptoms).forEach(([key, value]) => {
+          let one = loadSymptoms[key];
+            final[key] = [];
+            for(let i in one){
+              if(Array.isArray(one[i])){
+                for(let ind in one[i]){
+                  final[key].push({ id: total++, name: one[i][ind] })
+                }
+              }
+            }
+          })
+        return final
+      },
       searchable_symp({loadSymptoms}){
         let final = [], total = 0;
         for(let item in loadSymptoms){
@@ -251,14 +272,10 @@
               if(Array.isArray(one[i])){
                 for(let ind in one[i]){
                   final.push({ id: total++, name: one[i][ind] })
-                  // console.log(one[i][ind])
                 }
-              }else{
-                console.log(one[i])
               }
             }
           }
-        // console.log(final)
         return final
       }
     },
