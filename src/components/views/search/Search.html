@@ -285,9 +285,13 @@
     oncreate(){
 
       this.on('state', ({ changed, current, previous }) => {
-        if(current.selected_ != previous.selected_){
+        let {data, selected_symptom} = this.get()
+
+        if(current.selected_keyed_symp != previous.selected_keyed_symp){
           // got it selected symptom
-          console.log(current.selected_)
+          console.log(current.selected_keyed_symp)
+          data[selected_symptom] =  data[selected_symptom] ? data[selected_symptom]  + ', ' + current.selected_keyed_symp : current.selected_keyed_symp;
+          this.set({data})
         }
 
       });
