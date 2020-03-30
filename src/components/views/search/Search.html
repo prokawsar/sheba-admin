@@ -15,99 +15,123 @@
     </Notification>
     {/if}
 
-
-  <form on:submit="search(event)">
-    <Panel title="" has_toolbar={true} >
-
-      <div class="columns">
-        <div class="column">
-        <p class="title is-5">Patient Symptoms</p>
-
-          <div class="field">
-            <span class="select is-fullwidth">
-              <select class="input" bind:value="selected_symptom" >
-                <option value="">Select Type</option>
-                {#each Object.entries(data) as [key, value], i}
-                  {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
-                    <option value="{key}">{key}</option>
-                  {/if}
-                {/each}
-              </select>
-            </span>
-          </div>
-
-          <div class="field">
-            <p class="control">
-              <label class="label" style="text-transform: capitalize;">{selected_symptom}</label>
-              <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="data[selected_symptom]" style="height: 15rem;"></textarea>
-            </p>
-          </div>
-
-        </div>
-        <div class="column">
-          <p class="title is-5">Suggestions</p>
-
-          <div class="field">
-            <p class="control">
-              <label class="label" style="text-transform: capitalize;">{selected_symptom} Symptoms in the System</label>
-                <SearchableSelect
-                  data="{searchable_withkey[selected_symptom]}"
-                  placeholder="Choose..."
-                  bind:_name="selected_keyed_symp"
-                  searchKey="name"
-                  searchValue="id"
-                />
-                <!-- <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="loadSymptoms[selected_symptom]" style="height: 16rem;"></textarea> -->
-            </p>
-          </div>
-
-          <div class="field">
-            <p class="control">
-              <label class="label" style="text-transform: capitalize;">All Symptoms in the System</label>
-                <!-- <SearchResult {selected_symptom} {loadSymptoms} /> -->
-                <SearchableSelect
-                  data="{searchable_symp}"
-                  placeholder="Choose..."
-                  bind:_name="selected_symp"
-                  searchKey="name"
-                  searchValue="id"
-                />
-            </p>
-          </div>
-          <div class="field">
-            <p class="control">
-              <label class="label">&nbsp;</label>
-              <SubmitButton classes="is-primary is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
-            </p>
-          </div>
-        </div>
-      </div>
-    </Panel>
-  </form>
-    <br>
-
-      <Panel title="Cases" has_toolbar={true} >
-        <div slot='toolbar'>
-          <button type="button" class="button is-danger" on:click="reset()" >Reset</button>
-        </div>
+  {#if Object.keys(remedy_found).length === 0}
+    <form on:submit="search(event)">
+      <Panel title="" has_toolbar={true} >
 
         <div class="columns">
           <div class="column">
-            <div class="buttons">
-            {#each Object.entries(data) as [key, value], i }
-              <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize;">
-                {#if data[key] }
-                  <span class="icon is-small"><i class="fa fa-check"></i></span>
-                {/if}
-                <span>{key}</span>
-              </button>
-            {/each}
+          <p class="title is-5">Patient Symptoms</p>
+
+            <div class="field">
+              <span class="select is-fullwidth">
+                <select class="input" bind:value="selected_symptom" >
+                  <option value="">Select Type</option>
+                  {#each Object.entries(data) as [key, value], i}
+                    {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
+                      <option value="{key}">{key}</option>
+                    {/if}
+                  {/each}
+                </select>
+              </span>
+            </div>
+
+            <div class="field">
+              <p class="control">
+                <label class="label" style="text-transform: capitalize;">{selected_symptom}</label>
+                <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="data[selected_symptom]" style="height: 15rem;"></textarea>
+              </p>
+            </div>
+
+          </div>
+          <div class="column">
+            <p class="title is-5">Suggestions</p>
+
+            <div class="field">
+              <p class="control">
+                <label class="label" style="text-transform: capitalize;">{selected_symptom} Symptoms in the System</label>
+                  <SearchableSelect
+                    data="{searchable_withkey[selected_symptom]}"
+                    placeholder="Choose..."
+                    bind:_name="selected_keyed_symp"
+                    searchKey="name"
+                    searchValue="id"
+                  />
+                  <!-- <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="loadSymptoms[selected_symptom]" style="height: 16rem;"></textarea> -->
+              </p>
+            </div>
+
+            <div class="field">
+              <p class="control">
+                <label class="label" style="text-transform: capitalize;">All Symptoms in the System</label>
+                  <!-- <SearchResult {selected_symptom} {loadSymptoms} /> -->
+                  <SearchableSelect
+                    data="{searchable_symp}"
+                    placeholder="Choose..."
+                    bind:_name="selected_symp"
+                    searchKey="name"
+                    searchValue="id"
+                  />
+              </p>
+            </div>
+            <div class="field">
+              <p class="control">
+                <label class="label">&nbsp;</label>
+                <SubmitButton classes="is-primary is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
+              </p>
             </div>
           </div>
+        </div>
+      </Panel>
+    </form>
+      <br>
+  {/if}
 
+  {#if Object.keys(remedy_found).length !== 0}
+    <Panel title="Remedy Found" has_toolbar={true} >
+      <div slot='toolbar'>
+        <button type="button" class="button is-info" on:click="back()" >Back to Search</button>
+      </div>
+
+      <div class="columns">
+        <div class="column">
+          <div class="buttons">
+          {#each Object.entries(remedy_found) as [key, value], i }
+            <button type="button" class="button is-medium is-light" style="text-transform: capitalize;">
+              <span>{key} </span>
+              <span class="tag is-danger"> {value} </span>
+            </button>
+          {/each}
+          </div>
         </div>
 
-      </Panel>
+      </div>
+
+    </Panel>
+    <br>
+  {/if}
+  <Panel title="Cases" has_toolbar={true} >
+    <div slot='toolbar'>
+      <button type="button" class="button is-danger" on:click="reset()" >Reset</button>
+    </div>
+
+    <div class="columns">
+      <div class="column">
+        <div class="buttons">
+        {#each Object.entries(data) as [key, value], i }
+          <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize;">
+            {#if data[key] }
+              <span class="icon is-small"><i class="fa fa-check"></i></span>
+            {/if}
+            <span>{key}</span>
+          </button>
+        {/each}
+        </div>
+      </div>
+
+    </div>
+
+  </Panel>
 
   </ViewScaffold>
 </div>
@@ -211,6 +235,7 @@
           family_medical_history: '',
           rare_peculiar_symptoms: ''
         },
+        remedy_found: {},
         tracker: {
           saving: false,
           saved: false,
@@ -289,7 +314,6 @@
 
         if(current.selected_keyed_symp != previous.selected_keyed_symp){
           // got it selected symptom
-          console.log(current.selected_keyed_symp)
           data[selected_symptom] =  data[selected_symptom] ? data[selected_symptom]  + ', ' + current.selected_keyed_symp : current.selected_keyed_symp;
           this.set({data})
         }
@@ -302,7 +326,6 @@
       loadRemedies(){
         Remedies.getAll({limit:1000})
         .then( (r) => {
-          // console.log(r)
           this.set({ remedies: r.response })
         })
         .catch( (r) => {
@@ -311,6 +334,9 @@
       },
       reset(){
         this.set({ data: this.getDataObj() })
+      },
+      back(){
+        this.set({ remedy_found: {} })
       },
       select_symptom(key){
         this.set({ selected_symptom: key })
@@ -336,7 +362,7 @@
               saved: true,
               error: false
             },
-            data: r.response,
+            remedy_found: r.response,
           });
 
           setTimeout( () => {
