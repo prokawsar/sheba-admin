@@ -344,7 +344,9 @@
       search(e) {
         e.preventDefault();
 
-        var { data, valid }  = this.get();
+        var { data, valid, remedies }  = this.get();
+        let _payload = [];
+        let matched_remedies = [];
 
         this.set({
           tracker: {
@@ -354,43 +356,73 @@
           }
         });
 
-        Remedies.search(data)
-        .then( (r) => {
-          this.set({
-            tracker: {
-              saving: false,
-              saved: true,
-              error: false
-            },
-            remedy_found: r.response,
-          });
 
-          setTimeout( () => {
-            this.set({ tracker: { saved: false } });
-            Router.navigate('search');
-          }, 1500);
-
-        })
-        .catch( (r) => {
-
-          if (r.response.records.errorCode == '406') {
-            this.set({error_message: r.response.records.userMessage});
-          }else{
-            this.set({error_message: 'There was an error adding remedy'});
+        //reducing null fields from payload
+        for(let [key, value] of Object.entries(data)) {
+          if(value){
+            _payload[key] = value.split(',')
           }
-          this.set({
-            tracker: {
-              saving: false,
-              saved: false,
-              error: true
-            }
-          });
+        }
+        // console.log(_payload)
 
-          setTimeout( () => {
-            this.set({ tracker: { error: false } });
-          }, 2000);
+        for(let [key, values] of Object.entries(_payload)) { // values are array of symptoms
+          values.forEach( (value) => {
+            remedies.forEach( (remedy) => {
+              if(remedy[key].includes(value.trim())){ // currently matching with whole value
 
-        });
+                if(matched_remedies[remedy['name']]){
+                  matched_remedies[remedy['name']]++
+                }else{
+                  matched_remedies[remedy['name'].trim()] = 1;
+                }
+              }
+            })
+          })
+        }
+        this.set({ remedy_found: matched_remedies})
+
+        setTimeout( () => {
+          this.set({ tracker: { saved: false } });
+          Router.navigate('search');
+        }, 1500);
+
+        // Remedies.search(data)
+        // .then( (r) => {
+        //   this.set({
+        //     tracker: {
+        //       saving: false,
+        //       saved: true,
+        //       error: false
+        //     },
+        //     remedy_found: r.response,
+        //   });
+
+        //   setTimeout( () => {
+        //     this.set({ tracker: { saved: false } });
+        //     Router.navigate('search');
+        //   }, 1500);
+
+        // })
+        // .catch( (r) => {
+
+        //   if (r.response.records.errorCode == '406') {
+        //     this.set({error_message: r.response.records.userMessage});
+        //   }else{
+        //     this.set({error_message: 'There was an error adding remedy'});
+        //   }
+        //   this.set({
+        //     tracker: {
+        //       saving: false,
+        //       saved: false,
+        //       error: true
+        //     }
+        //   });
+
+        //   setTimeout( () => {
+        //     this.set({ tracker: { error: false } });
+        //   }, 2000);
+
+        // });
 
       },
       getDataObj(){
