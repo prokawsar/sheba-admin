@@ -77,7 +77,7 @@
             <div class="field">
               <p class="control">
                 <label class="label">&nbsp;</label>
-                <SubmitButton classes="is-primary is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
+                <SubmitButton classes="is-primary is-medium is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
               </p>
             </div>
           </div>
@@ -90,18 +90,27 @@
   {#if Object.keys(remedy_found).length !== 0}
     <Panel title="Remedy Found" has_toolbar={true} >
       <div slot='toolbar'>
-        <button type="button" class="button is-info" on:click="back()" >Back to Search</button>
+        <button type="button" class="button is-info" on:click="back()" >
+          <span class="icon is-small"><i class="fa fa-arrow-left"></i></span>
+
+          Back to Search
+        </button>
       </div>
 
       <div class="columns">
         <div class="column">
           <div class="buttons">
           {#each Object.entries(remedy_found) as [key, value], i }
-            <button type="button" class="button is-medium is-light" style="text-transform: capitalize;">
+
+            <button type="button" class="button is-medium is-light" on:click="showSymptoms(value)" style="text-transform: capitalize;">
               <span>{key} </span>
-              <span class="tag is-danger"> {value} </span>
+              <span class="tag is-danger is-medium"> {value.mark} </span>
             </button>
           {/each}
+          </div>
+
+          <div>
+            <textarea class="textarea" readonly>{result_symptoms ? result_symptoms : '' }</textarea>
           </div>
         </div>
 
@@ -112,7 +121,11 @@
   {/if}
   <Panel title="Cases" has_toolbar={true} >
     <div slot='toolbar'>
-      <button type="button" class="button is-danger" on:click="reset()" >Reset</button>
+      <button type="button" class="button is-danger" on:click="reset()" >
+        <span class="icon is-small"><i class="fa fa-refresh"></i></span>
+
+        Reset
+      </button>
     </div>
 
     <div class="columns">
@@ -163,6 +176,7 @@
         selected_symptom: '',
         selected_symp: '',
         selected_keyed_symp: '',
+        result_symptoms: '',
         remedies: {},
         data: {
           face: '',
@@ -337,16 +351,21 @@
       },
       back(){
         this.set({ remedy_found: {} })
+        this.set({ result_symptoms: {} })
+
       },
       select_symptom(key){
         this.set({ selected_symptom: key })
+      },
+      showSymptoms(value){
+        this.set({ result_symptoms: value.symptoms })
       },
       search(e) {
         e.preventDefault();
 
         var { data, valid, remedies }  = this.get();
         let _payload = [];
-        let matched_remedies = [];
+        let matched_remedies = {};
 
         this.set({
           tracker: {
@@ -368,14 +387,29 @@
         for(let [key, values] of Object.entries(_payload)) { // values are array of symptoms
           values.forEach( (value) => {
             remedies.forEach( (remedy) => {
-              if(remedy[key].includes(value.trim())){ // currently matching with whole value
+              remedy[key].split(',').forEach( (symptom) =>{ // matching with each symptoms for remedy
+                // console.log(symptom.trim())
+                if(symptom.trim() === value.trim() && value.trim() != ''){
+                  if( matched_remedies.hasOwnProperty(remedy['name']) ){
+                    matched_remedies[remedy['name']].mark++;
+                    matched_remedies[remedy['name']].symptoms += ', ' + value.trim();
 
-                if(matched_remedies[remedy['name']]){
-                  matched_remedies[remedy['name']]++
-                }else{
-                  matched_remedies[remedy['name'].trim()] = 1;
+                  }else{
+                    matched_remedies[remedy['name']] = {};
+                    matched_remedies[remedy['name']].mark = 1;
+                    matched_remedies[remedy['name']].symptoms = value.trim();
+
+                  }
                 }
-              }
+              })
+              // if(remedy[key].includes(value.trim())){ // currently matching with whole value
+
+              //   if(matched_remedies[remedy['name']]){
+              //     matched_remedies[remedy['name']]++
+              //   }else{
+              //     matched_remedies[remedy['name'].trim()] = 1;
+              //   }
+              // }
             })
           })
         }
