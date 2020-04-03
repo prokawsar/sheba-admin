@@ -56,7 +56,7 @@
         has_additional_buttons: false,
         columns:{
           'id':'ID',
-          'name': 'Name',
+          'name': 'Patient Name',
           'link': ''
         },
         search_placeholder: 'Name',
@@ -85,6 +85,12 @@
           return query.join(',');
         },
         valueTransformers:{
+          id(v, row){
+            return row.patient.id
+          },
+          name(v, row) {
+            return row.patient.name
+          },
           link(v, row) {
             return '<a href="#history/view/'  + row.id + '"><span class="icon"><i class="fa fa-pencil"></i></span></a>';
           },
