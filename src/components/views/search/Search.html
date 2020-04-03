@@ -15,13 +15,103 @@
     </Notification>
     {/if}
 
+    <form on:submit="patient(event)">
+      <Panel title="Patient" has_toolbar={true} >
+        <div slot='toolbar'>
+          <div class="field">
+            <div class="control">
+              <label class="radio">
+                <input type="radio" bind:group="patient_type" value="old"> OLD
+              </label>
+              <label class="radio">
+                <input type="radio" bind:group="patient_type" value="new"> NEW
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {#if patient_type == 'old'}
+        <div class="columns">
+          <div class="column">
+            <div class="field has-addons has-addons-centered">
+              <p class="control is-expanded">
+                <input class="input" type="text" bind:value="patient.name" placeholder="Name..." />
+              </p>
+
+              <p class="control is-expanded">
+                <input class="input" type="text" bind:value="patient.phone" placeholder="Phone..." />
+              </p>
+
+              <p class="control">
+                <button type="button" class="button is-primary">
+                  <span class="icon"><i class="fa fa-search"></i></span>
+                  <span>Search</span>
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+        {:elseif patient_type == 'new'}
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <p class="control">
+                <label class="label">Name</label>
+                <input class="input" type="text" required bind:value="patient.name" />
+              </p>
+            </div>
+            <div class="field">
+              <p class="control">
+                <label class="label">Phone</label>
+                <input class="input" type="text" bind:value="patient.phone" />
+              </p>
+            </div>
+            <div class="field">
+              <div class="control">
+                <label class="label">Gender</label>
+                <label class="radio">
+                  <input type="radio" bind:group="patient.gender" value="m"> Male
+                </label>
+                <label class="radio">
+                  <input type="radio" bind:group="patient.gender" value="f"> Female
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="field">
+              <p class="control">
+                <label class="label">Age</label>
+                <input class="input" type="number" required bind:value="patient.age" autocomplete="off" />
+              </p>
+            </div>
+            <div class="field">
+              <p class="control">
+                <label class="label">Address</label>
+                <input class="input" type="text" bind:value="patient.address" autocomplete="off" />
+              </p>
+            </div>
+            <div class="field">
+              <p class="control">
+                <label class="label">&nbsp;</label>
+                <span class="is-size-6 has-text-warning">This patient will be saved after saving the case history !</span>
+                <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Add Patient" bind:tracker />
+              </p>
+            </div>
+          </div>
+        </div>
+        {/if}
+
+      </Panel>
+    </form>
+    <br>
   {#if Object.keys(remedy_found).length === 0}
     <form on:submit="search(event)">
-      <Panel title="" has_toolbar={true} >
+      <Panel title="Patient Symptoms" has_toolbar={true} >
 
         <div class="columns">
           <div class="column">
-          <p class="title is-5">Patient Symptoms</p>
 
             <div class="field">
               <span class="select is-fullwidth">
@@ -190,6 +280,7 @@
         selected_symp: '',
         selected_keyed_symp: '',
         result_symptoms: '',
+        patient_type: '',
         remedies: {},
         data: {
           face: '',
@@ -262,6 +353,13 @@
           rare_peculiar_symptoms: ''
         },
         remedy_found: {},
+        patient: {
+          name: '',
+          phone: '',
+          gender: '',
+          age: '',
+          address: '',
+        },
         tracker: {
           saving: false,
           saved: false,
@@ -434,44 +532,12 @@
           Router.navigate('search');
         }, 1500);
 
-        // Remedies.search(data)
-        // .then( (r) => {
-        //   this.set({
-        //     tracker: {
-        //       saving: false,
-        //       saved: true,
-        //       error: false
-        //     },
-        //     remedy_found: r.response,
-        //   });
+      },
+      patient(e){
+        e.preventDefault();
+        let {patient} = this.get();
 
-        //   setTimeout( () => {
-        //     this.set({ tracker: { saved: false } });
-        //     Router.navigate('search');
-        //   }, 1500);
-
-        // })
-        // .catch( (r) => {
-
-        //   if (r.response.records.errorCode == '406') {
-        //     this.set({error_message: r.response.records.userMessage});
-        //   }else{
-        //     this.set({error_message: 'There was an error adding remedy'});
-        //   }
-        //   this.set({
-        //     tracker: {
-        //       saving: false,
-        //       saved: false,
-        //       error: true
-        //     }
-        //   });
-
-        //   setTimeout( () => {
-        //     this.set({ tracker: { error: false } });
-        //   }, 2000);
-
-        // });
-
+        console.log(patient)
       },
       getDataObj(){
         return {
