@@ -130,6 +130,19 @@
 
     <div class="columns">
       <div class="column">
+        <div class="field">
+          <span class="select is-fullwidth">
+            <select class="input" bind:value="selected_symptom" >
+              <option value="">Select Type</option>
+              {#each Object.entries(data) as [key, value], i}
+                {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
+                  <option value="{key}">{key}</option>
+                {/if}
+              {/each}
+            </select>
+          </span>
+        </div>
+
         <div class="buttons">
         {#each Object.entries(data) as [key, value], i }
           <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize;">
