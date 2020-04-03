@@ -178,6 +178,7 @@
   {/if}
 
   {#if Object.keys(remedy_found).length !== 0}
+  <form on:submit="saveHistory(event)">
     <Panel title="Remedy Found" has_toolbar={true} >
       <div slot='toolbar'>
         <button type="button" class="button is-info" on:click="back()" >
@@ -202,11 +203,20 @@
           <div>
             <textarea class="textarea" readonly>{result_symptoms ? result_symptoms : '' }</textarea>
           </div>
+
+          <div class="field">
+            <p class="control">
+              <label class="label"> &nbsp; </label>
+              <SubmitButton classes="is-primary is-pulled-right" icon="save" icon_size="small" text="Save History" bind:tracker />
+            </p>
+          </div>
+
         </div>
 
       </div>
 
     </Panel>
+  </form>
     <br>
   {/if}
   <Panel title="Cases" has_toolbar={true} >
@@ -458,6 +468,7 @@
       },
       reset(){
         this.set({ data: this.getDataObj() })
+        this.set({ remedy_found: {} })
       },
       back(){
         this.set({ remedy_found: {} })
@@ -469,6 +480,48 @@
       },
       showSymptoms(value){
         this.set({ result_symptoms: value.symptoms })
+      },
+      saveHistory(e){
+        e.preventDefault();
+
+        let {data} = this.get();
+
+        Model.create(data)
+        .then( (r) => {
+          this.set({
+            tracker: {
+              saving: false,
+              saved: true,
+              error: false
+            },
+            data: r.response,
+          });
+
+          setTimeout( () => {
+            this.set({ tracker: { saved: false } });
+            this.reset()
+          }, 1500);
+
+        })
+        .catch( (r) => {
+          if (r.response.records.errorCode == '406') {
+            this.set({error_message: r.response.records.userMessage});
+          }else{
+            this.set({error_message: 'There was an error adding history'});
+          }
+          this.set({
+            tracker: {
+              saving: false,
+              saved: false,
+              error: true
+            }
+          });
+
+          setTimeout( () => {
+            this.set({ tracker: { error: false } });
+          }, 3000);
+
+        });
       },
       search(e) {
         e.preventDefault();
