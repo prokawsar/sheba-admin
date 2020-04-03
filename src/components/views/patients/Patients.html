@@ -93,6 +93,9 @@
           return query.join(',');
         },
         valueTransformers:{
+          gender(v, row){
+            return row.gender == '' ? '' : row.gender == 'm' ? 'Male' : 'Female'
+          },
           link(v, row) {
             return '<a href="#patients/view/'  + row.id + '"><span class="icon"><i class="fa fa-pencil"></i></span></a>';
           },
