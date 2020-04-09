@@ -43,4 +43,8 @@ routeMap['history'] = [
   { 'pattern': '/view/(\\d+)$', 'view': 'ViewHistory', 'type': 'regex' },
 ];
 
+routeMap['sections'] = [
+  { 'pattern': '/', 'view': 'Sections' },
+];
+
 export default routeMap;

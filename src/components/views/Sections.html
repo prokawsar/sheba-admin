@@ -1,0 +1,204 @@
+<div class="page-content">
+
+  <PageTitle page="{page}">
+    <!-- <a class="button is-info is-pulled-right" href="#remedies">
+      <Icon icon="long-arrow-left" size="small" />
+      <span>Back to All Remedies</span>
+    </a> -->
+  </PageTitle>
+
+  <ViewScaffold {is_loading} {is_error} {error_message}>
+
+    {#if tracker.error}
+    <Notification type="danger">
+      {error_message}
+    </Notification>
+    {/if}
+
+        <form on:submit="addNew(event)">
+        <Panel title="Add Section" has_toolbar={true}>
+          <div slot='toolbar'>
+            <!-- <button type="button" class="button is-danger" on:click="reset()" >Reset</button> -->
+            <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Add Section" bind:tracker />
+
+          </div>
+
+          <div class="columns">
+            <div class="column">
+
+              <div class="field">
+                <p class="control">
+                  <label class="label">Name</label>
+                  <input class="input is-medium" type="text" required bind:value="data.name" />
+                </p>
+              </div>
+            </div>
+          </div>
+        </Panel>
+      </form>
+      <br>
+
+      <Panel title="Sections">
+
+        <div class="columns">
+
+          <div class="column">
+            <div class="buttons">
+              {#each fields as field }
+                <button type="button" class="button is-info" on:click="fieldEdit(field)"  style="text-transform: capitalize;">
+                  <span>{field.name}</span>
+                </button>
+              {/each}
+            </div>
+
+          </div>
+          <!-- <div class="column">
+
+            <div class="field">
+              <span class="select is-fullwidth">
+                <select class="input" bind:value="selected_symptom" >
+                  <option value="">Select Type</option>
+                  {#each Object.entries(data) as [key, value], i}
+                    {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
+                      <option value="{key}">{key}</option>
+                    {/if}
+                  {/each}
+                </select>
+              </span>
+            </div>
+            <div class="field">
+              <p class="control">
+                <label class="label" style="text-transform: capitalize;">{selected_symptom}</label>
+                <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="data[selected_symptom]" rows='10'></textarea>
+              </p>
+            </div>
+          </div> -->
+
+        </div>
+      </Panel>
+
+  </ViewScaffold>
+</div>
+
+<script>
+  import Model from '../../models/fields';
+  import Router from '../../services/router';
+  import { Icon, Notification, Panel } from '@kws3/helpers';
+  import { SubmitButton } from '@kws3/buttons';
+
+  export default {
+    components: {
+      ViewScaffold: '../helpers/ViewScaffold.html',
+      PageTitle: '../helpers/PageTitle.html',
+      Panel, Icon, Notification, SubmitButton
+    },
+
+    data() {
+      return {
+        is_loading: false,
+        is_error: false,
+        error_message: '',
+        is_update: false,
+        fields: {},
+        data: {
+          name: '',
+        },
+        tracker: {
+          saving: false,
+          saved: false,
+          error: false,
+        },
+        page: {
+          title: 'Sections',
+          icon: 'vcard-o',
+          icon_badge: 'plus'
+        },
+        valid:false
+      }
+    },
+    computed: {
+      user_role: ({ $user }) => $user && $user.role,
+    },
+    oncreate(){
+      this.load();
+    },
+    methods: {
+      load(){
+        Model.getAll()
+        .then( (r) => {
+          this.set({
+            fields: r.response,
+          });
+          setTimeout( () => {
+            Router.navigate('sections');
+          }, 1500);
+
+        })
+        .catch( (r) => {
+          console.log(r)
+          setTimeout( () => {
+            this.set({ tracker: { error: false } });
+          }, 3000);
+
+        });
+      },
+      addNew(e) {
+        e.preventDefault();
+
+        var { data, valid }  = this.get();
+
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
+
+        Model.create(data)
+        .then( (r) => {
+          this.set({
+            tracker: {
+              saving: false,
+              saved: true,
+              error: false
+            },
+            data: r.response,
+          });
+
+          setTimeout( () => {
+            this.set({ tracker: { saved: false } });
+            Router.navigate('sections');
+          }, 1500);
+
+        })
+        .catch( (r) => {
+          console.log(r)
+
+          this.set({
+            tracker: {
+              saving: false,
+              saved: false,
+              error: true
+            }
+          });
+
+          setTimeout( () => {
+            this.set({ tracker: { error: false } });
+          }, 3000);
+
+        });
+      },
+      fieldEdit(field){
+        this.set({
+          data: {
+            name: field.name
+          },
+          is_update: true
+        })
+        console.log(field.id)
+      }
+    }
+  }
+
+</script>

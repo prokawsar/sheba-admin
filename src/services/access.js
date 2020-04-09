@@ -23,12 +23,14 @@ var Access = function(){
     'Patients'            : {icon: 'users', url: 'patients'},
     'Search'              : {icon: 'search', url: 'search'},
     'History'             : {icon: 'th', url: 'history'},
+    'Sections'            : {icon: 'th', url: 'sections'},
+
   },
   allowedMap = {},
   allowedSections  = {};
 
   allowedMap[ROLE.CONTEXT_ADMIN] = [
-    'Dashboard', 'Profile', 'Remedies', 'Patients', 'History', 'Search', 'Users',
+    'Dashboard', 'Profile', 'Remedies', 'Patients', 'History', 'Search', 'Users', 'Sections'
   ];
   allowedMap[ROLE.CONTEXT_USER] = [
     'Dashboard', 'Profile'
