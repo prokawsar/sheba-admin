@@ -32,6 +32,13 @@
                   <input class="input is-medium" type="text" required bind:value="data.name" />
                 </p>
               </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">Group</label>
+                  <input class="input is-medium" type="text" bind:value="data.group" />
+                </p>
+              </div>
+
             </div>
           </div>
         </Panel>
@@ -102,6 +109,7 @@
         fields: {},
         data: {
           name: '',
+          group: ''
         },
         tracker: {
           saving: false,
