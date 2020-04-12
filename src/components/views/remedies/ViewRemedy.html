@@ -96,6 +96,7 @@
 
 <script>
   import Model from '../../../models/remedies';
+  import Fields from '../../../models/remedy_data';
   import {Icon, Notification, Panel, Message} from '@kws3/helpers';
   import { SubmitButton } from '@kws3/buttons';
 
@@ -167,6 +168,7 @@
           'is_loading': true,
           'is_error': false
         });
+        // Fields.getByRemedy(entityId)
 
         Model.getOne(entityId)
         .then((r) => {
