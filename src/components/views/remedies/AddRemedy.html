@@ -17,9 +17,9 @@
 
       <form on:submit="addNew(event)">
         <Panel title="Remedy Details" has_toolbar={true}>
-          <div slot='toolbar'>
+          <!-- <div slot='toolbar'>
             <button type="button" class="button is-danger" on:click="reset()" >Reset</button>
-          </div>
+          </div> -->
 
           <div class="columns">
             <div class="column">
@@ -33,60 +33,11 @@
             </div>
           </div>
 
-          <p class="title is-4">Symptoms</p>
           <div class="columns">
 
-            <div class="column">
-              <!-- {#each Object.entries(data) as [key, value], i }
-                <div class="field">
-                  <p class="control">
-                    <label class="label" style="text-transform:capitalize;">{key}</label>
-                    <textarea class="textarea" placeholder="{key}.." bind:value="data[key]"></textarea>
-                  </p>
-                </div>
-              {/each} -->
-              <div class="buttons">
-                {#each Object.entries(data) as [key, value], i }
-                  <button type="button" class="button is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' }" on:click="select_symptom(key)" style="text-transform: capitalize;">
-                    {#if data[key] != ''}
-                      <span class="icon is-small"><i class="fa fa-check"></i></span>
-                    {/if}
-                    <span>{key}</span>
-                  </button>
-                {/each}
-              </div>
 
-            </div>
             <div class="column">
 
-              <div class="field">
-                <span class="select is-fullwidth">
-                  <select class="input" bind:value="selected_symptom" >
-                    <option value="">Select Type</option>
-                    {#each Object.entries(data) as [key, value], i}
-                      {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
-                        <option value="{key}">{key}</option>
-                      {/if}
-                    {/each}
-                  </select>
-                </span>
-              </div>
-
-              <div class="field">
-                <p class="control">
-                  <label class="label" style="text-transform: capitalize;">{selected_symptom}</label>
-                  <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="data[selected_symptom]" rows='10'></textarea>
-                </p>
-              </div>
-
-              <!-- {#each Object.entries(data) as [key, value], i }
-                <div class="field">
-                  <p class="control">
-                    <label class="label" style="text-transform:capitalize;">{key}</label>
-                    <textarea class="textarea" placeholder="{key}.." bind:value="data[key]"></textarea>
-                  </p>
-                </div>
-              {/each} -->
               <div class="field">
                 <p class="control">
                   <label class="label">&nbsp;</label>
@@ -123,113 +74,7 @@
         error_message: '',
         selected_symptom: '',
         data: {
-          name: '',
-          abdomen: '',
-          ailments_from: '',
-          ameliarable: '',
-          anaemia: '',
-          anus_and_rectum: '',
-          appetite: '',
-          attacks_and_time: '',
-          aversions: '',
-          bones: '',
-          breathing: '',
-          built: '',
-          chest: '',
-          clinical: '',
-          constitution: '',
-          cyanosis: '',
-          dehydration: '',
-          desires: '',
-          diathesis: '',
-          digestion: '',
-          dreams: '',
-          duodenum: '',
-          ears: '',
-          extrimities: '',
-          eyes: '',
-          face: '',
-          fso_mgo: '',
-          gallbladder: '',
-          gums: '',
-          hair: '',
-          head: '',
-          hearing: '',
-          heart: '',
-          hunger: '',
-          intestine: '',
-
-          intolerable: '',
-          jaundice: '',
-          liver: '',
-          lungs: '',
-          miasm: '',
-          mind: '',
-          modalities: '',
-          mouth: '',
-          mso_mgo: '',
-          neck_and_back: '',
-          nose: '',
-          nutrition: '',
-          oesophagus: '',
-          pancreas: '',
-          perspiration: '',
-          pulse: '',
-          sensations: '',
-          side: '',
-          skin: '',
-          sleep: '',
-          smelling: '',
-          spleen: '',
-          stomach: '',
-          stools: '',
-          taste: '',
-          teeth: '',
-          temperament: '',
-          temperature_and_weather: '',
-          thermals: '',
-          thirst: '',
-          throat: '',
-          tongue: '',
-          tonsills: '',
-          urine: '',
-          vission: ''
-        },
-        data2: {
-          intolerable: '',
-          jaundice: '',
-          liver: '',
-          lungs: '',
-          miasm: '',
-          mind: '',
-          mouth: '',
-          mso_mgo: '',
-          neck_and_back: '',
-          nose: '',
-          nutrition: '',
-          oesophagus: '',
-          pancreas: '',
-          perspiration: '',
-          pulse: '',
-          sensations: '',
-          side: '',
-          skin: '',
-          sleep: '',
-          smelling: '',
-          spleen: '',
-          stomach: '',
-          stools: '',
-          taste: '',
-          teeth: '',
-          temperament: '',
-          temperature_and_weather: '',
-          thermals: '',
-          thirst: '',
-          throat: '',
-          tongue: '',
-          tonsills: '',
-          urine: '',
-          vission: ''
+          name: ''
         },
         tracker: {
           saving: false,
@@ -257,9 +102,7 @@
       addNew(e) {
         e.preventDefault();
 
-        var { data, data2, valid }  = this.get();
-
-        data = {...data, ...data2}
+        var { data, valid }  = this.get();
 
         this.set({
           tracker: {
@@ -308,77 +151,7 @@
       },
       getDataObj(){
         return {
-          name: '',
-          constitution: '',
-          diathesis: '',
-          miasm: '',
-          temperament: '',
-          thermals: '',
-          attacks_and_time: '',
-          side: '',
-          temperature_and_weather: '',
-          ailments_from: '',
-          sensations: '',
-          mind: '',
-          face: '',
-          hair: '',
-          skin: '',
-          built: '',
-          appetite: '',
-          hunger: '',
-          desires: '',
-          aversions: '',
-          intolerable: '',
-          ameliarable: '',
-          vission: '',
-          hearing: '',
-          smelling: '',
-          taste: '',
-          tongue: '',
-          thirst: '',
-          sleep: '',
-          dreams: '',
-          stools: '',
-          urine: '',
-          perspiration: '',
-          nutrition: '',
-
-          anaemia: '',
-          cyanosis: '',
-          dehydration: '',
-          jaundice: '',
-          breathing: '',
-          pulse: '',
-          head: '',
-          eyes: '',
-          nose: '',
-          ears: '',
-          mouth: '',
-          teeth: '',
-          gums: '',
-          throat: '',
-          tonsills: '',
-          neck_and_back: '',
-          extrimities: '',
-          bones: '',
-          oesophagus: '',
-          stomach: '',
-          abdomen: '',
-          liver: '',
-          gallbladder: '',
-          pancreas: '',
-          spleen: '',
-          intestine: '',
-          duodenum: '',
-          digestion: '',
-          chest: '',
-          heart: '',
-          lungs: '',
-          mso_mgo: '',
-          fso_mgo: '',
-          anus_and_rectum: '',
-          modalities: '',
-          clinical: ''
+          name: ''
         }
       }
     }
