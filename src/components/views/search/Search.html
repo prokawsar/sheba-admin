@@ -230,11 +230,12 @@
 
     <div class="columns">
       <div class="column">
+        {#if remedies.length}
         <div class="field">
           <span class="select is-fullwidth">
             <select class="input" bind:value="selected_symptom" >
               <option value="">Select Type</option>
-              {#each Object.entries(data) as [key, value], i}
+              {#each Object.entries(remedies[0]) as [key, value], i}
                 {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
                   <option value="{key}">{key}</option>
                 {/if}
@@ -244,15 +245,18 @@
         </div>
 
         <div class="buttons">
-        {#each Object.entries(data) as [key, value], i }
-          <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize;">
-            {#if data[key] }
-              <span class="icon is-small"><i class="fa fa-check"></i></span>
-            {/if}
-            <span>{key}</span>
-          </button>
+        {#each Object.entries(remedies[0]) as [key, value], i }
+          {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
+            <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize;">
+              {#if data[key] }
+                <span class="icon is-small"><i class="fa fa-check"></i></span>
+              {/if}
+              <span>{key}</span>
+            </button>
+          {/if}
         {/each}
         </div>
+        {/if}
       </div>
 
     </div>
@@ -292,76 +296,7 @@
         result_symptoms: '',
         patient_type: '',
         remedies: {},
-        data: {
-          face: '',
-          mind: '',
-          built: '',
-          hair: '',
-          tongue: '',
-          pulse: '',
-          breathing: '',
-          anaemia: '',
-          cyanosis: '',
-          dehydration: '',
-          jaundice: '',
-          skin: '',
-          sensation: '',
-          temperature_and_weather: '',
-          thermals: '',
-          susceptibility: '',
-          bathing: '',
-          vision: '',
-          hearing: '',
-          smelling: '',
-          taste: '',
-          thirst: '',
-          appetite: '',
-          hunger: '',
-          desires: '',
-          aversions: '',
-          intolerable: '',
-          ameliorable: '',
-          indigestion: '',
-          eructation: '',
-          nausia: '',
-          vomiting: '',
-          sweating_perspiration: '',
-          sleep: '',
-
-          dreams: '',
-          discharges: '',
-          stools: '',
-          urine: '',
-          menstruation: '',
-          leucorrhoea: '',
-          habit: '',
-          hobby: '',
-          addicted: '',
-          birth_history: '',
-          milestones: '',
-          mood_and_affect: '',
-          speech: '',
-          thought: '',
-          attention_and_concentration: '',
-          consciousness: '',
-          appearance_and_behavior: '',
-          memory: '',
-          intelligency: '',
-          judgement: '',
-          insight: '',
-          temperament: '',
-          alone_and_darkness: '',
-          frightness: '',
-          constitution: '',
-          diathesis: '',
-          miasm: '',
-          ailments_from: '',
-          attacks_and_time: '',
-          side: '',
-          past_medical_history: '',
-          family_medical_history: '',
-          rare_peculiar_symptoms: ''
-        },
+        data: {},
         remedy_found: {},
         patient: {
           name: '',
@@ -592,79 +527,7 @@
 
         console.log(patient)
       },
-      getDataObj(){
-        return {
-          face: '',
-          mind: '',
-          built: '',
-          hair: '',
-          tongue: '',
-          pulse: '',
-          breathing: '',
-          anaemia: '',
-          cyanosis: '',
-          dehydration: '',
-          dehydration: '',
-          jaundice: '',
-          skin: '',
-          sensation: '',
-          temperature_and_weather: '',
-          thermals: '',
-          susceptibility: '',
-          bathing: '',
-          vision: '',
-          hearing: '',
-          smelling: '',
-          taste: '',
-          thirst: '',
-          appetite: '',
-          hunger: '',
-          desires: '',
-          aversions: '',
-          intolerable: '',
-          ameliorable: '',
-          indigestion: '',
-          eructation: '',
-          nausia: '',
-          vomiting: '',
-          sweating_perspiration: '',
-          sleep: '',
 
-          dreams: '',
-          discharges: '',
-          stool: '',
-          urine: '',
-          menstruation: '',
-          leucorrhoea: '',
-          habit: '',
-          hobby: '',
-          addicted: '',
-          birth_history: '',
-          milestones: '',
-          mood_and_affect: '',
-          speech: '',
-          thought: '',
-          attention_and_concentration: '',
-          consciousness: '',
-          appearance_and_behavior: '',
-          memory: '',
-          intelligency: '',
-          judgement: '',
-          insight: '',
-          temperament: '',
-          alone_and_darkness: '',
-          frightness: '',
-          constitution: '',
-          diathesis: '',
-          miasm: '',
-          ailments_from: '',
-          attacks_and_time: '',
-          side: '',
-          past_medical_history: '',
-          family_medical_history: '',
-          rare_peculiar_symptoms: ''
-        }
-      }
     }
   }
 
