@@ -218,12 +218,7 @@
           }, 1500);
         })
         .catch(r => {
-
-          if(r.response.records.errorCode == '406') {
-            this.set({error_message: 'The username you entered already exists, Please try another one'});
-          } else {
-            this.set({error_message: 'There was an error updating premise'});
-          }
+          this.set({error_message: 'There was an error updating premise'});
 
           this.set({
             tracker: {
