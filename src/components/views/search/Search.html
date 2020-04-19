@@ -235,25 +235,21 @@
           <span class="select is-fullwidth">
             <select class="input" bind:value="selected_symptom" >
               <option value="">Select Type</option>
-              {#each Object.entries(remedies[0]) as [key, value], i}
-                {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
+              {#each filterFields as key }
                   <option value="{key}">{key}</option>
-                {/if}
               {/each}
             </select>
           </span>
         </div>
 
         <div class="buttons">
-        {#each Object.entries(remedies[0]) as [key, value], i }
-          {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
+        {#each filterFields as key }
             <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize;">
               {#if data[key] }
                 <span class="icon is-small"><i class="fa fa-check"></i></span>
               {/if}
               <span>{key}</span>
             </button>
-          {/if}
         {/each}
         </div>
         {/if}
@@ -298,6 +294,7 @@
         remedies: {},
         data: {},
         remedy_found: {},
+        omitted_field: [ 'id', 'name', 'created', 'modified', 'deleted', 'patient', 'treatments'],
         patient: {
           name: '',
           phone: '',
@@ -320,6 +317,28 @@
     },
     computed: {
       user_role: ({ $user }) => $user && $user.role,
+      filterFields: ({remedies, omitted_field}) => {
+
+        let last = ['built', 'constitution', 'diathesis', 'miasm', 'temperament', 'temperature_and_weather',
+         'thermal_sensitivity', 'sensation', 'tendency_take_cold', 'desires', 'aversions', 'birth_history_milestones',
+         'tissues', 'stages_and_states', 'attacks_and_side', 'ailments_from', 'affections', 'clinical', 'modalities',
+         'mental_state_and_disorders', 'appearance_and_behavior', 'attention_and_concentration', 'expression',
+         'consciousness', 'mood_and_affect', 'memory', 'speech', 'thoughts_and_ideas', 'perception', 'intelligence',
+         'judgment', 'fear_and_live_alone', 'boring', 'peaceful', 'anger', 'hobby', 'habit', 'addiction', 'nutrition',
+         'anaemia', 'cyanosis', 'dehydration', 'jaundice', 'pulse', 'breathing', 'peculiar_rare_symptoms'
+        ];
+
+        let filtered = [];
+        if(remedies.length){
+          for(let [key, value] of Object.entries(remedies[0])) {
+            if( !last.includes(key) && !omitted_field.includes(key)){
+              filtered.push(key)
+            }
+          }
+          filtered.push(...last)
+          return filtered
+        }
+      },
       loadSymptoms: ({remedies}) => {
         let symptoms = {}
         let _symp = []
@@ -464,6 +483,8 @@
         var { data, valid, remedies }  = this.get();
         let _payload = [];
         let matched_remedies = {};
+
+        console.log(data)
 
         this.set({
           tracker: {
