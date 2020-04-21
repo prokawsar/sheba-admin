@@ -235,8 +235,8 @@
           <span class="select is-fullwidth">
             <select class="input" bind:value="selected_symptom" >
               <option value="">Select Type</option>
-              {#each filterFields as key }
-                  <option value="{key}">{key}</option>
+              {#each filterFields as key, index }
+                  <option value="{key}">{index+1} - {key}</option>
               {/each}
             </select>
           </span>
