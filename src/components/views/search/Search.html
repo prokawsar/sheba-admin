@@ -221,11 +221,15 @@
   {/if}
   <Panel title="Cases" has_toolbar={true} >
     <div slot='toolbar'>
-      <button type="button" class="button is-danger" on:click="reset()" >
-        <span class="icon is-small"><i class="fa fa-refresh"></i></span>
-
-        Reset
-      </button>
+      <ConfirmButton
+          text="Reset"
+          color="danger"
+          size=""
+          icon="refresh"
+          icon_only="{false}"
+          disabled="{false}"
+          on:do="reset(event)"
+        />
     </div>
 
     <div class="columns">
@@ -244,7 +248,7 @@
 
         <div class="buttons">
         {#each filterFields as key }
-            <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize;">
+            <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize; margin-left: .6rem; margin-bottom: .6rem;">
               {#if data[key] }
                 <span class="icon is-small"><i class="fa fa-check"></i></span>
               {/if}
@@ -268,7 +272,7 @@
 
   import Router from '../../../services/router';
   import { Icon, Notification, Panel } from '@kws3/helpers';
-  import { SubmitButton } from '@kws3/buttons';
+  import { SubmitButton, ConfirmButton } from '@kws3/buttons';
   import SearchResult from './helpers/SearchResult.html';
   import SearchableSelect from '@kws3/searchable-select';
 
@@ -277,7 +281,7 @@
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
       Panel, Icon, Notification, SubmitButton, SearchResult,
-      SearchableSelect
+      SearchableSelect, ConfirmButton
     },
 
     data() {
@@ -420,9 +424,11 @@
           console.log(r)
         })
       },
-      reset(){
-        this.set({ data: this.getDataObj() })
+      reset(comp){
+        comp.doing()
+        this.set({ data: {} })
         this.set({ remedy_found: {} })
+        comp.done();
       },
       back(){
         this.set({ remedy_found: {} })
