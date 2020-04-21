@@ -63,8 +63,8 @@
                   <select class="input" bind:value="selected_symptom" >
                     <option value="">Select Type</option>
                     {#each Object.entries(data) as [key, value], i}
-                      {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
-                        <option value="{key}">{key}</option>
+                      {#if key != 'id' && key != 'name' && key != 'created'  && key != 'modified' && key != 'deleted' && key != 'treatments'}
+                        <option value="{key}">{i} - {key}</option>
                       {/if}
                     {/each}
                   </select>
@@ -218,7 +218,7 @@
           }, 1500);
         })
         .catch(r => {
-          this.set({error_message: 'There was an error updating premise'});
+          this.set({error_message: 'There was an error updating remedy'});
 
           this.set({
             tracker: {
