@@ -34,11 +34,11 @@
 
           <div class="columns">
             <div class="column">
-              {#each Object.entries(data) as [key, value]}
+              {#each Object.entries(data) as [key, value], i}
                 {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
                   <div class="columns">
                     <div class="column is-3">
-                      <p class="title is-5" style="text-transform: capitalize;">{key}</p>
+                      <p class="title is-5" style="text-transform: capitalize;">{i-1} - <u>{key} </u></p>
                     </div>
                     <div class="column">
                       <Message color="is-light">
