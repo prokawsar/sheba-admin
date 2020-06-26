@@ -15,7 +15,6 @@
       <div id="gradientHilight"></div>
       {#if !$is_loading}
         <RouteHandler on:updateLoggedIn on:hideSidebar />
-        <!-- <Dashboard /> -->
 
       {/if}
     </div>
@@ -133,11 +132,10 @@
   import { Icon } from '@kws3/helpers';
   import Login from './helpers/Login.html';
   import MainNavigation from './helpers/MainNavigation.html';
-  import Dashboard from './views/Dashboard.html';
 
   export default {
     components: {
-      RouteHandler, Login, Icon, MainNavigation, Dashboard
+      RouteHandler, Login, Icon, MainNavigation
     },
     data(){
       return {
