@@ -1,7 +1,10 @@
 <form on:submit="patient(event)">
-  <Panel title="Patient" has_toolbar={true} >
+  <Panel title="Patient" has_toolbar={true} collapsible collapsed="{data.patient}">
     <div slot='toolbar'>
       <div class="field">
+        {#if data.patient}
+        <span class="tag is-success">Patient Added</span>
+        {:else}
         <div class="control">
           <label class="radio">
             <input type="radio" bind:group="patient.patient_type" value="old"> OLD
@@ -13,6 +16,7 @@
             <input type="radio" bind:group="patient.patient_type" value="none"> NONE
           </label>
         </div>
+        {/if}
       </div>
     </div>
 
@@ -82,7 +86,7 @@
           <p class="control">
             <label class="label">&nbsp;</label>
             <span class="is-size-6 has-text-warning">This patient will be saved after saving the case history !</span>
-            <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Add Patient" bind:tracker />
+            <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Add Patient" disabled="{data.patient}" bind:tracker />
           </p>
         </div>
       </div>
@@ -109,8 +113,7 @@
       patient(e){
         e.preventDefault();
         let {patient} = this.get();
-        // console.log(patient)
-        this.fire('patient', patient);
+        this.fire('addPatient', patient);
 
       }
     }

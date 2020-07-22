@@ -108,7 +108,7 @@
 
       </Panel>
     </form> -->
-    <PatientAdd bind:patient on:patient />
+    <PatientAdd bind:patient on:addPatient bind:data />
     <br>
   {#if Object.keys(remedy_found).length === 0}
     <form on:submit="search(event)">
@@ -323,7 +323,6 @@
         selected_symp: '',
         selected_keyed_symp: '',
         result_symptoms: '',
-        patient_type: 'none',
         remedies: {},
         data: {},
         remedy_found: {},
@@ -442,8 +441,10 @@
 
       });
 
-      this.on('patient', patient => {
-        console.log(patient)
+      this.on('addPatient', patient => {
+        let {data} = this.get();
+        data.patient = patient;
+        this.set({data});
       });
 
       this.loadRemedies();
@@ -581,12 +582,6 @@
           Router.navigate('search');
         }, 1500);
 
-      },
-      patient(e){
-        e.preventDefault();
-        let {patient} = this.get();
-
-        console.log(patient)
       },
 
     }
