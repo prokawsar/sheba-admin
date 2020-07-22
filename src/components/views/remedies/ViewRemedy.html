@@ -44,7 +44,7 @@
             <div class="column">
               <div class="buttons">
                 {#each Object.entries(data) as [key, value], i }
-                  {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
+                  {#if !omitted_field.includes(key) }
                   <button type="button" class="button is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize;">
                     {#if data[key]}
                       <span class="icon is-small"><i class="fa fa-check"></i></span>
@@ -63,7 +63,7 @@
                   <select class="input" bind:value="selected_symptom" >
                     <option value="">Select Type</option>
                     {#each Object.entries(data) as [key, value], i}
-                      {#if key != 'id' && key != 'name' && key != 'created'  && key != 'modified' && key != 'deleted' && key != 'treatments'}
+                      {#if !omitted_field.includes(key) }
                         <option value="{key}">{i} - {key}</option>
                       {/if}
                     {/each}
@@ -115,6 +115,7 @@
         selected_symptom: '',
         data: {},
         meta: {},
+        omitted_field: [ 'id', 'name', 'created', 'modified', 'deleted', 'patient', 'treatments'],
         tracker: {
           saving: false,
           saved: false,
