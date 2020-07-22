@@ -183,6 +183,7 @@
 
   {#if Object.keys(remedy_found).length !== 0}
   <RemedyFound
+    bind:tracker
     bind:remedy_found
     {field_name}
     {result_symptoms}
@@ -436,10 +437,10 @@
         })
       },
       reset(comp){
-        comp.doing()
+        comp && comp.doing()
         this.set({ data: {} })
         this.set({ remedy_found: {} })
-        comp.done();
+        comp && comp.done();
       },
       back(){
         this.set({ remedy_found: {} })
@@ -456,6 +457,14 @@
       },
       saveHistory(){
         let {data} = this.get();
+
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
 
         Model.create(data)
         .then( (r) => {
