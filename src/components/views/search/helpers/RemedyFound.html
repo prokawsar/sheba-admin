@@ -1,0 +1,64 @@
+<form on:submit="saveHistory(event)">
+  <Panel title="Remedy Found" has_toolbar={true} >
+    <div slot='toolbar'>
+      <button type="button" class="button is-info" on:click="fire('back')" >
+        <span class="icon is-small"><i class="fa fa-arrow-left"></i></span>
+
+        Back to Search
+      </button>
+    </div>
+
+    <div class="columns">
+      <div class="column">
+        <div class="buttons">
+        {#each Object.entries(remedy_found) as [key, value], i }
+
+          <button type="button" class="button is-medium is-light" on:click="fire('showSymptoms', value)" style="text-transform: capitalize;">
+            <span>{key} </span>
+            <span class="tag is-danger is-medium"> {value.mark} </span>
+          </button>
+        {/each}
+        </div>
+        <!-- {#if field_name.length}
+          {#each field_name as field}
+            <span class="title">{field}: </span>
+            <p>{result_symptoms[field]}</p>
+          {/each}
+        {/if} -->
+        <label class="label">{field_name ? field_name : ''}</label>
+        <div>
+          <textarea class="textarea" readonly>{result_symptoms ? result_symptoms : '' }</textarea>
+        </div>
+
+        <div class="field">
+          <p class="control">
+            <label class="label"> &nbsp; </label>
+            <SubmitButton classes="is-primary is-pulled-right" icon="save" icon_size="small" text="Save History" bind:tracker />
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </Panel>
+</form>
+
+<script>
+
+  import { Panel } from '@kws3/helpers';
+  import { SubmitButton } from '@kws3/buttons';
+
+  export default {
+    components: {
+      Panel, SubmitButton
+    },
+    data(){
+      return{
+        remedy_found: {},
+        field_name: '',
+        result_symptoms: ''
+      }
+    }
+  }
+</script>

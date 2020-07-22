@@ -182,7 +182,7 @@
   {/if}
 
   {#if Object.keys(remedy_found).length !== 0}
-  <form on:submit="saveHistory(event)">
+  <!-- <form on:submit="saveHistory(event)">
     <Panel title="Remedy Found" has_toolbar={true} >
       <div slot='toolbar'>
         <button type="button" class="button is-info" on:click="back()" >
@@ -203,12 +203,6 @@
             </button>
           {/each}
           </div>
-          <!-- {#if field_name.length}
-            {#each field_name as field}
-              <span class="title">{field}: </span>
-              <p>{result_symptoms[field]}</p>
-            {/each}
-          {/if} -->
           <label class="label">{field_name ? field_name : ''}</label>
           <div>
             <textarea class="textarea" readonly>{result_symptoms ? result_symptoms : '' }</textarea>
@@ -226,8 +220,15 @@
       </div>
 
     </Panel>
-  </form>
-    <br>
+  </form> -->
+  <RemedyFound
+    bind:remedy_found
+    {field_name}
+    {result_symptoms}
+    on:back="back()"
+    on:showSymptoms
+  />
+  <br>
   {/if}
   <Panel title="Cases" has_toolbar={true} >
     <div slot='toolbar'>
@@ -310,13 +311,14 @@
   import SearchResult from './helpers/SearchResult.html';
   import SearchableSelect from '@kws3/searchable-select';
   import PatientAdd from './helpers/PatientAdd.html';
+  import RemedyFound from './helpers/RemedyFound.html';
 
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
       Panel, Icon, Notification, SubmitButton, SearchResult,
-      SearchableSelect, ConfirmButton, PatientAdd
+      SearchableSelect, ConfirmButton, PatientAdd, RemedyFound
     },
 
     data() {
@@ -453,6 +455,9 @@
         this.set({data});
       });
 
+      this.on('showSymptoms', value => {
+        this.showSymptoms(value);
+      })
       this.loadRemedies();
     },
     methods: {
