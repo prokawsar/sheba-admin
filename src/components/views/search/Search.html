@@ -122,7 +122,7 @@
                 <select class="input" bind:value="selected_symptom" >
                   <option value="">Select Type</option>
                   {#each Object.entries(data) as [key, value], i}
-                    {#if key != 'id' && key != 'created' && key != 'name' && key != 'modified' && key != 'deleted' && key != 'treatments'}
+                    {#if !omitted_field.includes(key)}
                       <option value="{key}">{key}</option>
                     {/if}
                   {/each}
