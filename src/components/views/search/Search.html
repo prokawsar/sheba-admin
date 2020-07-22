@@ -203,7 +203,13 @@
             </button>
           {/each}
           </div>
-
+          <!-- {#if field_name.length}
+            {#each field_name as field}
+              <span class="title">{field}: </span>
+              <p>{result_symptoms[field]}</p>
+            {/each}
+          {/if} -->
+          <label class="label">{field_name ? field_name : ''}</label>
           <div>
             <textarea class="textarea" readonly>{result_symptoms ? result_symptoms : '' }</textarea>
           </div>
@@ -474,7 +480,9 @@
         this.set({ selected_symptom: key })
       },
       showSymptoms(value){
-        this.set({ result_symptoms: value.symptoms })
+        // let fields = value.field.split(', '),
+
+        this.set({ result_symptoms: value.symptoms, field_name: value.field })
       },
       saveHistory(e){
         e.preventDefault();
@@ -553,10 +561,12 @@
                   if(symptom.trim() === value.trim() && value.trim() != ''){
                     if( matched_remedies.hasOwnProperty(remedy['name']) ){
                       matched_remedies[remedy['name']].mark++;
+                      matched_remedies[remedy['name']].field += ', ' + key;
                       matched_remedies[remedy['name']].symptoms += ', ' + value.trim();
 
                     }else{
                       matched_remedies[remedy['name']] = {};
+                      matched_remedies[remedy['name']].field = key;
                       matched_remedies[remedy['name']].mark = 1;
                       matched_remedies[remedy['name']].symptoms = value.trim();
 
