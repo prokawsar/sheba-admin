@@ -538,7 +538,7 @@
 
         //reducing null fields from payload
         for(let [key, value] of Object.entries(data)) {
-          if(value){
+          if(value && key != 'patient'){
             _payload[key] = value.split(',')
           }
         }
