@@ -26,6 +26,9 @@
               <label class="radio">
                 <input type="radio" bind:group="patient_type" value="new"> NEW
               </label>
+              <label class="radio">
+                <input type="radio" bind:group="patient_type" value="none"> NONE
+              </label>
             </div>
           </div>
         </div>
@@ -318,7 +321,7 @@
         selected_symp: '',
         selected_keyed_symp: '',
         result_symptoms: '',
-        patient_type: '',
+        patient_type: 'none',
         remedies: {},
         data: {},
         remedy_found: {},
