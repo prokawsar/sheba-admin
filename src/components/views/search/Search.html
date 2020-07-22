@@ -15,19 +15,19 @@
     </Notification>
     {/if}
 
-    <form on:submit="patient(event)">
+    <!-- <form on:submit="patient(event)">
       <Panel title="Patient" has_toolbar={true} >
         <div slot='toolbar'>
           <div class="field">
             <div class="control">
               <label class="radio">
-                <input type="radio" bind:group="patient_type" value="old"> OLD
+                <input type="radio" bind:group="patient.patient_type" value="old"> OLD
               </label>
               <label class="radio">
-                <input type="radio" bind:group="patient_type" value="new"> NEW
+                <input type="radio" bind:group="patient.patient_type" value="new"> NEW
               </label>
               <label class="radio">
-                <input type="radio" bind:group="patient_type" value="none"> NONE
+                <input type="radio" bind:group="patient.patient_type" value="none"> NONE
               </label>
             </div>
           </div>
@@ -107,7 +107,8 @@
         {/if}
 
       </Panel>
-    </form>
+    </form> -->
+    <PatientAdd bind:patient on:patient />
     <br>
   {#if Object.keys(remedy_found).length === 0}
     <form on:submit="search(event)">
@@ -302,13 +303,14 @@
   import { SubmitButton, ConfirmButton } from '@kws3/buttons';
   import SearchResult from './helpers/SearchResult.html';
   import SearchableSelect from '@kws3/searchable-select';
+  import PatientAdd from './helpers/PatientAdd.html';
 
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
       Panel, Icon, Notification, SubmitButton, SearchResult,
-      SearchableSelect, ConfirmButton
+      SearchableSelect, ConfirmButton, PatientAdd
     },
 
     data() {
@@ -328,10 +330,11 @@
         omitted_field: [ 'id', 'name', 'created', 'modified', 'deleted', 'patient', 'treatments'],
         patient: {
           name: '',
-          phone: '',
-          gender: '',
           age: '',
+          gender: '',
+          phone: '',
           address: '',
+          patient_type: 'none'
         },
         tracker: {
           saving: false,
@@ -437,6 +440,10 @@
           this.set({data})
         }
 
+      });
+
+      this.on('patient', patient => {
+        console.log(patient)
       });
 
       this.loadRemedies();
