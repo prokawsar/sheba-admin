@@ -3,7 +3,6 @@
     <div slot='toolbar'>
       <button type="button" class="button is-info" on:click="fire('back')" >
         <span class="icon is-small"><i class="fa fa-arrow-left"></i></span>
-
         Back to Search
       </button>
     </div>
@@ -36,11 +35,9 @@
             <SubmitButton classes="is-primary is-pulled-right" icon="save" icon_size="small" text="Save History" bind:tracker />
           </p>
         </div>
-
       </div>
 
     </div>
-
   </Panel>
 </form>
 
@@ -58,6 +55,13 @@
         remedy_found: {},
         field_name: '',
         result_symptoms: ''
+      }
+    },
+    methods: {
+      saveHistory(e){
+        e.preventDefault();
+        this.fire('saveHistory');
+
       }
     }
   }
