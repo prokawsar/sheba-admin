@@ -18,7 +18,7 @@
     <PatientAdd bind:patient on:addPatient bind:data />
     <br>
   {#if Object.keys(remedy_found).length === 0}
-    <form on:submit="search(event)">
+    <form on:submit="saveHistory(event)">
       <Panel title="Patient Symptoms" has_toolbar={true} >
 
         <div class="columns">
@@ -382,12 +382,12 @@
               saved: true,
               error: false
             },
-            data: r.response,
           });
 
           setTimeout( () => {
             this.set({ tracker: { saved: false } });
-            this.reset()
+            this.reset();
+            Router.navigate('history');
           }, 1500);
 
         })
