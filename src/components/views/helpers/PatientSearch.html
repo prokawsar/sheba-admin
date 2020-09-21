@@ -1,0 +1,270 @@
+<div class="search-wizard" data-cy="{entity}-search-wizard">
+  {#if has_title}
+    <div class="field has-addons">
+      <div class="control is-expanded">
+        <slot name="title"></slot>
+      </div>
+      {#if has_advanced_search}
+        <ToggleControl style="padding-top:0" cy="advanced-search-toggle-button">
+          <label class="label is-{size}">Advanced Search</label>
+          <Toggle {size} bind:on=is_advanced_search cy="toggle-button"/>
+        </ToggleControl>
+      {/if}
+    </div>
+  {/if}
+
+  <div class="search-box">
+    <form on:submit='getAll(event)'>
+      <div class="columns">
+        <div class="column">
+          {#if !is_advanced_search}
+            <div class="field is-grouped">
+              <div class="control is-expanded">
+                <div class="field has-addons">
+                  <div class="control is-expanded">
+                    <input type="text" class="input is-{size}" bind:value='searchString' disabled={is_advanced_search} placeholder={search_placeholder} data-cy="{entity}-search-input">
+                  </div>
+                  {#if searchString}
+                    <div class="control">
+                      <button type="button" class="button is-{size} is-danger" on:click="resetSearch()">
+                        <Icon size="small" icon="times-circle" />
+                      </button>
+                    </div>
+                  {/if}
+                </div>
+              </div>
+
+              <div class="control">
+                <div class="buttons">
+                  <SubmitButton
+                    {size}
+                    icon="search"
+                    text="Search"
+                    error_text="Failed to search"
+                    saved_text="Search Complete"
+                    bind:tracker
+                    disabled={is_advanced_search}
+                    cy="{entity}-search-button"
+                  />
+                  {#if customer_not_found}
+                    <button class="button is-success is-{size}" on:click="set({active_pane:'add_new_customer'})">
+                      <Icon icon="plus-circle" size="small" />
+                      <span>Add New Customer</span>
+                    </button>
+                  {/if}
+                </div>
+              </div>
+
+              {#if change_customer}
+                <div class="control">
+                  <button type="button" class="button is-{size} is-warning" on:click="set({change_customer: false})" data-cy="{entity}-search-cancel-button">
+                    <Icon size="small" icon="times" />
+                    <span>Cancel</span>
+                  </button>
+                </div>
+              {/if}
+            </div>
+          {/if}
+        </div>
+      </div>
+
+      {#if is_advanced_search}
+        <AdvancedSearch bind:active_columns bind:as_tracker bind:change_customer on:resetFields {size} {entity} />
+      {/if}
+    </form>
+  </div>
+
+  <slot></slot>
+</div>
+
+<script>
+  import Model from '../../../models/patients';
+  import {Icon} from '@kws3/helpers';
+  import {Toggle, ToggleControl} from '@kws3/controls';
+  import {SubmitButton} from '@kws3/buttons';
+  import AdvancedSearch from './AdvancedSearch.html';
+
+  export default {
+    components:{
+      Icon, ToggleControl, Toggle,
+      SubmitButton,
+      AdvancedSearch
+    },
+    data(){
+      return {
+        Model,
+        meta: {},
+        data: {},
+        has_title: true,
+        has_advanced_search: true,
+        is_advanced_search: false,
+        change_customer: false,
+        searchString: '',
+        searchable_columns:{
+          'id': 'ID',
+          'name': 'Name',
+          'phone': 'Phone',
+          'address': 'Address',
+        },
+        active_columns: [],
+        size: '',
+        entity: 'patient',
+        tracker: {
+          saving: false,
+          saved: false,
+          error: false
+        },
+        as_tracker: {
+          saving: false,
+          saved: false,
+          error: false
+        }
+      }
+    },
+    computed:{
+      search_placeholder: ({searchable_columns}) => Object.values(searchable_columns).join(', '),
+      customer_not_found: ({ meta }) => meta && meta.count == 0
+    },
+    oncreate(){
+      this.on('resetFields', (e) => {
+        e.preventDefault();
+        this.resetASFields();
+      });
+
+      this.fillColumns();
+    },
+    onstate({changed, current}){
+      if(changed.is_advanced_search){
+        if(current.is_advanced_search){
+          this.resetASFields();
+        } else {
+          this.resetSearch();
+        }
+      }
+    },
+    methods:{
+      fillColumns(){
+        var {searchable_columns} = this.get();
+        var _columns = [];
+        for(const column in searchable_columns){
+          _columns.push({
+            name:searchable_columns[column],
+            field_name:column,
+            value: ''
+          });
+        }
+        this.set({active_columns: _columns});
+      },
+      proccesQuery(){
+        var {active_columns, searchString, is_advanced_search} = this.get();
+
+        var _q = '';
+
+        if(!is_advanced_search && searchString){
+          _q = active_columns.map((c, i)=>{
+            let pipe = i > 0 ? '|' :'';
+            if(c.field_name == 'id'){
+              return `${c.field_name}[eq]${pipe}:${searchString}`;
+            }
+            return `${c.field_name}[lk]${pipe}:${searchString}`;
+          }).join(',')
+        }
+
+        if(is_advanced_search){
+          _q = active_columns
+          .map((c)=> c.value ?  {key:c.field_name, value:c.value} : '')
+          .filter(Boolean)
+          .map((c)=>`${c.key}[lk]:${c.value}`).join(',')
+        }
+
+        return _q
+      },
+      getAll(e){
+        e && e.preventDefault();
+
+        var {is_advanced_search, Model} = this.get();
+        var _opts = this.proccesQuery();
+        var context = is_advanced_search ? 'as_tracker' : 'tracker'
+
+        if(!_opts){
+          return false;
+        }
+
+        if(e){
+          this.set({
+            [context]: {
+              saving: true,
+              saved: false,
+              error: false
+            },
+            data: []
+          });
+        }
+
+        Model && Model.getAll({limit: 20, offset: 0, q:_opts})
+        .then((r)=>{
+
+          this.set({
+              data: r.response,
+              meta: r._meta,
+              is_error: false
+            });
+
+            if(e){
+              this.set({
+                [context]: {
+                  saving: false,
+                  saved: false,
+                  error: false
+                }
+              });
+            }
+        })
+        .catch((r) => {
+          var user_message = '';
+          if (r.response && typeof r.response.records != 'undefined'){
+            user_message = r.response.records.userMessage;
+          }
+          this.set({
+            error_message: user_message
+          });
+
+          if(e){
+            this.set({
+              [context]: {
+                saving: false,
+                saved: false,
+                error: true
+              }
+            });
+            setTimeout(() => {
+              this.set({
+                [context]: {
+                  error: false
+                }
+              });
+            }, 3000);
+          }
+        });
+      },
+      resetData(){
+        this.set({
+          meta:{},
+          data:[]
+        });
+      },
+      resetASFields(){
+        var {active_columns} = this.get();
+        active_columns.forEach((_,i) =>{active_columns[i].value = ''});
+        this.resetData();
+        this.set({active_columns});
+      },
+      resetSearch(){
+        this.resetData();
+        this.set({
+          searchString: ''
+        });
+      }
+    }
+  }
+</script>

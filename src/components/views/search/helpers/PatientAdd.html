@@ -21,7 +21,7 @@
     </div>
 
     {#if patient.patient_type == 'old'}
-    <div class="columns">
+    <!-- <div class="columns">
       <div class="column">
         <div class="field has-addons has-addons-centered">
           <p class="control is-expanded">
@@ -40,7 +40,17 @@
           </p>
         </div>
       </div>
-    </div>
+    </div> -->
+    {#if !data.patient}
+      <Panel>
+        <PatientSearch bind:active_pane bind:meta bind:data size="medium">
+          <h1 slot="title" class="subtitle is-4">Patient Search</h1>
+        </PatientSearch>
+
+        <PatientSearchResults {active_pane} {data} {meta} on:rowClick on:customerCreate />
+
+      </Panel>
+    {/if}
     {:elseif patient.patient_type == 'new'}
     <div class="columns">
       <div class="column">
@@ -99,14 +109,18 @@
 <script>
   import { Panel } from '@kws3/helpers';
   import { SubmitButton } from '@kws3/buttons';
-
+  import PatientSearch from '../../helpers/PatientSearch.html';
+  import PatientSearchResults from '../../helpers/PatientSearchResults.html';
+  
   export default {
     components: {
-      Panel, SubmitButton
+      Panel, SubmitButton, PatientSearch, PatientSearchResults
     },
     data(){
       return {
-        patient: {}
+        patient: {},
+        data: {},
+        meta: {},
       }
     },
     methods: {
@@ -116,6 +130,12 @@
         this.fire('addPatient', patient);
 
       }
+    },
+    oncreate(){
+      this.on('rowClick', ({row}) => {
+        this.fire('addPatient', row);
+
+      });
     }
 
   }

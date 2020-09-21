@@ -1,0 +1,138 @@
+{#if (typeof meta.total != 'undefined' && (meta.total == 0 || (!has_pagination && meta.total > 20)) || data.length)}
+  <div class="search-list" data-cy="search-list">
+    {#if (!has_pagination && meta.total > 20)}
+      <Message color="danger">
+        <p class="has-text-centered">
+          Too many results... Please narrow down your search criteria{#if has_advanced_search}, or use <b>Advanced search</b>{/if}.
+        </p>
+      </Message>
+    {:elseif meta.total == 0}
+    <SlidingPaneSet style="height:{pane_height}px">
+      <SlidingPane active={active_pane=='not_found' } track_height on:heightChange>
+        <Message color="danger">
+          <p class="has-text-centered is-size-6">
+            No results found.
+          </p>
+        </Message>
+      </SlidingPane>
+      <SlidingPane active={active_pane=='add_new_customer' } track_height on:heightChange>
+        <!-- <CustomerCreate on:customerCreate/> -->
+      </SlidingPane>
+    </SlidingPaneSet>
+    {/if}
+
+    {#if data.length}
+      <ViewHOC target={targetview}
+        on:*="fire('_forwardEvent', event)"
+        transition="{has_transition}"
+        {iteration_key}
+        {data}
+        {columns}
+        {valueTransformers}
+        {styleTransformers}
+        {clickableRows}
+      />
+    {/if}
+  </div>
+{/if}
+
+<script>
+  import {createHOC} from '@kws3/helpers';
+  import {GridView} from '@kws3/datagrid';
+  import {Message} from '@kws3/helpers';
+  import { SlidingPaneSet, SlidingPane } from '@kws3/sliding-panes';
+  // import CustomerCreate from './CustomerCreate.html';
+
+  export default {
+    components:{
+      ViewHOC: createHOC(),
+      Message, SlidingPaneSet, SlidingPane
+    },
+    data(){
+      return {
+        targetview: GridView,
+        iteration_key:'id',
+        pane_height: 500,
+        active_pane: 'not_found',
+        meta:{},
+        data:[],
+        columns: {
+          'id': 'ID',
+          'name': 'Name',
+          'email': 'Email',
+          'phone': 'Phone',
+          'address': 'Address'
+        },
+        valueTransformers: {
+          name: (v, row) => {
+            var ret = [row.title, row.name, row.surname].filter(i => i).join(' ');
+
+            if(row.premise){
+              ret += `<span class="is-block">
+                <span class="tags has-addons" style="margin:0">
+                  <span class="tag is-small is-paddingless">
+                    <span class="icon"><i class="fa fa-building-o"></i></span>
+                  </span>
+                  <span class="tag is-small">${row.premise_name}</span>
+                </span>
+              </span>`;
+            }
+
+            return ret;
+          },
+          address: (v, row) => {
+            return [row.addr1, row.addr2, row.city, row.county]
+            .filter(Boolean)
+            .map(i => `<small class="is-block">${i}</small>`)
+            .join('') +
+            `<span class="is-block"><span class="tag is-small">${row.postcode}</span></span>`;
+          },
+          phone: (v, row) => {
+            let out = '';
+            if(row.phone && row.phone.trim() != ''){
+              out += row.phone;
+            }
+            if(row.mobile && row.mobile.trim() != ''){
+              out += `<span class="is-block">
+                <span class="tags has-addons" style="margin:0">
+                  <span class="tag is-small is-paddingless">
+                    <span class="icon"><i class="fa fa-mobile fa-2x"></i></span>
+                  </span>
+                  <span class="tag is-small">${row.mobile}</span>
+                </span>
+              </span>`
+            }
+
+            return out;
+          },
+          email:(v) => `<small>${v}</small>`,
+        },
+        styleTransformers: {
+          email: () => 'word-break: break-all;'
+        },
+        has_pagination: false,
+        clickableRows: true,
+        has_advanced_search: true
+      }
+    },
+    computed:{
+      has_transition({ $settings, transition }){
+        if(typeof transition != 'undefined'){
+          return transition;
+        }else{
+          return $settings.transition;
+        }
+      },
+      active_pane: ({ active_pane }) => active_pane || 'not_found' 
+    },
+    oncreate(){
+      this.on('_forwardEvent', (e) => {
+        this.fire(e.name, e.event);
+      });
+
+      this.on('heightChange', ({ height }) => {
+        this.set({ pane_height: height });
+      });
+    }
+  }
+</script>

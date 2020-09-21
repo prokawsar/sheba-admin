@@ -1,0 +1,75 @@
+<div class="columns is-multiline" data-cy="advanced-search-form">
+  {#if active_columns.length}
+    {#each active_columns as { name, value}, i}
+      <div class="column is-3">
+        <div class="field has-addons">
+          <div class="control is-expanded">
+            <input class="input is-{size}" type="text" bind:value="value" placeholder={name}>
+          </div>
+          {#if value}
+            <div class="control">
+              <button type="button" class="button is-{size} is-danger" on:click="reset(i)">
+                <Icon size="small" icon="times-circle" />
+              </button>
+            </div>
+          {/if}
+        </div>
+      </div>
+    {:else}
+      No columns
+    {/each}
+  {/if}
+  <div class="column">
+    <div class="field is-grouped is-grouped-right">
+      <div class="control">
+        <SubmitButton
+          {size}
+          icon="search-plus"
+          classes="is-fullwidth"
+          text="Search"
+          error_text="Failed to search"
+          saved_text="Search Complete"
+          bind:tracker="as_tracker"
+          cy="{entity}-search-button"
+        />
+      </div>
+      <div class="control">
+        <button class="button is-{size} is-danger" on:click="fire('resetFields', event)">
+          <Icon size="small" icon="undo" />
+          <span>Reset</span>
+        </button>
+      </div>
+      {#if change_customer}
+        <div class="control">
+          <button type="button" class="button is-{size} is-warning" on:click="set({change_customer: false})">
+            <Icon size="small" icon="times" />
+            <span>Cancel</span>
+          </button>
+        </div>
+      {/if}
+    </div>
+  </div>
+</div>
+
+<script>
+  import {Icon} from '@kws3/helpers';
+  import {SubmitButton} from '@kws3/buttons';
+  export default {
+    components: {
+      Icon, SubmitButton
+    },
+    data(){
+      return {
+        active_columns:[],
+        change_customer: false,
+      }
+    },
+    methods: {
+      reset(index){
+        var {active_columns} = this.get();
+        active_columns[index].value = '';
+        this.set({active_columns});
+      }
+    }
+  }
+</script>
