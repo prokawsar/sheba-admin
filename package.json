@@ -12,7 +12,8 @@
   "devDependencies": {
     "@kws3/buttons": "^0.4.1",
     "@kws3/colorpicker": "^0.1.0",
-    "@kws3/datagrid": "^1.3.7",
+    "@kws3/controls": "^0.2.8",
+    "@kws3/datagrid": "^1.4.8",
     "@kws3/datepicker": "^0.1.3",
     "@kws3/helpers": "^0.4.1",
     "@kws3/masked-input": "0.0.5",
