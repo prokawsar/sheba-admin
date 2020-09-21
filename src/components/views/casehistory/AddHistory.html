@@ -58,7 +58,6 @@
                     searchKey="name"
                     searchValue="id"
                   />
-                  <!-- <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="loadSymptoms[selected_symptom]" style="height: 16rem;"></textarea> -->
               </p>
             </div>
 
@@ -77,7 +76,7 @@
             <div class="field">
               <p class="control">
                 <label class="label">&nbsp;</label>
-                <SubmitButton classes="is-primary is-medium is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
+                <SubmitButton classes="is-primary is-medium is-pulled-right" icon="save" icon_size="small" text="Save History" bind:tracker />
               </p>
             </div>
           </div>
@@ -219,7 +218,7 @@
           error: false,
         },
         page: {
-          title: 'Search Remedy',
+          title: 'Add Case History',
           icon: 'vcard-o',
           icon_badge: 'plus'
         },
@@ -228,7 +227,7 @@
     },
     computed: {
       user_role: ({ $user }) => $user && $user.role,
-      filterFields: ({remedies, omitted_field}) => {
+      filterFields: ({remedies, omitted_field, data}) => {
 
         let last = ['built', 'constitution', 'diathesis', 'miasm', 'temperament', 'temperature_and_weather',
          'thermal_sensitivity', 'sensation', 'tendency_take_cold', 'desires', 'aversions', 'birth_history_milestones',
@@ -247,6 +246,9 @@
             }
           }
           filtered.push(...last)
+          // filtered.forEach( (field) => {
+          //   data[field] = null;
+          // })  
           return filtered
         }
       },
@@ -307,10 +309,10 @@
       }
     },
     oncreate(){
-
+      
       this.on('state', ({ changed, current, previous }) => {
         let {data, selected_symptom} = this.get()
-
+        
         if(current.selected_keyed_symp != previous.selected_keyed_symp){
           // got it selected symptom
           data[selected_symptom] =  data[selected_symptom] ? data[selected_symptom]  + ', ' + current.selected_keyed_symp : current.selected_keyed_symp;
@@ -330,6 +332,7 @@
       })
 
       this.loadRemedies();
+      
     },
     methods: {
       loadRemedies(){
