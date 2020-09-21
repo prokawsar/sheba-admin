@@ -1,0 +1,73 @@
+{
+  "generators":{
+    "module":{
+      "name": "Generate all files for a full module",
+      "description":"Will create 3 views for CRUD and a model. Will also update routes and routeHandler",
+      "command": "node scripts/generators modules ${module} --colors",
+      "Input":{
+        "name": "module",
+        "validate": {
+          "module": "required"
+        },
+        "message": "What is the module name?",
+        "initial": ""
+      }
+    },
+    "route":{
+      "name": "Generate routes",
+      "description":"Will update routes.js with new routes",
+      "command": "node scripts/generators route ${route} --colors",
+      "Input":{
+        "name": "route",
+        "validate": {
+          "route": "required"
+        },
+        "message": "What is the route name?",
+        "initial": ""
+      }
+    },
+    "route_handler":{
+      "name": "Generate template file imports",
+      "description":"Will update RouteHandler.html with new template import statements",
+      "command": "node scripts/generators route_handler ${module} --colors",
+      "Input":{
+        "name": "module",
+        "validate": {
+          "module": "required"
+        },
+        "message": "What is the module name?",
+        "initial": ""
+      }
+    },
+    "model":{
+      "name": "Generate model",
+      "description":"Will generate a model file extended from baseModel",
+      "command": "node scripts/generators model ${model} --colors",
+      "Input":{
+        "name": "model",
+        "validate": {
+          "model": "required"
+        },
+        "message": "What is the model name?",
+        "initial": ""
+      }
+    },
+    "views":{
+      "name": "Generate views",
+      "description":"Will create 3 views for CRUD. List view, Edit view and Add view",
+      "command": "node scripts/generators views ${module} --colors",
+      "Input":{
+        "name": "module",
+        "validate": {
+          "module": "required"
+        },
+        "message": "What is the module name?",
+        "initial": ""
+      }
+    }
+  },
+  "scripts":{
+    "run-tests-gui": "npm run test:ui",
+    "run-tests": "npm run test"
+  }
+}
