@@ -1,0 +1,482 @@
+<div class="page-content">
+
+  <PageTitle page="{page}">
+    <!-- <a class="button is-info is-pulled-right" href="#remedies">
+      <Icon icon="long-arrow-left" size="small" />
+      <span>Back to All Remedies</span>
+    </a> -->
+  </PageTitle>
+
+  <ViewScaffold {is_loading} {is_error} {error_message}>
+
+    {#if tracker.error}
+    <Notification type="danger">
+      {error_message}
+    </Notification>
+    {/if}
+
+    <PatientAdd bind:patient on:addPatient bind:data />
+    <br>
+  {#if Object.keys(remedy_found).length === 0}
+    <form on:submit="search(event)">
+      <Panel title="Patient Symptoms" has_toolbar={true} >
+
+        <div class="columns">
+          <div class="column">
+
+            <div class="field">
+              <span class="select is-fullwidth">
+                <select class="input" bind:value="selected_symptom" >
+                  <option value="">Select Type</option>
+                  {#each Object.entries(data) as [key, value], i}
+                    {#if !omitted_field.includes(key)}
+                      <option value="{key}">{key}</option>
+                    {/if}
+                  {/each}
+                </select>
+              </span>
+            </div>
+
+            <div class="field">
+              <p class="control">
+                <label class="label" style="text-transform: capitalize;">{selected_symptom}</label>
+                <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="data[selected_symptom]" style="height: 15rem;"></textarea>
+              </p>
+            </div>
+
+          </div>
+          <div class="column">
+            <p class="title is-5">Suggestions</p>
+
+            <div class="field">
+              <p class="control">
+                <label class="label" style="text-transform: capitalize;">{selected_symptom} Symptoms in the System</label>
+                  <SearchableSelect
+                    data="{searchable_withkey[selected_symptom]}"
+                    placeholder="Choose..."
+                    bind:_name="selected_keyed_symp"
+                    searchKey="name"
+                    searchValue="id"
+                  />
+                  <!-- <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="loadSymptoms[selected_symptom]" style="height: 16rem;"></textarea> -->
+              </p>
+            </div>
+
+            <div class="field">
+              <p class="control">
+                <label class="label" style="text-transform: capitalize;">All Symptoms in the System</label>
+                  <SearchableSelect
+                    data="{searchable_symp}"
+                    placeholder="Choose..."
+                    bind:_name="selected_symp"
+                    searchKey="name"
+                    searchValue="id"
+                  />
+              </p>
+            </div>
+            <div class="field">
+              <p class="control">
+                <label class="label">&nbsp;</label>
+                <SubmitButton classes="is-primary is-medium is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
+              </p>
+            </div>
+          </div>
+        </div>
+      </Panel>
+    </form>
+      <br>
+  {/if}
+
+  {#if Object.keys(remedy_found).length !== 0}
+  <RemedyFound
+    bind:tracker
+    bind:remedy_found
+    {field_name}
+    {result_symptoms}
+    on:back="back()"
+    on:showSymptoms
+    on:saveHistory="saveHistory()"
+  />
+  <br>
+  {/if}
+
+
+  <Panel title="Cases" has_toolbar={true} >
+    <div slot='toolbar'>
+      <ConfirmButton
+          text="Reset"
+          color="danger"
+          size=""
+          icon="refresh"
+          icon_only="{false}"
+          disabled="{false}"
+          on:do="reset(event)"
+        />
+    </div>
+
+    <div class="columns">
+      <div class="column">
+        {#if remedies.length}
+        <div class="columns">
+          <div class="column">
+            <label class="label">With Number</label>
+            <div class="field">
+              <span class="select is-fullwidth">
+                <select class="input" bind:value="selected_symptom" >
+                  <option value="">Select Type</option>
+                  {#each filterFields as key, index }
+                      <option value="{key}">{index+1} - {key}</option>
+                  {/each}
+                </select>
+              </span>
+            </div>
+
+          </div>
+          <div class="column">
+            <label class="label">Without Number</label>
+            <div class="field">
+              <span class="select is-fullwidth">
+                <select class="input" bind:value="selected_symptom" >
+                  <option value="">Select Type</option>
+                  {#each filterFields as key, index }
+                      <option value="{key}">{key}</option>
+                  {/each}
+                </select>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns">
+          <div class="column">
+            <div class="buttons">
+              {#each filterFields as key }
+                  <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize; margin-left: .6rem; margin-bottom: .6rem;">
+                    {#if data[key] }
+                      <span class="icon is-small"><i class="fa fa-check"></i></span>
+                    {/if}
+                    <span>{key}</span>
+                  </button>
+              {/each}
+              </div>
+
+          </div>
+        </div>
+        {/if}
+      </div>
+
+    </div>
+
+  </Panel>
+
+  </ViewScaffold>
+</div>
+
+<script>
+  import Model from '../../../models/histories';
+  import Remedies from '../../../models/remedies';
+
+  import Router from '../../../services/router';
+  import { Icon, Notification, Panel } from '@kws3/helpers';
+  import { SubmitButton, ConfirmButton } from '@kws3/buttons';
+  import SearchableSelect from '@kws3/searchable-select';
+  import PatientAdd from '../search/helpers/PatientAdd.html';
+  import RemedyFound from '../search/helpers/RemedyFound.html';
+
+  export default {
+    components: {
+      ViewScaffold: '../../helpers/ViewScaffold.html',
+      PageTitle: '../../helpers/PageTitle.html',
+      Panel, Notification, SubmitButton,
+      SearchableSelect, ConfirmButton, PatientAdd, RemedyFound
+    },
+
+    data() {
+      return {
+        is_loading: false,
+        is_error: false,
+        error_message: '',
+        is_active_case_modal: false,
+        selected_symptom: '',
+        selected_symp: '',
+        selected_keyed_symp: '',
+        result_symptoms: '',
+        remedies: {},
+        data: {},
+        remedy_found: {},
+        omitted_field: [ 'id', 'name', 'created', 'modified', 'deleted', 'patient', 'treatments'],
+        patient: {
+          name: '',
+          age: '',
+          gender: '',
+          phone: '',
+          address: '',
+          patient_type: 'none'
+        },
+        tracker: {
+          saving: false,
+          saved: false,
+          error: false,
+        },
+        page: {
+          title: 'Search Remedy',
+          icon: 'vcard-o',
+          icon_badge: 'plus'
+        },
+        valid:false
+      }
+    },
+    computed: {
+      user_role: ({ $user }) => $user && $user.role,
+      filterFields: ({remedies, omitted_field}) => {
+
+        let last = ['built', 'constitution', 'diathesis', 'miasm', 'temperament', 'temperature_and_weather',
+         'thermal_sensitivity', 'sensation', 'tendency_take_cold', 'desires', 'aversions', 'birth_history_milestones',
+         'tissues', 'stages_and_states', 'attacks_and_side', 'ailments_from', 'affections', 'clinical', 'modalities',
+         'mental_state_and_disorders', 'appearance_and_behavior', 'attention_and_concentration', 'expression',
+         'consciousness', 'mood_and_affect', 'memory', 'speech', 'thoughts_and_ideas', 'perception', 'intelligence',
+         'judgment', 'fear_and_live_alone', 'boring', 'peaceful', 'anger', 'hobby', 'habit', 'addiction', 'nutrition',
+         'anaemia', 'cyanosis', 'dehydration', 'jaundice', 'pulse', 'breathing', 'peculiar_rare_symptoms'
+        ];
+
+        let filtered = [];
+        if(remedies.length){
+          for(let [key, value] of Object.entries(remedies[0])) {
+            if( !last.includes(key) && !omitted_field.includes(key)){
+              filtered.push(key)
+            }
+          }
+          filtered.push(...last)
+          return filtered
+        }
+      },
+      loadSymptoms: ({remedies}) => {
+        let symptoms = {}
+        let _symp = []
+
+        for(let i in remedies){
+          Object.entries(remedies[i]).forEach(([key, value]) => {
+          _symp[key] = []
+          })
+          break;
+        }
+        for(let item in remedies){
+          let single = remedies[item];
+
+          Object.entries(single).forEach(([key, value]) => {
+            if(value){
+              if(typeof value == 'string'){
+                _symp[key].push(value.split(','))
+              }
+              symptoms[key] = (symptoms[key] ? symptoms[key] : '') + ', ' + value;
+            }
+          })
+        }
+        return _symp
+      },
+      searchable_withkey({loadSymptoms}){
+        let final = [], total = 0;
+
+        Object.entries(loadSymptoms).forEach(([key, value]) => {
+          let one = loadSymptoms[key];
+            final[key] = [];
+            for(let i in one){
+              if(Array.isArray(one[i])){
+                for(let ind in one[i]){
+                  final[key].push({ id: total++, name: one[i][ind] })
+                }
+              }
+            }
+          })
+        return final
+      },
+      searchable_symp({loadSymptoms}){
+        let final = [], total = 0;
+        for(let item in loadSymptoms){
+          let one = loadSymptoms[item];
+
+            for(let i in one){
+              if(Array.isArray(one[i])){
+                for(let ind in one[i]){
+                  final.push({ id: total++, name: one[i][ind] })
+                }
+              }
+            }
+          }
+        return final
+      }
+    },
+    oncreate(){
+
+      this.on('state', ({ changed, current, previous }) => {
+        let {data, selected_symptom} = this.get()
+
+        if(current.selected_keyed_symp != previous.selected_keyed_symp){
+          // got it selected symptom
+          data[selected_symptom] =  data[selected_symptom] ? data[selected_symptom]  + ', ' + current.selected_keyed_symp : current.selected_keyed_symp;
+          this.set({data})
+        }
+
+      });
+
+      this.on('addPatient', patient => {
+        let {data} = this.get();
+        data.patient = patient;
+        this.set({data});
+      });
+
+      this.on('showSymptoms', value => {
+        this.showSymptoms(value);
+      })
+
+      this.loadRemedies();
+    },
+    methods: {
+      loadRemedies(){
+        Remedies.getAll({limit:1000})
+        .then( (r) => {
+          this.set({ remedies: r.response })
+        })
+        .catch( (r) => {
+          console.log(r)
+        })
+      },
+      reset(comp){
+        comp && comp.doing()
+        this.set({ data: {} })
+        this.set({ remedy_found: {} })
+        comp && comp.done();
+      },
+      back(){
+        this.set({ remedy_found: {} })
+        this.set({ result_symptoms: {} })
+
+      },
+      select_symptom(key){
+        this.set({ selected_symptom: key })
+      },
+      showSymptoms(value){
+        // let fields = value.field.split(', '),
+
+        this.set({ result_symptoms: value.symptoms, field_name: value.field })
+      },
+      saveHistory(){
+        let {data} = this.get();
+
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
+
+        Model.create(data)
+        .then( (r) => {
+          this.set({
+            tracker: {
+              saving: false,
+              saved: true,
+              error: false
+            },
+            data: r.response,
+          });
+
+          setTimeout( () => {
+            this.set({ tracker: { saved: false } });
+            this.reset()
+          }, 1500);
+
+        })
+        .catch( (r) => {
+          if (r.response.records.errorCode == '406') {
+            this.set({error_message: r.response.records.userMessage});
+          }else{
+            this.set({error_message: 'There was an error adding history'});
+          }
+          this.set({
+            tracker: {
+              saving: false,
+              saved: false,
+              error: true
+            }
+          });
+
+          setTimeout( () => {
+            this.set({ tracker: { error: false } });
+          }, 3000);
+
+        });
+      },
+      search(e) {
+        e.preventDefault();
+
+        var { data, valid, remedies }  = this.get();
+        let _payload = [];
+        let matched_remedies = {};
+
+        console.log(data)
+
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
+
+
+        //reducing null fields from payload
+        for(let [key, value] of Object.entries(data)) {
+          if(value && key != 'patient'){
+            _payload[key] = value.split(',')
+          }
+        }
+        // console.log(_payload)
+
+        for(let [key, values] of Object.entries(_payload)) { // values are array of symptoms
+          values.forEach( (value) => {
+            remedies.forEach( (remedy) => {
+              if(remedy[key] != '' && remedy[key] ){
+                remedy[key].split(',').forEach( (symptom) =>{ // matching with each symptoms for remedy
+
+                  if(symptom.trim() === value.trim() && value.trim() != ''){
+                    if( matched_remedies.hasOwnProperty(remedy['name']) ){
+                      matched_remedies[remedy['name']].mark++;
+                      matched_remedies[remedy['name']].field += ', ' + key;
+                      matched_remedies[remedy['name']].symptoms += ', ' + value.trim();
+
+                    }else{
+                      matched_remedies[remedy['name']] = {};
+                      matched_remedies[remedy['name']].field = key;
+                      matched_remedies[remedy['name']].mark = 1;
+                      matched_remedies[remedy['name']].symptoms = value.trim();
+
+                    }
+                  }
+                })
+              }
+              // if(remedy[key].includes(value.trim())){ // currently matching with whole value
+
+              //   if(matched_remedies[remedy['name']]){
+              //     matched_remedies[remedy['name']]++
+              //   }else{
+              //     matched_remedies[remedy['name'].trim()] = 1;
+              //   }
+              // }
+            })
+          })
+        }
+        this.set({ remedy_found: matched_remedies})
+
+        setTimeout( () => {
+          this.set({ tracker: { saved: false } });
+          Router.navigate('search');
+        }, 1500);
+
+      },
+
+    }
+  }
+
+</script>
