@@ -76,7 +76,7 @@
             <div class="field">
               <p class="control">
                 <label class="label">&nbsp;</label>
-                <SubmitButton classes="is-primary is-medium is-pulled-right" icon="save" icon_size="small" text="Save History" bind:tracker />
+                <SubmitButton bind:disabled classes="is-primary is-medium is-pulled-right" icon="save" icon_size="small" text="Save History" bind:tracker />
               </p>
             </div>
           </div>
@@ -227,6 +227,7 @@
       }
     },
     computed: {
+      disabled: ({data, tracker}) => tracker.saving || tracker.saved || !Object.keys(data).length,
       user_role: ({ $user }) => $user && $user.role,
       filterFields: ({remedies, omitted_field, data}) => {
 
