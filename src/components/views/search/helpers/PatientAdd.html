@@ -50,6 +50,8 @@
         <PatientSearchResults {active_pane} {data} {meta} on:rowClick on:customerCreate />
 
       </Panel>
+    {:else}
+     <PatientDetails data={data.patient} />
     {/if}
     {:elseif patient.patient_type == 'new'}
     <div class="columns">
@@ -111,10 +113,11 @@
   import { SubmitButton } from '@kws3/buttons';
   import PatientSearch from '../../helpers/PatientSearch.html';
   import PatientSearchResults from '../../helpers/PatientSearchResults.html';
+  import PatientDetails from '../../helpers/PatientDetails.html';
   
   export default {
     components: {
-      Panel, SubmitButton, PatientSearch, PatientSearchResults
+      Panel, SubmitButton, PatientSearch, PatientSearchResults , PatientDetails
     },
     data(){
       return {

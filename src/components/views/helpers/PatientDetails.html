@@ -1,0 +1,44 @@
+<span class="tags has-addons is-marginless">
+  <span class="tag is-small is-dark">ID</span>
+  <span class="tag is-small">{data.id || ''}</span>
+</span>
+
+<strong class="has-text-grey">{data.name || ''} </strong>
+
+<p class="is-block">{@html address || ''}</p>
+<br>
+<span class="tags has-addons is-marginless">
+  <span class="tag is-primary"><Icon icon="phone" /></span>
+  <span class="tag">{data.phone || ''}</span>
+</span>
+
+<span class="tags has-addons is-marginless">
+  <span class="tag is-primary"><Icon icon="at" /></span>
+  <span class="tag" style="word-break: break-all;">{data.email || ''}</span>
+</span>
+
+
+<script>
+  import {Icon} from '@kws3/helpers';
+
+    export default {
+    components:{
+      Icon
+    },
+    data(){
+      return {
+        data: {}
+      }
+    },
+    computed:{
+      address: ({data}) => {
+        if(data){
+          return [data.address]
+          .filter(Boolean)
+          .map(i => `<small>${i}</small>`)
+          .join(', ');
+        }
+      },
+    }
+  }
+</script>
