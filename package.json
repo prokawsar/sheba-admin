@@ -2,6 +2,7 @@
   "name": "sheba-homoeo-admin",
   "version": "1.0.0",
   "dependencies": {
+    "@kws3/sliding-panes": "^0.2.1",
     "bulma": "0.6.2",
     "grapnel": "~0.6.3",
     "microevent": "git://github.com/ekhaled/microevent.js.git",
