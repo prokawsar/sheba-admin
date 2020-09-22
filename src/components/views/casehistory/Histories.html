@@ -22,6 +22,8 @@
       {valueTransformers}
       {classTransformers}
       {styleTransformers}
+      {clickableRows}
+      on:rowClick
       >
       <a  slot="additionalButtons" href="#history/add" class="button is-success">
         <Icon size="small" icon="plus-circle" /><span>Add Case History</span>
@@ -36,7 +38,8 @@
 
   import Model from '../../../models/histories';
   import { Icon } from '@kws3/helpers';
-
+  import Router from '../../../services/router';
+  
   export default {
     components:{
       Icon,
@@ -58,11 +61,11 @@
         entity_name: 'History',
         route_prefix: 'history/',
         has_additional_buttons: true,
+        clickableRows: true,
         columns:{
           'id':'ID',
           'name': 'Patient Name',
           'created': 'Last Visited Date',
-          'link': ''
         },
         search_placeholder: 'Name',
         page:{
@@ -96,9 +99,6 @@
           name(v, row) {
             return row.patient.name
           },
-          link(v, row) {
-            return '<a href="#history/view/'  + row.id + '"><span class="icon"><i class="fa fa-pencil"></i></span></a>';
-          },
         },
         classTransformers:{
           link(){
@@ -108,6 +108,11 @@
         styleTransformers:{},
       }
     },
-    computed: {}
+    computed: {},
+    oncreate(){
+      this.on('rowClick', ({row}) => {
+        Router.navigate(`history/view/${row.id}`);
+      });
+    }
   }
 </script>
