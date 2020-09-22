@@ -11,21 +11,21 @@
       <div class="column">
         <div class="field is-grouped">
           <div class="select is-fullwidth">
-            <select>
+            <select bind:value="treatment.remedy">
           {#each Object.entries(remedy_found) as [key, value], i }
               <option value="value">{key}</option>
           {/each}
             </select>
           </div>
           <div class="select is-fullwidth">
-            <select>
+            <select bind:value="treatment.power">
               {#each powers as power}
               <option value="{power}">{power}</option>
               {/each}
             </select>
           </div>
           <div class="select is-fullwidth">
-            <select>
+            <select bind:value="treatment.rule">
               {#each rules as rule}
               <option value="{rules}">{rule}</option>
               {/each}
@@ -66,6 +66,11 @@
           '10-3',
           '5-2'
         ],
+        treatment: {
+          remedy: '',
+          power: 200,
+          rule: '' 
+        },
         result_symptoms: '',
         tracker: {}
       }
