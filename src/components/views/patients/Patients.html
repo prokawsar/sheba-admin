@@ -22,6 +22,8 @@
       {valueTransformers}
       {classTransformers}
       {styleTransformers}
+      {clickableRows}
+      on:rowClick
       >
 
       <a  slot="additionalButtons" href="#patients/add" class="button is-success">
@@ -37,7 +39,8 @@
 
   import Model from '../../../models/patients';
   import { Icon } from '@kws3/helpers';
-
+  import Router from '../../../services/router';
+  
   export default {
     components:{
       ViewScaffold: '../../helpers/ViewScaffold.html',
@@ -58,14 +61,14 @@
         entity_name: 'Patients',
         route_prefix: 'patients/',
         has_additional_buttons: true,
+        clickableRows: true,
         columns:{
           'id':'ID',
           'name': 'Name',
           'age': 'Age',
           'phone': 'Phone',
-          'address': 'Address',
           'gender': 'Gender',
-          'link': ''
+          'address': 'Address',
         },
         search_placeholder: 'Name',
         page:{
@@ -96,9 +99,6 @@
           gender(v, row){
             return row.gender == '' ? '' : row.gender == 'm' ? 'Male' : 'Female'
           },
-          link(v, row) {
-            return '<a href="#patients/view/'  + row.id + '"><span class="icon"><i class="fa fa-pencil"></i></span></a>';
-          },
         },
         classTransformers:{
           link(){
@@ -108,6 +108,11 @@
         styleTransformers:{},
       }
     },
-    computed: {}
+    computed: {},
+    oncreate(){
+      this.on('rowClick', ({row}) => {
+        Router.navigate(`patients/view/${row.id}`);
+      });
+    }
   }
 </script>
