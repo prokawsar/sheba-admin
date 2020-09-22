@@ -4,9 +4,25 @@
   <PageTitle page="{page}"></PageTitle>
 
   <ViewScaffold {is_loading} {is_error} {error_message}>
-    <div>
-      Prescription
-    </div>
+    <DataList
+    {Model}
+    {View}
+    {entity_name}
+    {route_prefix}
+    {has_additional_buttons}
+    {search_placeholder}
+    bind:is_loading
+    bind:is_error
+    bind:error_message
+    bind:data
+    bind:meta
+    {columns}
+    {searchStringTransformer}
+    {valueTransformers}
+    {classTransformers}
+    {styleTransformers}
+    >
+    </DataList>
 
   </ViewScaffold>
 
@@ -14,7 +30,7 @@
 
 <script>
 
-  import Model from '../../../models/remedies';
+  import Model from '../../../models/histories';
   import { Icon } from '@kws3/helpers';
 
   export default {
@@ -38,7 +54,9 @@
         route_prefix: 'prescriptions/',
         has_additional_buttons: true,
         columns:{
-
+          'id':'ID',
+          'name': 'Patient Name',
+          'modified': 'Last Visited Date',
         },
         search_placeholder: '',
         page:{
@@ -66,12 +84,15 @@
           return query.join(',');
         },
         valueTransformers:{
-
+          id(v, row){
+            return row.patient.id
+          },
+          name(v, row) {
+            return row.patient.name
+          },
         },
         classTransformers:{
-          link(){
-            return 'is-icon';
-          }
+          
         },
         styleTransformers:{},
       }
