@@ -89,15 +89,28 @@
   {/if}
 
   {#if Object.keys(remedy_found).length !== 0}
-  <RemedyFound
-    bind:tracker
-    bind:remedy_found
-    {field_name}
-    {result_symptoms}
-    on:back="back()"
-    on:showSymptoms
-    on:saveHistory="saveHistory()"
-  />
+  <div class="columns">
+    <div class="column">
+      <RemedyFound
+        bind:tracker
+        bind:remedy_found
+        {field_name}
+        {result_symptoms}
+        on:back="back()"
+        on:showSymptoms
+        on:saveHistory="saveHistory()"
+      />
+    </div>
+    <div class="column">
+      <Treatment
+        bind:tracker
+        bind:remedy_found
+        {result_symptoms}
+        on:saveTreatment
+      />
+    </div>
+  </div>
+  
   <br>
   {/if}
 
@@ -184,12 +197,13 @@
   import SearchableSelect from '@kws3/searchable-select';
   import PatientAdd from './helpers/PatientAdd.html';
   import RemedyFound from './helpers/RemedyFound.html';
-
+  import Treatment from './helpers/Treatment.html';
+  
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
-      Panel, Notification, SubmitButton,
+      Panel, Notification, SubmitButton, Treatment,
       SearchableSelect, ConfirmButton, PatientAdd, RemedyFound
     },
 

@@ -1,0 +1,81 @@
+<form on:submit="saveTreatment(event)">
+  <Panel title="Select Remedy" has_toolbar={true} >
+    <div slot='toolbar'>
+      <button type="button" class="button is-warning" on:click="reset()" >
+        <span class="icon is-small"><i class="fa fa-refresh"></i></span>
+        Reset
+      </button>
+    </div>
+
+    <div class="columns">
+      <div class="column">
+        <div class="field is-grouped">
+          <div class="select is-fullwidth">
+            <select>
+          {#each Object.entries(remedy_found) as [key, value], i }
+              <option value="value">{key}</option>
+          {/each}
+            </select>
+          </div>
+          <div class="select is-fullwidth">
+            <select>
+              {#each powers as power}
+              <option value="{power}">{power}</option>
+              {/each}
+            </select>
+          </div>
+          <div class="select is-fullwidth">
+            <select>
+              {#each rules as rule}
+              <option value="{rules}">{rule}</option>
+              {/each}
+            </select>
+          </div>
+        </div>
+        <div>
+          <textarea class="textarea" readonly>{result_symptoms ? result_symptoms : '' }</textarea>
+        </div>
+
+        <div class="field">
+          <p class="control">
+            <label class="label"> &nbsp; </label>
+            <SubmitButton classes="is-primary is-pulled-right" icon="save" icon_size="small" text="Save Treatment" bind:tracker />
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </Panel>
+</form>
+
+<script>
+
+  import { Panel } from '@kws3/helpers';
+  import { SubmitButton } from '@kws3/buttons';
+
+  export default {
+    components: {
+      Panel, SubmitButton
+    },
+    data(){
+      return{
+        remedy_found: {},
+        powers: [6, 30, 200, '1m', '10m', '50m', 'cm'],
+        rules: [
+          '10-2',
+          '10-3',
+          '5-2'
+        ],
+        result_symptoms: '',
+        tracker: {}
+      }
+    },
+    methods: {
+      saveTreatment(e){
+        e.preventDefault();
+        this.fire('saveTreatment');
+
+      }
+    }
+  }
+</script>
