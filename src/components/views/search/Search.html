@@ -310,11 +310,12 @@
         let final = [], total = 0;
         for(let item in loadSymptoms){
           let one = loadSymptoms[item];
-
+          
             for(let i in one){
               if(Array.isArray(one[i])){
                 for(let ind in one[i]){
-                  final.push({ id: total++, name: one[i][ind] })
+                  let value = one[i][ind] + ' -> ' + item;
+                  final.push({ id: total++, name: value })
                 }
               }
             }
