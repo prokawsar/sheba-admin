@@ -21,6 +21,8 @@
     {valueTransformers}
     {classTransformers}
     {styleTransformers}
+    {clickableRows}
+    on:rowClick
     >
     </DataList>
 
@@ -32,7 +34,8 @@
 
   import Model from '../../../models/histories';
   import { Icon } from '@kws3/helpers';
-
+  import Router from '../../../services/router';
+  
   export default {
     components:{
       ViewScaffold: '../../helpers/ViewScaffold.html',
@@ -53,6 +56,7 @@
         entity_name: 'Prescriptions',
         route_prefix: 'prescriptions/',
         has_additional_buttons: true,
+        clickableRows: true,
         columns:{
           'id':'ID',
           'name': 'Patient Name',
@@ -60,9 +64,9 @@
         },
         search_placeholder: '',
         page:{
-          title: 'Prescription',
+          title: 'Prescriptions',
           icon: 'copy',
-          subtitle: 'All Prescription in this System'
+          subtitle: 'All Prescriptions in this System'
         },
         searchStringTransformer: (q) => {
           var qparts = q.split('~'),
@@ -97,6 +101,11 @@
         styleTransformers:{},
       }
     },
-    computed: {}
+    computed: {},
+    oncreate(){
+      this.on('rowClick', ({row}) => {
+        Router.navigate(`prescriptions/view/${row.id}`);
+      });
+    }
   }
 </script>
