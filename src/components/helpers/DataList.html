@@ -1,26 +1,39 @@
 
 {#if is_paginating}
-  <div class="is-overlay">
-    <Loader />
-  </div>
+<div class="is-overlay">
+  <Loader />
+</div>
 {/if}
 
 
 {#if has_search}
 <div class="columns search-area">
-  <div class="column">
-    <DataSearch hasSearch={show_search_box} hasFilters={show_filters} placeholder="{search_placeholder}" bind:filters="meta.filters" {q} on:search on:resetSearch {filterComponent} {filter_not_in_use_class} {filter_in_use_class} />
-  </div>
-  {#if has_additional_buttons}
-  <div class="column is-narrow">
-    <slot name="additionalButtons"></slot>
-  </div>
-  {/if}
+<div class="column">
+  <DataSearch
+    hasSearch={show_search_box}
+    hasFilters={show_filters}
+    placeholder="{search_placeholder}"
+    bind:filters="meta.filters"
+    {q}
+    on:search
+    on:resetSearch
+    {filterComponent}
+    {filter_not_in_use_class}
+    {filter_in_use_class}
+    {filter_label_map}
+  />
+</div>
+{#if has_additional_buttons}
+<div class="column is-narrow">
+  <slot name="additionalButtons"></slot>
+</div>
+{/if}
 </div>
 {/if}
 {#if meta.sort}
-  <DataSort options={meta.sort} {sort} on:sort />
+<DataSort options={meta.sort} {sort} on:sort />
 {/if}
+
 
 <ViewHOC target={targetview}
   on:*="fire('_forwardEvent', event)"
@@ -31,201 +44,202 @@
   {tileItemComponent}
   {cellComponentMap}
   {rowComponent}
+  {clickableRows}
 />
-
-
 {#if has_pagination}
   <Pagination {meta} entityName="{entity_name}" on:paginate on:setLimit />
 {/if}
 
 <script>
 
-  import Router from '../../services/router.js';
-  import {Loader, createHOC} from '@kws3/helpers';
-  import {GridView, TileView, DataSearch, Pagination} from '@kws3/datagrid';
-  import DataSort from './DataSort.html';
+import Router from '../../services/router.js';
+import {Loader, createHOC} from '@kws3/helpers';
+import {GridView, TileView, DataSearch, Pagination} from '@kws3/datagrid';
+import DataSort from './DataSort.html';
 
-  export default {
-    components:{
-      ViewHOC: createHOC(),
-      Loader, DataSearch, Pagination,
-      DataSort
-    },
-    data(){
-      return {
-        _GridView: GridView, _TileView: TileView,
-        customView: null,
-        iteration_key:'id',
-        Router:null,
-        Model: null,
-        View:null,
-        route_prefix: '',
-        sort_param_index: 2,
-        q_param_index: 1,
-        offset_param_index: 0,
-        limit:20,
-        entity_name: 'entries',
-        view_type: 'grid',
-        tileItemComponent: null,
-        rowComponent: null,
-        filterComponent: null,
-        has_search: true,
-        show_search_box: true,
-        show_filters: true,
-        search_placeholder: 'Search',
-        has_pagination: true,
-        has_additional_buttons: false,
-        filter_in_use_class:'is-in-use',
-        filter_not_in_use_class:'is-not-in-use',
-        is_striped: true,
-        per_row: 3,
-        is_loading: true,
-        is_error: false,
-        error_message:'',
-        is_paginating: false,
-        sort:'',
-        q:'',
-        meta:{},
-        data:[],
-        response: [],
-        columns:{},
-        searchStringTransformer: (q) => '',
-        reponseTransformer: (d) =>  d,
-        requestTransformer: (Model, opts) => Model.getAll(opts),
-        valueTransformers:{},
-        classTransformers:{},
-        styleTransformers:{},
-        visibilityMap:{},
-        cellComponentMap:{},
+export default {
+  components:{
+    ViewHOC: createHOC(),
+    Loader, DataSearch, Pagination,
+    DataSort
+  },
+  data(){
+    return {
+      _GridView: GridView, _TileView: TileView,
+      customView: null,
+      iteration_key:'id',
+      Router:null,
+      Model: null,
+      View:null,
+      route_prefix: '',
+      sort_param_index: 2,
+      q_param_index: 1,
+      offset_param_index: 0,
+      limit:20,
+      entity_name: 'entries',
+      view_type: 'grid',
+      tileItemComponent: null,
+      rowComponent: null,
+      filterComponent: null,
+      has_search: true,
+      show_search_box: true,
+      show_filters: true,
+      search_placeholder: 'Search',
+      has_pagination: true,
+      has_additional_buttons: false,
+      filter_in_use_class:'is-in-use',
+      filter_not_in_use_class:'is-not-in-use',
+      filter_label_map:{},
+      is_striped: true,
+      per_row: 3,
+      is_loading: true,
+      is_error: false,
+      error_message:'',
+      is_paginating: false,
+      sort:'',
+      q:'',
+      meta:{},
+      data:[],
+      response: [],
+      columns:{},
+      searchStringTransformer: (q) => '',
+      responseTransformer: (d) =>  d,
+      requestTransformer: (Model, opts) => Model.getAll(opts),
+      valueTransformers:{},
+      classTransformers:{},
+      styleTransformers:{},
+      visibilityMap:{},
+      cellComponentMap:{},
+      clickableRows: false,
+    }
+  },
+  computed:{
+    has_transition({ $settings, transition }){
+      if(typeof transition != 'undefined'){
+        return transition;
+      }else{
+        return $settings.transition;
       }
     },
-    computed:{
-      has_transition({ $settings, transition }){
-        if(typeof transition != 'undefined'){
-          return transition;
-        }else{
-          return $settings.transition;
-        }
-      },
-      targetview({view_type, customView, _TileView, _GridView}){
-        var target = customView;
-        if(view_type == 'tile'){
-          target = _TileView;
-        }
-        else if(view_type == 'grid'){
-          target = _GridView;
-        }
-        return target;
-      },
+    targetview({view_type, customView, _TileView, _GridView}){
+      var target = customView;
+      if(view_type == 'tile'){
+        target = _TileView;
+      }
+      else if(view_type == 'grid'){
+        target = _GridView;
+      }
+      return target;
     },
-    oncreate(){
-      this.on('_forwardEvent', (e) => {
-        this.fire(e.name, e.event);
+  },
+  oncreate(){
+    this.on('_forwardEvent', (e) => {
+      this.fire(e.name, e.event);
+    });
+
+    this.init();
+  },
+  methods:{
+    init(){
+      this.setCurrentQuery();
+
+      this.on('setLimit', (payload) => {
+        this.set({limit: payload.newLimit});
+        if(payload.currentPage > 0){
+          this.fire('paginate', {offset: 0});
+        }else{
+          this.getAll();
+        }
       });
 
-      this.init();
+      this.on('sort', (payload) => {
+        let { route_prefix, q } = this.get();
+        q = q.replace('%', '');
+
+        //we have clear data here otherwise items will not reorder due to svelte's keyed-list rendering
+        this.set({data: []})
+
+        this.getRouter().navigate(route_prefix + '0/' + q + '/' + payload);
+      });
+
+      this.on('paginate', (payload) => {
+        let { route_prefix, q, sort } = this.get();
+        q = q.replace('%', '');
+        this.getRouter().navigate(route_prefix + payload['offset'] + '/' + q + '/' + sort);
+      });
+
+      this.on('search', (q) => {
+        if(q != ''){
+          let { route_prefix, sort } = this.get();
+          q = q.replace('%', '');
+          this.getRouter().navigate(route_prefix + '0/' + q + '/' + sort);
+        }
+      });
+      this.on('resetSearch', () => {
+        this.getRouter().navigate(this.get().route_prefix);
+      });
+
+      this.store.on('state', ({ changed, current, previous }) => {
+        var { nav }  = current;
+        if (nav.activeView == this.get().View) {
+          this.setCurrentQuery();
+          this.getAll();
+        }
+      }, { init: false });
+
+      this.getAll();
     },
-    methods:{
-      init(){
-        this.setCurrentQuery();
+    getRouter(){
+      return Router || this.get().Router;
+    },
+    setCurrentQuery(){
+      var { nav } = this.store.get(),
+      {q_param_index, sort_param_index} = this.get(),
+      q_number = q_param_index || 1,
+      sort_number = sort_param_index || 2;
+      this.set({ q: nav && nav.params[q_number] || '', sort: nav && nav.params[sort_number] || '' });
+    },
+    getOpts(){
+      var { nav }  = this.store.get(),
+      {limit, searchStringTransformer, q_param_index, offset_param_index, sort_param_index} = this.get(),
+      q = ( nav && nav.params && nav.params[q_param_index]) ? nav.params[q_param_index] : '',
+      offset = (nav && nav.params && nav.params[offset_param_index]) ? nav.params[offset_param_index] : 0,
+      sort = (nav && nav.params && nav.params[sort_param_index]) ? nav.params[sort_param_index] : '',
+      opts = {offset, limit, q: searchStringTransformer(q), sort};
 
-        this.on('setLimit', (payload) => {
-          this.set({limit: payload.newLimit});
-          if(payload.currentPage > 0){
-            this.fire('paginate', {offset: 0});
-          }else{
-            this.getAll();
-          }
+      return opts;
+    },
+    getAll(){
+      var opts = this.getOpts();
+
+      this.set({is_paginating: true});
+
+      let { responseTransformer, requestTransformer, Model } = this.get();
+
+      requestTransformer(Model, opts)
+      .then((r) => {
+        this.set({
+          meta: r._meta,
+          data: responseTransformer(r.response),
+          response: r.response,
+          is_paginating: false,
+          is_loading:false,
+          is_error: false
         });
-
-        this.on('sort', (payload) => {
-          let { route_prefix, q } = this.get();
-          q = q.replace('%', '');
-
-          //we have clear data here otherwise items will not reorder due to svelte's keyed-list rendering
-          this.set({data: []})
-
-          this.getRouter().navigate(route_prefix + '0/' + q + '/' + payload);
+      })
+      .catch((r) => {
+        var user_message = '';
+        if (typeof r.response != 'undefined' && typeof r.response.records != 'undefined'){
+            user_message = r.response.records.userMessage;
+        }
+        this.set({
+          is_error: true,
+          error_message: user_message,
+          is_paginating: false,
+          is_loading:false
         });
-
-        this.on('paginate', (payload) => {
-          let { route_prefix, q, sort } = this.get();
-          q = q.replace('%', '');
-          this.getRouter().navigate(route_prefix + payload['offset'] + '/' + q + '/' + sort);
-        });
-
-        this.on('search', (q) => {
-          if(q != ''){
-            let { route_prefix, sort } = this.get();
-            q = q.replace('%', '');
-            this.getRouter().navigate(route_prefix + '0/' + q + '/' + sort);
-          }
-        });
-        this.on('resetSearch', () => {
-          this.getRouter().navigate(this.get().route_prefix);
-        });
-
-        this.store.on('state', ({ changed, current, previous }) => {
-          var { nav }  = current;
-          if (nav.activeView == this.get().View) {
-            this.setCurrentQuery();
-            this.getAll();
-          }
-        }, { init: false });
-
-        this.getAll();
-      },
-      getRouter(){
-        return Router || this.get().Router;
-      },
-      setCurrentQuery(){
-        var { nav } = this.store.get(),
-        {q_param_index, sort_param_index} = this.get(),
-        q_number = q_param_index || 1,
-        sort_number = sort_param_index || 2;
-        this.set({ q: nav && nav.params[q_number] || '', sort: nav && nav.params[sort_number] || '' });
-      },
-      getOpts(){
-        var { nav }  = this.store.get(),
-        {limit, searchStringTransformer, q_param_index, offset_param_index, sort_param_index} = this.get(),
-        q = ( nav && nav.params && nav.params[q_param_index]) ? nav.params[q_param_index] : '',
-        offset = (nav && nav.params && nav.params[offset_param_index]) ? nav.params[offset_param_index] : 0,
-        sort = (nav && nav.params && nav.params[sort_param_index]) ? nav.params[sort_param_index] : '',
-        opts = {offset, limit, q: searchStringTransformer(q), sort};
-
-        return opts;
-      },
-      getAll(){
-        var opts = this.getOpts();
-
-        this.set({is_paginating: true});
-
-        let { reponseTransformer, requestTransformer, Model } = this.get();
-
-        requestTransformer(Model, opts)
-        .then((r) => {
-          this.set({
-            meta: r._meta,
-            data: reponseTransformer(r.response),
-            response: r.response,
-            is_paginating: false,
-            is_loading:false,
-            is_error: false
-          });
-        })
-        .catch((r) => {
-          var user_message = '';
-          if (typeof r.response != 'undefined' && typeof r.response.records != 'undefined'){
-              user_message = r.response.records.userMessage;
-          }
-          this.set({
-            is_error: true,
-            error_message: user_message,
-            is_paginating: false,
-            is_loading:false
-          });
-        });
-      }
+      });
     }
   }
+}
 </script>
