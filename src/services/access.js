@@ -19,6 +19,7 @@ var Access = function(){
     'Dashboard'           : {icon:'dashboard', url:''},
     'Users'               : {icon:'vcard-o', url:'users'},
     'Profile'             : {visible: false },
+    'Settings'            : {icon: 'cogs', url: 'settings'},    
     'Remedies'            : {icon: 'medkit', url: 'remedies'},
     'Patients'            : {icon: 'users', url: 'patients'},
     'Search'              : {icon: 'search', url: 'search'},
@@ -29,7 +30,7 @@ var Access = function(){
   allowedSections  = {};
 
   allowedMap[ROLE.CONTEXT_ADMIN] = [
-    'Dashboard', 'Profile', 'Remedies', 'Patients', 'History', 'Search', 'Prescriptions', 'Users',
+    'Dashboard', 'Profile', 'Remedies', 'Patients', 'History', 'Search', 'Prescriptions', 'Users', 'Settings'
   ];
   allowedMap[ROLE.CONTEXT_USER] = [
     'Dashboard', 'Profile'
