@@ -43,6 +43,16 @@
             {#if !data.patient}
             <label class="subtitle is-size-5 has-text-warning"> Selection patient is mendatory for saving Treatment ! </label>
             {/if}
+            <!-- <ConfirmButton
+            text="Save Treatment"
+            color="primary"
+            classes="is-pulled-right"
+            icon="save"
+            icon_only="{false}"
+            bind:disabled
+            on:do="saveTreatment(e)"
+          /> -->
+        
             <SubmitButton bind:disabled classes="is-primary is-pulled-right" icon="save" icon_size="small" text="Save Treatment" bind:tracker />
           </p>
         </div>
@@ -55,11 +65,11 @@
 <script>
 
   import { Panel } from '@kws3/helpers';
-  import { SubmitButton } from '@kws3/buttons';
+  import { SubmitButton, ConfirmButton } from '@kws3/buttons';
 
   export default {
     components: {
-      Panel, SubmitButton
+      Panel, SubmitButton, ConfirmButton
     },
     data(){
       return{
