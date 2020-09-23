@@ -336,7 +336,11 @@
         }
 
       });
-
+      
+      this.on('saveTreatment', treatment => {
+        console.log(treatment)  
+      });
+      
       this.on('addPatient', patient => {
         let {data} = this.get();
         data.patient = patient;
