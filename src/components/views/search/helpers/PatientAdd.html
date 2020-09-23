@@ -3,6 +3,13 @@
     <div slot='toolbar'>
       <div class="field">
         {#if data.patient}
+        <button type="button" on:click="fire('changePatient')" class="button is-text " >
+          <span class="icon is-small">
+             <i class="fa fa-pencil"></i>
+         </span> 
+         <span>Change patient</span>
+        </button>
+        
         <span class="tag is-success">Patient Added</span>
         {:else}
         <div class="control">
@@ -52,7 +59,7 @@
       </Panel>
     {:else}
 
-     <PatientDetails bind:data="data.patient" on:changePatient />
+     <PatientDetails data={data.patient} />
      
       
     {/if}
