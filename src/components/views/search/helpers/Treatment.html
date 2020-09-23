@@ -42,7 +42,7 @@
             {#if !data.patient}
             <label class="subtitle is-size-5 has-text-warning"> Selection patient is mendatory for saving Treatment ! </label>
             {/if}
-            <SubmitButton classes="is-primary is-pulled-right" icon="save" icon_size="small" text="Save Treatment" bind:tracker />
+            <SubmitButton bind:disabled classes="is-primary is-pulled-right" icon="save" icon_size="small" text="Save Treatment" bind:tracker />
           </p>
         </div>
       </div>
@@ -77,6 +77,9 @@
         result_symptoms: '',
         tracker: {}
       }
+    },
+    computed: {
+      disabled: ({data}) => !data.patient,
     },
     methods: {
       saveTreatment(e){
