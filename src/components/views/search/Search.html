@@ -103,6 +103,7 @@
     </div>
     <div class="column">
       <Treatment
+        bind:data
         bind:tracker
         bind:remedy_found
         {result_symptoms}
@@ -446,6 +447,7 @@
         //reducing null fields from payload
         for(let [key, value] of Object.entries(data)) {
           if(value && key != 'patient'){
+            console.log(value)
             _payload[key] = value.split(',')
           }
         }
