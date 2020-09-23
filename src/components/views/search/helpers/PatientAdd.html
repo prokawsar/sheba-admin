@@ -51,7 +51,10 @@
 
       </Panel>
     {:else}
-     <PatientDetails data={data.patient} />
+
+     <PatientDetails bind:data="data.patient" on:changePatient />
+     
+      
     {/if}
     {:elseif patient.patient_type == 'new'}
     <div class="columns">
@@ -139,6 +142,21 @@
         this.fire('addPatient', row);
 
       });
+      
+      this.on('changePatient', () => {
+        this.set({
+          patient: {
+            name: '',
+            age: '',
+            phone: '',
+            address: '',
+            patient_type: 'none'
+          },
+          data:{
+            patient: ''
+          }
+        })
+      })
     }
 
   }
