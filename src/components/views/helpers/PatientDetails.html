@@ -1,10 +1,4 @@
-<button type="button" on:click="reset()" class="button is-text is-small is-pulled-right" >
-  <span class="icon is-small">
-     <i class="fa fa-pencil"></i>
- </span> 
- <span>Change</span>
-</button>
- 
+
 <span class="tags has-addons is-marginless">
   <span class="tag is-small is-dark">ID</span>
   <span class="tag is-small">{data.id || ''}</span>
@@ -47,10 +41,5 @@
         }
       },
     },
-    methods: {
-      reset(){
-        this.fire('changePatient');
-      }
-    }
   }
 </script>
