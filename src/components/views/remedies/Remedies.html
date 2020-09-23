@@ -61,6 +61,7 @@
         columns:{
           // 'id':'ID',
           'name': 'Remedy Name',
+          'total_data_size': 'Data Saved Percentage',
           'singleview': '',
           'link': ''
         },
@@ -68,7 +69,7 @@
         page:{
           title: 'Remedies',
           icon: 'building-o',
-          subtitle: 'Remedies in this System'
+          subtitle: 'All Remedies in this System'
         },
         searchStringTransformer: (q) => {
           var qparts = q.split('~'),
@@ -90,6 +91,17 @@
           return query.join(',');
         },
         valueTransformers:{
+          total_data_size(v, row){
+            let percentage = parseFloat(row.total_data_size).toFixed(2) + ' %';
+            let color = (value) => {
+              value = parseFloat(value);
+              if(value < 30) return 'danger';
+              if(value < 50) return 'warning';
+              if(value < 70) return 'info';
+              if(value < 90) return 'success';
+            };
+            return `<span class='tag is-medium is-${color(percentage)}'>${percentage}</span>`;
+          },
           singleview(v, row){
             return '<a href="#remedies/singleview/'  + row.id + '"><span class="icon"><i class="fa fa-eye"></i></span></a>' ;
           },
@@ -111,6 +123,6 @@
         styleTransformers:{},
       }
     },
-    computed: {}
+    computed: {},
   }
 </script>
