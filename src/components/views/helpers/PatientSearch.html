@@ -197,15 +197,15 @@
               saved: false,
               error: false
             },
-            data: []
+            p_data: []
           });
         }
 
         Model && Model.getAll({limit: 20, offset: 0, q:_opts})
         .then((r)=>{
-
+          
           this.set({
-              data: r.response,
+              p_data: r.response,
               meta: r._meta,
               is_error: false
             });
