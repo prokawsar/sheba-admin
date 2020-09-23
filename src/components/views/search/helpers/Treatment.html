@@ -32,13 +32,16 @@
             </select>
           </div>
         </div>
-        <div>
+        
+        <div class="field">
           <textarea class="textarea" readonly>{result_symptoms ? result_symptoms : '' }</textarea>
         </div>
 
         <div class="field">
           <p class="control">
-            <label class="label"> &nbsp; </label>
+            {#if !data.patient}
+            <label class="subtitle is-size-5 has-text-warning"> Selection patient is mendatory for saving Treatment ! </label>
+            {/if}
             <SubmitButton classes="is-primary is-pulled-right" icon="save" icon_size="small" text="Save Treatment" bind:tracker />
           </p>
         </div>
