@@ -16,7 +16,10 @@ routeMap['search'] = [
 ];
 
 routeMap['prescriptions'] = [
-  { 'pattern': '/', 'view': 'Prescriptions' }
+  { 'pattern': '/', 'view': 'Prescriptions' },
+  { 'pattern': '/(\\d+)/?([^/]*)?/?([^/]*)?/?$', 'view': 'Prescriptions', 'type': 'regex' },
+  { 'pattern': '/view/(\\d+)$', 'view': 'ViewPrescription', 'type': 'regex' },
+  
 ];
 
 routeMap['users'] = [
