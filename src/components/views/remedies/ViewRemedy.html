@@ -64,7 +64,7 @@
                     <option value="">Select Type</option>
                     {#each Object.entries(data) as [key, value], i}
                       {#if !omitted_field.includes(key) }
-                        <option value="{key}">{i} - {key}</option>
+                        <option value="{key}">{key}</option>
                       {/if}
                     {/each}
                   </select>
