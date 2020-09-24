@@ -1,26 +1,164 @@
 <div class="page-content">
-  <PageTitle page="{page}">
+  <!-- <PageTitle page="{page}">
     <a class="button is-info is-pulled-right" href="#history">
       <Icon icon="long-arrow-left" size="small" />
       <span>Back to All Histories</span>
     </a>
-  </PageTitle>
+  </PageTitle> -->
 
-  <ViewScaffold {is_loading} {is_error} {error_message} class="has-fullpage-tabs has-multilevel-tabs">
+  <ViewScaffold {is_loading} {is_error} {error_message}>
 
-    <LabsTabs {tabs} bind:active_tab />
+    {#if tracker.error}
+    <Notification type="danger"> {error_message} </Notification>
+    {/if}
+    
+  {#if Object.keys(remedy_found).length === 0}
+    <form on:submit="search(event)">
+      <Panel title="Patient Symptoms" has_toolbar={true} >
 
-    <SlidingPaneSet style="height:{pane_height}px">
-      <SlidingPane active={active_tab == 'static_view'} track_height on:heightChange>
-        <ViewHistoryStatic bind:is_error bind:error_message />
-        
-      </SlidingPane>
-      
-      <SlidingPane active={active_tab == 'edit_view'} track_height on:heightChange>
-        <!-- <ViewHistoryEdit bind:is_error bind:error_message /> -->
-        
-      </SlidingPane>
-    </SlidingPaneSet>
+        <div class="columns">
+          <div class="column">
+
+            <div class="field">
+              <span class="select is-fullwidth">
+                <select class="input" bind:value="selected_symptom" >
+                  <option value="">Select Type</option>
+                  {#each Object.entries(data) as [key, value], i}
+                    {#if !omitted_field.includes(key)}
+                      <option value="{key}">{key}</option>
+                    {/if}
+                  {/each}
+                </select>
+              </span>
+            </div>
+
+            <div class="field">
+              <p class="control">
+                <label class="label" style="text-transform: capitalize;">{selected_symptom}</label>
+                <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="data[selected_symptom]" style="height: 15rem;"></textarea>
+              </p>
+            </div>
+
+          </div>
+          <div class="column">
+            <p class="title is-5">Suggestions</p>
+
+            <div class="field">
+              <p class="control">
+                <label class="label" style="text-transform: capitalize;">{selected_symptom} Symptoms in the System</label>
+                  <SearchableSelect
+                    data="{searchable_withkey[selected_symptom]}"
+                    placeholder="Choose..."
+                    bind:_name="selected_keyed_symp"
+                    searchKey="name"
+                    searchValue="id"
+                  />
+              </p>
+            </div>
+
+            <div class="field">
+              <p class="control">
+                <label class="label" style="text-transform: capitalize;">All Symptoms in the System</label>
+                  <SearchableSelect
+                    data="{searchable_symp}"
+                    placeholder="Choose..."
+                    bind:_name="selected_symp"
+                    searchKey="name"
+                    searchValue="id"
+                  />
+              </p>
+            </div>
+            <div class="field">
+              <p class="control">
+                <label class="label">&nbsp;</label>
+                <SubmitButton disabled={true} classes="is-primary is-medium is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
+              </p>
+            </div>
+          </div>
+        </div>
+      </Panel>
+    </form>
+      <br>
+  {/if}
+
+  {#if Object.keys(remedy_found).length !== 0}
+  <!-- <RemedyFound
+    bind:tracker
+    bind:remedy_found
+    {field_name}
+    {result_symptoms}
+    on:back="back()"
+    on:showSymptoms
+    on:saveHistory="saveHistory()"
+  /> -->
+  <br>
+  {/if}
+
+  <Panel title="Cases" has_toolbar={true} >
+    <div slot='toolbar'>
+      <ConfirmButton
+          text="Reset"
+          color="danger"
+          size=""
+          icon="refresh"
+          icon_only="{false}"
+          disabled="{true}"
+          on:do="reset(event)"
+          
+        />
+    </div>
+
+    <div class="columns">
+      <div class="column">
+        {#if remedies.length}
+        <div class="columns">
+          <div class="column">
+            <label class="label">With Number</label>
+            <div class="field">
+              <span class="select is-fullwidth">
+                <select class="input" bind:value="selected_symptom" >
+                  <option value="">Select Type</option>
+                  {#each filterFields as key, index }
+                      <option value="{key}">{index+1} - {key}</option>
+                  {/each}
+                </select>
+              </span>
+            </div>
+
+          </div>
+          <div class="column">
+            <label class="label">Without Number</label>
+            <div class="field">
+              <span class="select is-fullwidth">
+                <select class="input" bind:value="selected_symptom" >
+                  <option value="">Select Type</option>
+                  {#each filterFields as key, index }
+                      <option value="{key}">{key}</option>
+                  {/each}
+                </select>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="columns">
+          <div class="column">
+            <div class="buttons">
+              {#each filterFields as key }
+                  <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize; margin-left: .6rem; margin-bottom: .6rem;">
+                    {#if data[key] }
+                      <span class="icon is-small"><i class="fa fa-check"></i></span>
+                    {/if}
+                    <span>{key}</span>
+                  </button>
+              {/each}
+              </div>
+          </div>
+        </div>
+        {/if}
+      </div>
+    </div>
+  </Panel>
 
   </ViewScaffold>
 </div>
@@ -31,25 +169,19 @@
 
   import {Icon, Notification, Panel, Message} from '@kws3/helpers';
   import { SubmitButton, ConfirmButton } from '@kws3/buttons';
-  import {SlidingPaneSet, SlidingPane} from '@kws3/sliding-panes';
-  
+
   import Router from '../../../services/router';
   import SearchableSelect from '@kws3/searchable-select';
   import SearchResult from '../search/helpers/SearchResult.html';
   import RemedyFound from '../search/helpers/RemedyFound.html';
-  import LabsTabs from '../helpers/Tabs.html';
-  import ViewHistoryStatic from './ViewHistoryStatic.html';
-  import ViewHistoryEdit from './ViewHistoryEdit.html';
-  
-  
+
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
       Notification, Message, SearchableSelect, SubmitButton, ConfirmButton,
-      Icon, Panel, SearchResult, RemedyFound, LabsTabs,
-      ViewHistoryStatic, ViewHistoryEdit,
-      SlidingPaneSet, SlidingPane,
+      Icon, Panel, SearchResult, RemedyFound
+
     },
     data() {
       return {
@@ -76,11 +208,6 @@
           icon: 'building-o',
           icon_badge: 'pencil'
         },
-        active_tab: 'static_view',
-        tabs: [
-          {icon: 'info-circle', name: 'static_view', title: 'Static'},
-          {icon: 'pencil', name: 'edit_view', title: 'Edit Case History'},
-        ],
       }
     },
     computed: {
@@ -149,10 +276,6 @@
       },
     },
     oncreate() {
-      this.on('heightChange', ({height}) => {
-        this.set({pane_height: height})
-      });
-      
       var { entityId } = this.get();
 
       this.on('state', ({ changed, current, previous }) => {
@@ -165,6 +288,7 @@
       });
 
       this.load();
+      
       this.loadRemedies();
     },
     methods: {
