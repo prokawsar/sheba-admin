@@ -74,13 +74,13 @@
               <div class="field">
                 <p class="control">
                   <label class="label">Symptoms about <span style="text-transform: capitalize;">{selected_symptom} </span></label>
-                  <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="data[selected_symptom]" rows='10'></textarea>
+                  <textarea class="textarea" ref:input_field placeholder="{selected_symptom}..." bind:value="data[selected_symptom]" name="{selected_symptom}" rows='10'></textarea>
                 </p>
               </div>
               <div class="field">
                 <p class="control">
                   <label class="label">&nbsp;</label>
-                  <SubmitButton classes="is-primary is-pulled-right" icon="save" icon_size="small" text="Update Remedy" bind:tracker />
+                  <SubmitButton classes="is-primary is-medium is-pulled-right" icon="save" icon_size="small" text="Update Remedy" bind:tracker />
                 </p>
               </div>
             </div>
@@ -159,6 +159,8 @@
     },
     methods: {
       select_symptom(key){
+        let {input_field} = this.refs;
+        input_field.focus();
         this.set({ selected_symptom: key })
       },
       load() {
