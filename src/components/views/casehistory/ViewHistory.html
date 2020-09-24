@@ -12,13 +12,13 @@
 
     <SlidingPaneSet style="height:{pane_height}px">
       <SlidingPane active={active_tab == 'static_view'} track_height on:heightChange>
-        <ViewHistoryStatic bind:is_error bind:error_message />
-        
+        <!-- <ViewHistoryStatic bind:is_error bind:error_message /> -->
+        Static
       </SlidingPane>
       
       <SlidingPane active={active_tab == 'edit_view'} track_height on:heightChange>
         <!-- <ViewHistoryEdit bind:is_error bind:error_message /> -->
-        
+        Edit        
       </SlidingPane>
     </SlidingPaneSet>
 
@@ -26,28 +26,19 @@
 </div>
 
 <script>
-  import Model from '../../../models/histories';
-  import Remedies from '../../../models/remedies';
-
   import {Icon, Notification, Panel, Message} from '@kws3/helpers';
   import { SubmitButton, ConfirmButton } from '@kws3/buttons';
-  import {SlidingPaneSet, SlidingPane} from '@kws3/sliding-panes';
-  
-  import Router from '../../../services/router';
-  import SearchableSelect from '@kws3/searchable-select';
-  import SearchResult from '../search/helpers/SearchResult.html';
-  import RemedyFound from '../search/helpers/RemedyFound.html';
+  import {SlidingPaneSet, SlidingPane} from '@kws3/sliding-panes'; 
   import LabsTabs from '../helpers/Tabs.html';
   import ViewHistoryStatic from './ViewHistoryStatic.html';
   import ViewHistoryEdit from './ViewHistoryEdit.html';
-  
   
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
-      Notification, Message, SearchableSelect, SubmitButton, ConfirmButton,
-      Icon, Panel, SearchResult, RemedyFound, LabsTabs,
+      Notification, Message, SubmitButton, ConfirmButton,
+      Icon, Panel, LabsTabs,
       ViewHistoryStatic, ViewHistoryEdit,
       SlidingPaneSet, SlidingPane,
     },
@@ -56,15 +47,8 @@
         is_loading: false,
         is_error: false,
         error_message: '',
-        selected_symptom: '',
-        selected_symp: '',
-        selected_keyed_symp: '',
-        result_symptoms: '',
-        remedies: {},
         data: {},
         meta: {},
-        remedy_found: {},
-        omitted_field: [ 'id', 'name', 'created', 'modified', 'deleted', 'patient', 'treatments'],
         tracker: {
           saving: false,
           saved: false,
@@ -85,68 +69,6 @@
     },
     computed: {
       entityId: ({ $nav }) => $nav && $nav.params[0],
-      filterFields: ({remedies, omitted_field}) => {
-        
-        let last = ['built', 'constitution', 'diathesis', 'miasm', 'temperament', 'temperature_and_weather',
-        'thermal_sensitivity', 'sensation', 'tendency_take_cold', 'desires', 'aversions', 'birth_history_milestones',
-        'tissues', 'stages_and_states', 'attacks_and_side', 'ailments_from', 'affections', 'clinical', 'modalities',
-        'mental_state_and_disorders', 'appearance_and_behavior', 'attention_and_concentration', 'expression',
-        'consciousness', 'mood_and_affect', 'memory', 'speech', 'thoughts_and_ideas', 'perception', 'intelligence',
-        'judgment', 'fear_and_live_alone', 'boring', 'peaceful', 'anger', 'hobby', 'habit', 'addiction', 'nutrition',
-        'anaemia', 'cyanosis', 'dehydration', 'jaundice', 'pulse', 'breathing', 'peculiar_rare_symptoms'
-        ];
-
-        let filtered = [];
-        if(remedies.length){
-          for(let [key, value] of Object.entries(remedies[0])) {
-            if( !last.includes(key) && !omitted_field.includes(key)){
-              filtered.push(key)
-            }
-          }
-          filtered.push(...last)
-          return filtered
-        }
-      },
-      loadSymptoms: ({remedies}) => {
-        let symptoms = {}
-        let _symp = []
-
-        for(let i in remedies){
-          Object.entries(remedies[i]).forEach(([key, value]) => {
-          _symp[key] = []
-          })
-          break;
-        }
-        for(let item in remedies){
-          let single = remedies[item];
-
-          Object.entries(single).forEach(([key, value]) => {
-            if(value){
-              if(typeof value == 'string'){
-                _symp[key].push(value.split(','))
-              }
-              symptoms[key] = (symptoms[key] ? symptoms[key] : '') + ', ' + value;
-            }
-          })
-        }
-        return _symp
-      },
-      searchable_withkey({loadSymptoms}){
-        let final = [], total = 0;
-
-        Object.entries(loadSymptoms).forEach(([key, value]) => {
-          let one = loadSymptoms[key];
-            final[key] = [];
-            for(let i in one){
-              if(Array.isArray(one[i])){
-                for(let ind in one[i]){
-                  final[key].push({ id: total++, name: one[i][ind] })
-                }
-              }
-            }
-          })
-        return final
-      },
     },
     oncreate() {
       this.on('heightChange', ({height}) => {
@@ -156,105 +78,11 @@
       var { entityId } = this.get();
 
       this.on('state', ({ changed, current, previous }) => {
-        if (changed['$nav']) {
-          var { $nav } = current;
-          if ($nav.activeView == '_COMPONENT_') {
-            this.load();
-          }
-        }
+        console.log(current)
       });
 
-      this.load();
-      this.loadRemedies();
     },
     methods: {
-      
-      select_symptom(key){
-        this.set({ selected_symptom: key })
-      },
-      load() {
-        var { entityId } = this.get();
-
-        this.set({
-          is_loading: true,
-          is_error: false
-        });
-
-        Model && Model.getOne(entityId)
-        .then((r) => {
-          console.log(r)
-          this.set({
-            is_loading: false,
-            meta: r._meta,
-            data: r.response
-          });
-
-        })
-        .catch((r) => {
-          var user_message = '';
-          if (typeof r != 'undefined' && typeof r.response != 'undefined' && typeof r.response.records != 'undefined') {
-            user_message = r.response.records.userMessage;
-          }
-          this.set({
-            'is_error': true,
-            'is_loading': false,
-            'error_message': user_message
-          });
-        });
-      },
-      loadRemedies(){
-        Remedies.getAll({limit:1000})
-        .then( (r) => {
-          this.set({ remedies: r.response })
-        })
-        .catch( (r) => {
-          console.log(r)
-        })
-      },
-      save() {
-        var {data, entityId, tracker} = this.get();
-
-        this.set({
-          tracker: {
-            saving: true,
-            saved: false,
-            error: false
-          }
-        });
-
-        Model.save(entityId, data)
-        .then(r => {
-          this.set({
-            data: r.response,
-            tracker: {
-              saving: false,
-              saved: true,
-              error: false
-            }
-          });
-
-          setTimeout(() => {
-            tracker.saved = false;
-            this.set({tracker});
-          }, 1500);
-        })
-        .catch(r => {
-          console.log(r)
-          this.set({error_message: 'There was an error updating premise'});
-
-          this.set({
-            tracker: {
-              saving: false,
-              saved: false,
-              error: true
-            }
-          });
-
-          setTimeout(() => {
-            this.set({tracker: {error: false}});
-          }, 1500);
-        });
-      }
     }
   }
 </script>
