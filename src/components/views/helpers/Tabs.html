@@ -1,0 +1,59 @@
+<PageTabBar {getTotalSpace} {getAvailableSpace} type="boxed" alignment="centered">
+  {#each tabs as tab}
+    <li class={(tab.name == active_tab) ? 'is-active ' : ''}>
+      <a href={tab.link ? tab.link : 'javascript:void(0)'} on:click="set({active_tab: tab.name})">
+        <Icon size="small" icon={tab.icon} />
+        <span>{tab.title}</span>
+      </a>
+    </li>
+  {/each}
+</PageTabBar>
+
+<script>
+  import { Icon } from '@kws3/helpers';
+  import PageTabBar from '../../helpers/PageTabBar.html';
+
+  export default {
+    components: {
+      Icon,
+      PageTabBar
+    },
+    computed: {
+      tabs : ({ link, tabs, id, is_detailed_route }) => {
+        if(link) 
+        {
+          tabs.forEach(e => {
+            if(e.default_route) {
+              e.link = e.is_detailed_route ? `javascript:void(0)` : `${link}/${id}/${e.default_route}`;
+            } else {
+              e.link = e.default_route ? `javascript:void(0)` : `${link}/${id}/${e.name}`;
+            }
+          });
+          return tabs;
+        }
+        return tabs;
+      },
+      is_detailed_route: ({ $nav }) => {
+        console.log($nav)
+        if ($nav && typeof $nav.params[1] != 'undefined') {
+          return $nav.params[1];
+        }
+        return false;
+      },
+    },
+    data() {
+      return {
+        getTotalSpace(tabbar) {
+          var totalSpace = tabbar.children[0].clientWidth;
+          return totalSpace;
+        },
+        getAvailableSpace(tabbar, totalSpace) {
+          var availableSpace = tabbar.clientWidth;
+          return availableSpace;
+        },
+        tab_list: {},
+        active_tab: 'details'
+      }
+    }
+  }
+</script>
