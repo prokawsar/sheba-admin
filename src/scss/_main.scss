@@ -381,6 +381,36 @@ html, body{
     .inner-content{
       padding:2rem;
     }
+    &.has-fullpage-tabs{
+      position: relative;
+      background: $background;
+      margin-top:3rem;
+      &.has-multilevel-tabs{
+        margin-top:4rem;
+      }
+      .tabbar {
+        padding: 0 2rem 0 0;
+        margin: -4.2rem -2rem 2rem 0;
+        .tabs{
+          & > ul{
+            li{
+              a{
+                border-color:transparent;
+              }
+              &.is-active > a{
+                border-color:$tabs-border-bottom-color;
+                background-color: $background;
+                color:findColorInvert($background);
+                opacity:1;
+              }
+              &.more-link.is-active > a{
+                background: $background;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   .search-area{
