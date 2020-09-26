@@ -70,7 +70,22 @@
                   </select>
                 </span>
               </div>
-
+              
+              {#if is_reference }
+              <div class="field">
+                <p class="control">
+                  <label class="label" style="text-transform: capitalize;">Select {selected_symptom}</label>
+                    <SearchableSelect
+                      data="{book_references}"
+                      placeholder="Choose..."
+                      bind:_name="selected_keyed_symp"
+                      searchKey="name"
+                      searchValue="id"
+                    />
+                </p>
+              </div>
+              {/if}
+              
               <div class="field">
                 <p class="control">
                   <label class="label">Symptoms about <span style="text-transform: capitalize;">{selected_symptom} </span></label>
@@ -104,13 +119,14 @@
   import Model from '../../../models/remedies';
   import {Icon, Notification, Panel, Message} from '@kws3/helpers';
   import { SubmitButton } from '@kws3/buttons';
-
+  import SearchableSelect from '@kws3/searchable-select';
+  
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
       Notification, SubmitButton,
-      Icon, Panel,
+      Icon, Panel, SearchableSelect
 
     },
     data() {
@@ -122,6 +138,11 @@
         data: {},
         meta: {},
         omitted_field: [ 'id', 'name', 'created', 'modified', 'deleted', 'patient', 'treatments'],
+        book_references: [
+          {name: 'Condensed M.M C. Hering', id: 'Condensed M.M C. Hering'},
+          {name: 'Textbook of M.M A. Lippe', id: 'Textbook of M.M A. Lippe' },
+          {name: 'M.M Pura S. Hahnemann', id: 'M.M Pura S. Hahnemann' }
+        ],
         tracker: {
           saving: false,
           saved: false,
@@ -137,16 +158,18 @@
     },
     computed: {
       entityId: ({ $nav }) => $nav && $nav.params[0],
+      is_reference: ({selected_symptom}) => selected_symptom == 'book_references',
     },
     oncreate() {
       var { entityId } = this.get();
 
       this.on('state', ({ changed, current, previous }) => {
-        if (changed['$nav']) {
-          var { $nav } = current;
-          if ($nav.activeView == '_COMPONENT_') {
-            this.load();
-          }
+        let {data, selected_symptom} = this.get()
+
+        if(current.selected_keyed_symp != previous.selected_keyed_symp){
+          // got it selected symptom
+          data[selected_symptom] =  data[selected_symptom] ? data[selected_symptom]  + ', ' + current.selected_keyed_symp : current.selected_keyed_symp;
+          this.set({data})
         }
       });
 
