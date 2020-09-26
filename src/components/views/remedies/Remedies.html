@@ -102,6 +102,16 @@
             let color = (value) => {
               value = parseFloat(value);
               let color_code = '', color_range = 0;
+              let color_ratio = {
+                0: '#e01409',
+                1: '#e06609',
+                2: '#e0a009',
+                3: '#D6FA50',
+                4: '#CBD89D',
+                5: '#04ba83',
+                6: '#63d40d',
+                7: '#07ba3d',
+              }
               
               if(value < 10) {color_code = '#e01409'; color_range = 10}
               else if(value < 20) {color_code = '#e06609'; color_range = 20}
