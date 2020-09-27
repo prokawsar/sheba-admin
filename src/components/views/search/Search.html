@@ -89,7 +89,8 @@
   {#if Object.keys(remedy_found).length !== 0}
   <div class="columns">
     <div class="column">
-      <RemedyFound
+      <RemedyFound    
+        bind:data
         bind:tracker
         bind:remedy_found
         {field_name}
@@ -112,8 +113,16 @@
   
   <br>
   {/if}
-
-
+  
+  {#if has_searched && !data.patient}
+    <div class="columns is-centered">
+      <label class="subtitle is-size-5 has-text-warning is-centered"> Selection patient is mendatory for saving Case History or Treatment ! </label>
+      
+    </div>
+  {/if}
+  
+  {#if !has_searched}
+ 
   <Panel title="Cases" has_toolbar={true} >
     <div slot='toolbar'>
       <ConfirmButton
@@ -181,7 +190,7 @@
     </div>
 
   </Panel>
-
+  {/if}
   </ViewScaffold>
 </div>
 
@@ -242,6 +251,7 @@
       }
     },
     computed: {
+      has_searched: ({remedy_found}) => Object.keys(remedy_found).length,
       user_role: ({ $user }) => $user && $user.role,
       filterFields: ({remedies, omitted_field}) => {
 
