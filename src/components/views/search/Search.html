@@ -17,7 +17,7 @@
 
     <PatientAdd bind:patient on:addPatient bind:data />
     <br>
-  {#if Object.keys(remedy_found).length === 0}
+  {#if !has_searched}
     <form on:submit="search(event)">
       <Panel title="Patient Symptoms" has_toolbar={true} >
 
@@ -86,7 +86,7 @@
       <br>
   {/if}
 
-  {#if Object.keys(remedy_found).length !== 0}
+  {#if has_searched}
   <div class="columns">
     <div class="column">
       <RemedyFound    
