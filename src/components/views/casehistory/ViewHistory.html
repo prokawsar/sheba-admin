@@ -16,7 +16,7 @@
         Static
       </SlidingPane>
       
-      <SlidingPane active={active_tab == 'edit_view'} track_height on:heightChange>
+      <SlidingPane active={false} track_height on:heightChange>
         <!-- <ViewHistoryEdit bind:is_error bind:error_message /> -->
         Edit        
       </SlidingPane>
@@ -47,6 +47,7 @@
         is_loading: false,
         is_error: false,
         error_message: '',
+        pane_height: 500,
         data: {},
         meta: {},
         tracker: {
