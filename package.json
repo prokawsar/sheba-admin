@@ -2,7 +2,6 @@
   "name": "sheba-homoeo-admin",
   "version": "1.0.0",
   "dependencies": {
-    "@kws3/sliding-panes": "^0.2.1",
     "bulma": "0.6.2",
     "grapnel": "~0.6.3",
     "microevent": "git://github.com/ekhaled/microevent.js.git",
@@ -19,6 +18,7 @@
     "@kws3/helpers": "^0.4.1",
     "@kws3/masked-input": "0.0.5",
     "@kws3/searchable-select": "^0.1.4",
+    "@kws3/sliding-panes": "^0.2.2",
     "@kws3/timepicker": "^0.1.0",
     "@kws3/transitions": "^1.0.0",
     "apexcharts": "^2.2.2",
