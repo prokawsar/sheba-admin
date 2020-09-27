@@ -32,10 +32,15 @@
               {/each}
             </select>
           </div>
+          <div class="field is-fullwidth">
+            <button class="button is-info" type="button" on:click="addRemedy()" disabled={disable_add}>Add</button>
+          </div>
         </div>
         
         <div class="field">
-          <textarea class="textarea" readonly>{result_symptoms ? result_symptoms : '' }</textarea>
+          {#each selected_remedies as {remedy, power, rule}}
+            <p>{remedy} - {power} - {rule}</p>
+          {/each}
         </div>
 
         <div class="field">
@@ -74,7 +79,7 @@
     data(){
       return{
         remedy_found: {},
-        powers: [6, 30, 200, '1m', '10m', '50m', 'cm'],
+        powers: ['1x', '3x', 6, 30, 200, '1m', '10m', '50m', 'cm'],
         rules: [
           '10-2',
           '10-3',
@@ -83,14 +88,16 @@
         treatment: {
           remedy: '',
           power: 200,
-          rule: '' 
+          rule: '10-2' 
         },
+        selected_remedies: [],
         result_symptoms: '',
         tracker: {}
       }
     },
     computed: {
       disabled: ({data}) => !data.patient,
+      disable_add: ({treatment}) => !treatment.remedy,
     },
     methods: {
       saveTreatment(e){
@@ -99,6 +106,15 @@
         
         this.fire('saveTreatment', treatment);
 
+      },
+      addRemedy(){
+        let {selected_remedies, treatment} = this.get();
+        
+        if(treatment.remedy){
+          selected_remedies.push(Object.assign({}, treatment));
+          this.set({selected_remedies})        
+        }
+        
       }
     }
   }
