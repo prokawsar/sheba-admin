@@ -10,7 +10,7 @@
     <div class="columns">
       <div class="column">
         <div class="field is-grouped">
-          <div class="select is-fullwidth">
+          <div class="select is-fullwidth {treatment.remedy == '' ? 'is-danger': ''}">
             <select bind:value="treatment.remedy" required>
             <option value="">Select...</option>          
             {#each Object.entries(remedy_found) as [key, value], i }
@@ -96,15 +96,15 @@
       }
     },
     computed: {
-      disabled: ({data}) => !data.patient,
+      disabled: ({data, selected_remedies}) => !data.patient || selected_remedies.length == 0,
       disable_add: ({treatment}) => !treatment.remedy,
     },
     methods: {
       saveTreatment(e){
         e.preventDefault();
-        let {treatment} = this.get();
+        let {selected_remedies} = this.get();
         
-        this.fire('saveTreatment', treatment);
+        this.fire('saveTreatment', selected_remedies);
 
       },
       addRemedy(){
@@ -115,6 +115,9 @@
           this.set({selected_remedies})        
         }
         
+      },
+      reset(){
+        this.set({selected_remedies: [] })
       }
     }
   }
