@@ -21,6 +21,7 @@
     {valueTransformers}
     {classTransformers}
     {styleTransformers}
+    {requestTransformer}
     {clickableRows}
     on:rowClick
     >
@@ -101,7 +102,10 @@
         styleTransformers:{},
       }
     },
-    computed: {},
+    computed: {
+      requestTransformer: ({ data }) => (model, opts) => model.getAll(opts, '/case_histories/with_treatments'),
+   
+    },
     oncreate(){
       this.on('rowClick', ({row}) => {
         Router.navigate(`prescriptions/view/${row.id}`);
