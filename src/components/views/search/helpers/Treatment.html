@@ -38,9 +38,30 @@
         </div>
         
         <div class="field">
-          {#each selected_remedies as {remedy, power, rule}}
-            <p>{remedy} - {power} - {rule}</p>
-          {/each}
+          <table class="table has-background-warning-light">
+            <tr>
+              <th>Remedy name</th>
+              <th>Power</th>
+              <th>Taking Rule</th>
+              <th>Quantity</th>
+              <th></th>
+              <th></th>
+            </tr>
+            {#each selected_remedies as {remedy, power, rule}}
+              <tr>
+                <td>{remedy}</td>
+                <td>{power}</td>
+                <td>{rule}</td>
+                <td></td>
+                <td></td>
+                <td>
+                  <span class="icon has-text-danger is-pulled-right" style="cursor:pointer" data-tooltip="Remove" on:click="deleteItem(i)"><i class="fa fa-trash"></i></span>
+                </td>
+              </tr>
+            {/each}
+            
+          </table>
+          
         </div>
 
         <div class="field">
@@ -119,7 +140,12 @@
       },
       reset(){
         this.set({selected_remedies: [] })
-      }
+      },
+      deleteItem(i) {
+        let { selected_remedies } = this.get();
+        selected_remedies.splice(i,1)
+        this.set({selected_remedies});
+      },
     }
   }
 </script>
