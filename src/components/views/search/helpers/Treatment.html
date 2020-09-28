@@ -51,7 +51,7 @@
             </select>
           </div>
           <div class="select is-fullwidth">
-            <select bind:value="treatment.rule">
+            <select bind:value="treatment.taking_rule">
               {#each rules as rule}
               <option value="{rule}">{rule}</option>
               {/each}
@@ -75,11 +75,11 @@
             <th></th>
             <th></th>
           </tr>
-          {#each selected_remedies as {remedy, power, rule}, i}
+          {#each selected_remedies as {remedy, power, taking_rule}, i}
             <tr>
               <td>{remedy}</td>
               <td>{power}</td>
-              <td>{rule}</td>
+              <td>{taking_rule}</td>
               <td></td>
               <td></td>
               <td>
@@ -136,7 +136,7 @@
         treatment: {
           remedy: '',
           power: 200,
-          rule: '10-2' 
+          taking_rule: '10-2' 
         },
         selected_remedies: [],
         remedy_names: [],
