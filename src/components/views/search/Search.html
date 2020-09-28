@@ -452,11 +452,29 @@
       },
       saveTreatment(treatments){
         let {data} = this.get();
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
         
         TreatmentModel.createWithCase({data: treatments, case: data})
         .then( (r) => {
-          console.log(r.response)  
-          Router.navigate('search');
+          this.set({
+            tracker: {
+              saving: false,
+              saved: true,
+              error: false
+            }
+          });
+
+          setTimeout( () => {
+            this.set({ tracker: { saved: false } });
+            this.reset()
+          }, 1500);
+          
         })
         .catch( (r) => {
           console.log(r)
