@@ -71,7 +71,8 @@
   import SearchableSelect from '@kws3/searchable-select';
   import PatientDetails from '../helpers/PatientDetails.html';
   import Timeline from '../helpers/Timeline.html';
-  
+  import niceDate from '../../../utils/niceDate.js';
+
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
@@ -79,6 +80,9 @@
       Notification, Message, SearchableSelect, SubmitButton, ConfirmButton,
       Icon, Panel, PatientDetails, Timeline
 
+    },
+    helpers: {
+      niceDate,
     },
     data() {
       return {
@@ -136,7 +140,8 @@
           let values = data.treatments;
           // this gives an object with dates as keys
           const groups = values.reduce((groups, remedy) => {
-            const date = remedy.created;
+            const date = niceDate(remedy.created);
+  
             if (!groups[date]) {
               groups[date] = [];
             }
