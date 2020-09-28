@@ -1,0 +1,99 @@
+
+<div>
+  {#if history != null && typeof history.length != 'undefined' && history.length > 0}
+    <ul class="timeline">
+      {#each history as item}
+        <li>
+          <span class="description"><strong>{item.date}</strong></span>
+          <span class="description">
+            
+            <table class="table has-background-warning-light">
+              <tr style="font-size: 17px;">
+                <td>Remedy name</td>
+                <td>Power</td>
+                <td>Taking Rule</td>
+                <td>Quantity</td>
+                <td></td>
+              </tr>
+              {#each item.remedies as {remedy, power, taking_rule}, i}
+                <tr>
+                  <td>{remedy}</td>
+                  <td>{power}</td>
+                  <td>{taking_rule}</td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              {/each}
+            </table>
+            
+            <br>
+          </span>
+        </li>
+      {/each}
+    </ul>
+    {#if hasMoreItems}
+    <div class="columns">
+      <div class="column">
+        <hr>
+        <button class="button is-info is-small is-fullwidth" type="button" on:click="showAll()"><Icon icon="chevron-down" /> <span>Show <strong>{history.length - visible}</strong> more items</span></button>
+      </div>
+    </div>
+    {/if}
+  {/if}
+</div>
+
+<script>
+
+import { Icon, Panel } from '@kws3/helpers';
+import fuzzysearch from 'fuzzysearch';
+import {nl2br} from '../../../utils/templateHelpers.js';
+
+export default {
+  components:{
+    Icon, Panel
+  },
+  data(){
+    return {
+      history: [],
+      visible: 5,
+      showAll: false,
+      filter: '',
+    }
+  },
+  helpers:{
+    nl2br
+  },
+  computed:{
+    // _history({history, visible, showAll, filter, has_filter}){
+    //   var _history = (history || []).slice();
+    //   if(has_filter)
+    //   {
+    //     _history = _history.filter(item =>{
+    //       if(fuzzysearch(filter, item.description.toLowerCase()))
+    //       {
+    //         return item;
+    //       }
+    //     });
+    //   }
+    //   return ((!showAll && !has_filter) && (_history.length > (visible + 1))) ? _history.slice(0, visible) : _history;
+    // },
+    // hasMoreItems({history, visible, showAll, has_filter}){
+    //   return (((!showAll && !has_filter) && (history.length - (visible + 1))) > 0);
+    // },
+    // has_filter: ({filter}) => filter && filter.trim() != ''
+  },
+  oncreate(){
+    console.log(this.get())
+    this.on('resetSearch', () => {
+      this.set({
+        filter: ''
+      });
+    });
+  },
+  methods:{
+    showAll(){
+      this.set({showAll: true});
+    }
+  }
+}
+</script>
