@@ -1361,13 +1361,22 @@ div[draggable=true]{
 
 /* ---------------------------- */
 /* ---- ToolTip  ---- */
-$kws-tt-background-color   : $grey-darker;
-$kws-tt-foreground-color   : $text;
+// $kws-tt-background-color   : $grey-darker;
+// $kws-tt-foreground-color   : $text;
+// $kws-tt-arrow-size         : 8px;
+// $kws-tt-vertical-shift     : 12px;
+// $kws-tt-tooltip-padding    : 0.5rem;
+// $kws-tt-roundness          : 3px; // 0 || border-radius
+// $kws-tt-shadow             : 0 5px 15px -5px rgba(0, 0, 0, .65); // 0 || box-shadow
+
+/* ---- ToolTip  ---- */
+$kws-tt-background-color   : $scheme-invert-ter;
+$kws-tt-foreground-color   : $scheme-main;
 $kws-tt-arrow-size         : 8px;
-$kws-tt-vertical-shift     : 12px;
 $kws-tt-tooltip-padding    : 0.5rem;
 $kws-tt-roundness          : 3px; // 0 || border-radius
-$kws-tt-shadow             : 0 5px 15px -5px rgba(0, 0, 0, .65); // 0 || box-shadow
+$kws-tt-shadow             : 0 5px 15px -5px rgba(0, 0, 0, .65);
+$kws-tt-vertical-shift     : 12px;
 
 [data-tooltip] {
 
