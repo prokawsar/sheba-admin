@@ -102,6 +102,7 @@
     </div>
     <div class="column">
       <Treatment
+        bind:remedy_names
         bind:data
         bind:tracker
         bind:remedy_found
@@ -228,6 +229,7 @@
         remedies: {},
         data: {},
         remedy_found: {},
+        remedy_names: [],
         omitted_field: [ 'id', 'name', 'created', 'modified', 'deleted', 'patient', 'treatments', 'book_references', 'total_data_size'],
         patient: {
           name: '',
@@ -275,10 +277,19 @@
           return filtered
         }
       },
+      remedy_names: ({remedies}) => {
+        let _names= [];
+        
+        for(let item in remedies){
+          let single = remedies[item];
+          _names.push(single.name);
+        }
+        return _names;
+      },
       loadSymptoms: ({remedies}) => {
-        let symptoms = {}
-        let _symp = []
-
+        let symptoms = {}, _symp = [];
+        // let _symp = []
+        
         for(let i in remedies){
           Object.entries(remedies[i]).forEach(([key, value]) => {
           _symp[key] = []

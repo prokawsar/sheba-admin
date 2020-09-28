@@ -6,17 +6,42 @@
         Reset
       </button>
     </div>
-
+    
+    <div class="columns">
+      <div class="column">
+        <div class="control">
+          <label class="radio">
+            <input type="radio" name="" bind:group="remedy_type" value="suggested">
+            Suggested remedy
+          </label>
+          <label class="radio">
+            <input type="radio" name="" bind:group="remedy_type" value="all">
+            All remedy
+          </label>
+        </div>
+      </div>  
+    </div>
+    
     <div class="columns">
       <div class="column">
         <div class="field is-grouped">
           <div class="select is-fullwidth {treatment.remedy == '' && !selected_remedies.length ? 'is-danger': ''}">
-            <select bind:value="treatment.remedy">
-            <option value="">Select...</option>          
-            {#each Object.entries(remedy_found) as [key, value], i }
-              <option value="{key}">{key}</option>
-            {/each}
-            </select>
+            {#if remedy_type == 'suggested'}
+              <select bind:value="treatment.remedy">
+                <option value="">Select...</option>          
+                {#each Object.entries(remedy_found) as [key, value], i }
+                  <option value="{key}">{key}</option>
+                {/each}
+              </select>
+            {/if}
+            {#if remedy_type == 'all'}
+              <select bind:value="treatment.remedy">
+                <option value="">Select...</option>          
+                {#each remedy_names as key, i }
+                  <option value="{key}">{key}</option>
+                {/each}
+              </select>
+            {/if}
           </div>
           <div class="select is-fullwidth">
             <select bind:value="treatment.power">
@@ -37,53 +62,55 @@
           </div>
         </div>
         
-        <div class="field">
-          <table class="table has-background-warning-light">
-            <tr>
-              <th>Remedy name</th>
-              <th>Power</th>
-              <th>Taking Rule</th>
-              <th>Quantity</th>
-              <th></th>
-              <th></th>
-            </tr>
-            {#each selected_remedies as {remedy, power, rule}, i}
-              <tr>
-                <td>{remedy}</td>
-                <td>{power}</td>
-                <td>{rule}</td>
-                <td></td>
-                <td></td>
-                <td>
-                  <span class="icon has-text-danger is-pulled-right" style="cursor:pointer" data-tooltip="Remove" on:click="deleteItem(i)"><i class="fa fa-trash"></i></span>
-                </td>
-              </tr>
-            {/each}
-          </table>
-        </div>
-
-        <div class="field">
-          <p class="control">
-            
-            <label class="subtitle is-size-6 has-text-grey" style="line-height: 2rem;"> By saving treatment, whole case will be saved </label>
-            
-            <!-- <ConfirmButton
-            text="Save Treatment"
-            color="primary"
-            classes="is-pulled-right"
-            icon="save"
-            icon_only="{false}"
-            bind:disabled
-            on:do="saveTreatment(e)"
-          /> -->
-        
-            <SubmitButton bind:disabled classes="is-primary is-pulled-right" icon="save" icon_size="small" text="Save Treatment" bind:tracker />
-          </p>
-        </div>
-        
       </div>
-
     </div>
+    <div class="columns">
+      <div class="column">
+        <table class="table has-background-warning-light">
+          <tr>
+            <th>Remedy name</th>
+            <th>Power</th>
+            <th>Taking Rule</th>
+            <th>Quantity</th>
+            <th></th>
+            <th></th>
+          </tr>
+          {#each selected_remedies as {remedy, power, rule}, i}
+            <tr>
+              <td>{remedy}</td>
+              <td>{power}</td>
+              <td>{rule}</td>
+              <td></td>
+              <td></td>
+              <td>
+                <span class="icon has-text-danger is-pulled-right" style="cursor:pointer" data-tooltip="Remove" on:click="deleteItem(i)"><i class="fa fa-trash"></i></span>
+              </td>
+            </tr>
+          {/each}
+        </table>
+      </div>
+    </div>
+      
+      
+    <div class="field">
+      <p class="control">
+        
+        <label class="subtitle is-size-6 has-text-grey" style="line-height: 2rem;"> By saving treatment, whole case will be saved </label>
+        
+        <!-- <ConfirmButton
+        text="Save Treatment"
+        color="primary"
+        classes="is-pulled-right"
+        icon="save"
+        icon_only="{false}"
+        bind:disabled
+        on:do="saveTreatment(e)"
+      /> -->
+    
+        <SubmitButton bind:disabled classes="is-primary is-pulled-right" icon="save" icon_size="small" text="Save Treatment" bind:tracker />
+      </p>
+    </div>
+      
   </Panel>
 </form>
 
@@ -105,6 +132,7 @@
           '10-3',
           '5-2'
         ],
+        remedy_type: 'suggested',
         treatment: {
           remedy: '',
           power: 200,
