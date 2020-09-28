@@ -28,30 +28,20 @@
             <div class="column">        
               <p class="title is-5">Current Remedy
                 <span class="is-pulled-right">
-                  <button class="button is-primary" type="button">Add More</button>
+                  <button class="button is-primary" type="button" on:click="set({add_remedy: !add_remedy})">{add_remedy ? 'Cancel' : 'Add More'}</button>
                 </span>
               </p>
-
+              {#if add_remedy}
+                <AddTreatment
+                  bind:remedy_names
+                  bind:data
+                  bind:tracker
+                  prescribe={true}
+                  on:saveTreatment
+               />
+              {:else}
               <Timeline history="{treatments}" />
-
-              <!-- <table class="table has-background-warning-light">
-                <tr>
-                  <th>Remedy name</th>
-                  <th>Power</th>
-                  <th>Taking Rule</th>
-                  <th>Quantity</th>
-                  <th></th>
-                </tr>
-                {#each treatments as {remedy, power, taking_rule}, i}
-                  <tr>
-                    <td>{remedy}</td>
-                    <td>{power}</td>
-                    <td>{taking_rule}</td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                {/each}
-              </table> -->
+              {/if}
             </div>
           </div>
         
@@ -72,13 +62,14 @@
   import PatientDetails from '../helpers/PatientDetails.html';
   import Timeline from '../helpers/Timeline.html';
   import niceDate from '../../../utils/niceDate.js';
-
+  import AddTreatment from '../search/helpers/Treatment.html';
+  
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
       Notification, Message, SearchableSelect, SubmitButton, ConfirmButton,
-      Icon, Panel, PatientDetails, Timeline
+      Icon, Panel, PatientDetails, Timeline, AddTreatment,
 
     },
     helpers: {
@@ -90,14 +81,11 @@
         is_error: false,
         error_message: '',
         selected_symptom: '',
-        selected_symp: '',
-        selected_keyed_symp: '',
-        result_symptoms: '',
         remedies: {},
         data: {},
         meta: {},
-        remedy_found: {},
         omitted_field: [ 'id', 'name', 'created', 'modified', 'deleted', 'patient', 'treatments'],
+        add_remedy: false,
         tracker: {
           saving: false,
           saved: false,
@@ -160,8 +148,16 @@
           return groupArrays
         }
         return []
-      }
-      
+      },
+      remedy_names: ({remedies}) => {
+        let _names= [];
+        
+        for(let item in remedies){
+          let single = remedies[item];
+          _names.push(single.name);
+        }
+        return _names;
+      },
     },
     oncreate() {
       var { entityId } = this.get();
