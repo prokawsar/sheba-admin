@@ -23,27 +23,37 @@
         {/if}
         </div>
         <div class="column">
-          <p class="title is-5">Current Remedies</p>
+          <div class="columns">
 
-          <div class="field">
-            <p class="control">
-              <label class="label" style="text-transform: capitalize;">{selected_symptom} Symptoms in the System</label>
-                
-            </p>
-          </div>
+            <div class="column">        
+              <p class="title is-5">Current Remedy
+                <span class="is-pulled-right">
+                  <button class="button is-primary" type="button">Add More</button>
+                </span>
 
-          <div class="field">
-            <p class="control">
-              <label class="label" style="text-transform: capitalize;">All Symptoms in the System</label>
-                
-            </p>
+              </p>
+              
+              <table class="table has-background-warning-light">
+                <tr>
+                  <th>Remedy name</th>
+                  <th>Power</th>
+                  <th>Taking Rule</th>
+                  <th>Quantity</th>
+                  <th></th>
+                </tr>
+                {#each treatments as {remedy, power, taking_rule}, i}
+                  <tr>
+                    <td>{remedy}</td>
+                    <td>{power}</td>
+                    <td>{taking_rule}</td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                {/each}
+              </table>
+            </div>
           </div>
-          <div class="field">
-            <p class="control">
-              <label class="label">&nbsp;</label>
-              <SubmitButton disabled={true} classes="is-primary is-medium is-pulled-right" icon="save" icon_size="small" text="Update" bind:tracker />
-            </p>
-          </div>
+        
         </div>
       </div>
     </Panel>
@@ -119,59 +129,16 @@
           return filtered
         }
       },
-      loadSymptoms: ({remedies}) => {
-        let symptoms = {}
-        let _symp = []
-
-        for(let i in remedies){
-          Object.entries(remedies[i]).forEach(([key, value]) => {
-          _symp[key] = []
-          })
-          break;
+      treatments: ({data}) => {
+        if(data.treatments){
+          return data.treatments
         }
-        for(let item in remedies){
-          let single = remedies[item];
-
-          Object.entries(single).forEach(([key, value]) => {
-            if(value){
-              if(typeof value == 'string'){
-                _symp[key].push(value.split(','))
-              }
-              symptoms[key] = (symptoms[key] ? symptoms[key] : '') + ', ' + value;
-            }
-          })
-        }
-        return _symp
-      },
-      searchable_withkey({loadSymptoms}){
-        let final = [], total = 0;
-
-        Object.entries(loadSymptoms).forEach(([key, value]) => {
-          let one = loadSymptoms[key];
-            final[key] = [];
-            for(let i in one){
-              if(Array.isArray(one[i])){
-                for(let ind in one[i]){
-                  final[key].push({ id: total++, name: one[i][ind] })
-                }
-              }
-            }
-          })
-        return final
-      },
+        return []
+      }
+      
     },
     oncreate() {
       var { entityId } = this.get();
-
-      this.on('state', ({ changed, current, previous }) => {
-        if (changed['$nav']) {
-          var { $nav } = current;
-          if ($nav.activeView == '_COMPONENT_') {
-            this.load();
-          }
-        }
-      });
-
       this.load();
       this.loadRemedies();
     },
