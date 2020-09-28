@@ -139,6 +139,7 @@
           rule: '10-2' 
         },
         selected_remedies: [],
+        remedy_names: [],
         result_symptoms: '',
         tracker: {}
       }
@@ -151,7 +152,6 @@
       saveTreatment(e){
         e.preventDefault();
         let {selected_remedies} = this.get();
-        
         this.fire('saveTreatment', selected_remedies);
 
       },
@@ -162,7 +162,6 @@
           selected_remedies.push(Object.assign({}, treatment));
           this.set({selected_remedies})        
         }
-        
       },
       reset(){
         this.set({selected_remedies: [] })
