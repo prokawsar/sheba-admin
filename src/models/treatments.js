@@ -5,4 +5,9 @@ export default new class extends baseModel {
     super();
     this.apiEndpoint = '/treatments';
   }
+  
+  createWithCase(payload) {
+    return this.create(payload, this.apiEndpoint + '/create_with_case');
+  }
+
 };
