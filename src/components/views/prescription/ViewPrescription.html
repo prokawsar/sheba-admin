@@ -30,10 +30,11 @@
                 <span class="is-pulled-right">
                   <button class="button is-primary" type="button">Add More</button>
                 </span>
-
               </p>
-              
-              <table class="table has-background-warning-light">
+
+              <Timeline history="{treatments}" />
+
+              <!-- <table class="table has-background-warning-light">
                 <tr>
                   <th>Remedy name</th>
                   <th>Power</th>
@@ -50,7 +51,7 @@
                     <td></td>
                   </tr>
                 {/each}
-              </table>
+              </table> -->
             </div>
           </div>
         
@@ -69,13 +70,14 @@
   import Router from '../../../services/router';
   import SearchableSelect from '@kws3/searchable-select';
   import PatientDetails from '../helpers/PatientDetails.html';
- 
+  import Timeline from '../helpers/Timeline.html';
+  
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
       Notification, Message, SearchableSelect, SubmitButton, ConfirmButton,
-      Icon, Panel, PatientDetails,
+      Icon, Panel, PatientDetails, Timeline
 
     },
     data() {
@@ -131,7 +133,26 @@
       },
       treatments: ({data}) => {
         if(data.treatments){
-          return data.treatments
+          let values = data.treatments;
+          // this gives an object with dates as keys
+          const groups = values.reduce((groups, remedy) => {
+            const date = remedy.created;
+            if (!groups[date]) {
+              groups[date] = [];
+            }
+            groups[date].push(remedy);
+            return groups;
+          }, {});
+
+          // Edit: to add it in the array format instead
+          const groupArrays = Object.keys(groups).map((date) => {
+            return {
+              date,
+              remedies: groups[date]
+            };
+          });
+
+          return groupArrays
         }
         return []
       }
