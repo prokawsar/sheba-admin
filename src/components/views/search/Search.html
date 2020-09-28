@@ -453,7 +453,7 @@
       saveTreatment(treatments){
         let {data} = this.get();
         
-        TreatmentModel.create({data: treatments, case: data})
+        TreatmentModel.createWithCase({data: treatments, case: data})
         .then( (r) => {
           console.log(r.response)  
           Router.navigate('search');
