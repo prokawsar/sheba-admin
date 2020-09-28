@@ -198,7 +198,8 @@
 <script>
   import Model from '../../../models/histories';
   import Remedies from '../../../models/remedies';
-
+  import TreatmentModel from '../../../models/treatments';
+  
   import Router from '../../../services/router';
   import { Icon, Notification, Panel } from '@kws3/helpers';
   import { SubmitButton, ConfirmButton } from '@kws3/buttons';
@@ -356,8 +357,8 @@
 
       });
       
-      this.on('saveTreatment', treatment => {
-        console.log(treatment)  
+      this.on('saveTreatment', treatments => {
+        this.saveTreatment(treatments)
       });
       
       this.on('addPatient', patient => {
@@ -448,6 +449,20 @@
           }, 3000);
 
         });
+      },
+      saveTreatment(treatments){
+        let {data} = this.get();
+        
+        TreatmentModel.create({data: treatments, case: data})
+        .then( (r) => {
+          console.log(r.response)  
+          Router.navigate('search');
+        })
+        .catch( (r) => {
+          console.log(r)
+        })
+        
+        
       },
       search(e) {
         e.preventDefault();
