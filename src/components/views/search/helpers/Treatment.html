@@ -47,7 +47,7 @@
               <th></th>
               <th></th>
             </tr>
-            {#each selected_remedies as {remedy, power, rule}}
+            {#each selected_remedies as {remedy, power, rule}, i}
               <tr>
                 <td>{remedy}</td>
                 <td>{power}</td>
@@ -59,9 +59,7 @@
                 </td>
               </tr>
             {/each}
-            
           </table>
-          
         </div>
 
         <div class="field">
