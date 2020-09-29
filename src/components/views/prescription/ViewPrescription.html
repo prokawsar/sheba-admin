@@ -35,12 +35,13 @@
                 <AddTreatment
                   bind:remedy_names
                   bind:data
+                  bind:selected_remedies
                   bind:tracker
                   prescribe={true}
                   on:saveTreatment
                />
               {:else}
-              <Timeline history="{treatments}" />
+              <Timeline history="{prescribe_history}" on:editPrescription />
               {/if}
             </div>
           </div>
@@ -124,7 +125,7 @@
           return filtered
         }
       },
-      treatments: ({data}) => {
+      prescribe_history: ({data}) => {
         if(data.treatments){
           let values = data.treatments;
           // this gives an object with dates as keys
@@ -166,6 +167,14 @@
       this.on('saveTreatment', treatments => {
         this.savePrescription(treatments);
       });
+      
+      this.on('editPrescription', remedies => {
+        console.log(remedies)
+        this.set({
+          add_remedy: true,
+          selected_remedies: remedies
+        })
+      })
       
       this.load();
       this.loadRemedies();
