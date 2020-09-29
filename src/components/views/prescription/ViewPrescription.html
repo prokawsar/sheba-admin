@@ -55,6 +55,7 @@
 <script>
   import Model from '../../../models/histories';
   import Remedies from '../../../models/remedies';
+  import TreatmentModel from '../../../models/treatments';
   import {Icon, Notification, Panel, Message} from '@kws3/helpers';
   import { SubmitButton, ConfirmButton } from '@kws3/buttons';
   import Router from '../../../services/router';
@@ -161,6 +162,11 @@
     },
     oncreate() {
       var { entityId } = this.get();
+      
+      this.on('saveTreatment', treatments => {
+        this.savePrescription(treatments);
+      });
+      
       this.load();
       this.loadRemedies();
     },
@@ -208,9 +214,17 @@
           console.log(r)
         })
       },
-      save() {
-        var {data, entityId, tracker} = this.get();
-
+      savePrescription(treatments) {
+        let {data, entityId} = this.get();
+        
+        let structured = {
+          prescribe: {
+            id: entityId,
+            patient: data.patient.id
+          },
+          data: treatments
+        };
+        
         this.set({
           tracker: {
             saving: true,
@@ -218,11 +232,10 @@
             error: false
           }
         });
-
-        Model.save(entityId, data)
-        .then(r => {
+        
+        TreatmentModel.createWithCase(structured)
+        .then( (r) => {
           this.set({
-            data: r.response,
             tracker: {
               saving: false,
               saved: true,
@@ -230,27 +243,15 @@
             }
           });
 
-          setTimeout(() => {
-            tracker.saved = false;
-            this.set({tracker});
+          setTimeout( () => {
+            this.set({ tracker: { saved: false }, add_remedy: false });
+            
           }, 1500);
+          
         })
-        .catch(r => {
+        .catch( (r) => {
           console.log(r)
-          this.set({error_message: 'There was an error updating premise'});
-
-          this.set({
-            tracker: {
-              saving: false,
-              saved: false,
-              error: true
-            }
-          });
-
-          setTimeout(() => {
-            this.set({tracker: {error: false}});
-          }, 1500);
-        });
+        })
       }
     }
   }
