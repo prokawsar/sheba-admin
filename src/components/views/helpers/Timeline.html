@@ -4,17 +4,18 @@
     <ul class="timeline">
       {#each history as item}
         <li>
-          <span class="description"><strong>{item.date}</strong></span>
+          <span class="description"><strong>{item.date}</strong>
+            {#if item.date == niceDate(today) }
+            <span class="is-pulled-right">
+              <button type="button" class="button is-small" on:click="edit(item.remedies)" >
+                <span class="icon is-small"><i class="fa fa-pencil"></i></span>
+              </button>
+            </span>
+            {/if}
+          </span>
           <span class="description">
             
             <table class="table has-background-warning-light">
-              <!-- <tr style="font-size: 17px;">
-                <td>Remedy name</td>
-                <td>Power</td>
-                <td>Taking Rule</td>
-                <td>Quantity</td>
-                <td></td>
-              </tr> -->
               {#each item.remedies as {remedy, power, taking_rule}, i}
                 <tr>
                   <td>{remedy}</td>
@@ -47,7 +48,8 @@
 import { Icon, Panel } from '@kws3/helpers';
 import fuzzysearch from 'fuzzysearch';
 import {nl2br} from '../../../utils/templateHelpers.js';
-
+import niceDate from '../../../utils/niceDate.js';
+ 
 export default {
   components:{
     Icon, Panel
@@ -61,9 +63,11 @@ export default {
     }
   },
   helpers:{
-    nl2br
+    nl2br,
+    niceDate
   },
   computed:{
+    today: ({history}) => new Date(),
     // _history({history, visible, showAll, filter, has_filter}){
     //   var _history = (history || []).slice();
     //   if(has_filter)
@@ -93,6 +97,10 @@ export default {
   methods:{
     showAll(){
       this.set({showAll: true});
+    },
+    edit(items){
+      console.log(items)
+      this.fire('editPrescription', items)
     }
   }
 }
