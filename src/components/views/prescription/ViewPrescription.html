@@ -13,7 +13,16 @@
     {/if}
     
     <Panel title="Prescription Details" has_toolbar={true} >
-
+      <div slot='toolbar'>
+       
+        <a type="button" class="button is-gray" href="/#history/view/{entityId}" >
+          <span class="icon is-small"><i class="fa fa-eye"></i></span>
+          <span>
+            View case history            
+          </span>
+        </a>
+      </div>
+      
       <div class="columns">
         <div class="column">
         {#if data.patient}
