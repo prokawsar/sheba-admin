@@ -93,7 +93,6 @@ export default {
     // has_filter: ({filter}) => filter && filter.trim() != ''
   },
   oncreate(){
-    console.log(this.get())
     this.on('resetSearch', () => {
       this.set({
         filter: ''
@@ -105,7 +104,6 @@ export default {
       this.set({showAll: true});
     },
     edit(items){
-      console.log(items)
       this.fire('editPrescription', items)
     }
   }
