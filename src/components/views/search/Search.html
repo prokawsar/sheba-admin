@@ -22,6 +22,14 @@
       <Panel title="Patient Symptoms" has_toolbar={true} >
 
         <div class="columns">
+            <div class="column">
+              <Message title="Records" color='light'>
+                {#each Object.entries(data) as [key, value], i}
+                  <p><span class="has-text-weight-bold is-size-5">{key}</span>: {value}</p> <br>
+                {/each}
+              </Message>
+            </div>
+
           <div class="column">
 
             <div class="field">
@@ -201,7 +209,7 @@
   import TreatmentModel from '../../../models/treatments';
   
   import Router from '../../../services/router';
-  import { Icon, Notification, Panel } from '@kws3/helpers';
+  import { Icon, Notification, Panel, Message } from '@kws3/helpers';
   import { SubmitButton, ConfirmButton } from '@kws3/buttons';
   import SearchResult from './helpers/SearchResult.html';
   import SearchableSelect from '@kws3/searchable-select';
@@ -213,7 +221,7 @@
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
-      Panel, Notification, SubmitButton, Treatment,
+      Panel, Notification, SubmitButton, Treatment, Message,
       SearchableSelect, ConfirmButton, PatientAdd, RemedyFound
     },
 
