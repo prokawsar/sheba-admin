@@ -151,6 +151,12 @@
       disabled: ({data, selected_remedies}) => !data.patient || selected_remedies.length == 0,
       disable_add: ({treatment}) => !treatment.remedy,
     },
+    oncreate(){
+      let {prescribe} = this.get();
+      if(prescribe){
+        this.set({remedy_type: 'all'})
+      }
+    },
     methods: {
       saveTreatment(e){
         e.preventDefault();
