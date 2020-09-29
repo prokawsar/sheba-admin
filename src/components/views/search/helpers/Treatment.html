@@ -1,6 +1,10 @@
 <form on:submit="saveTreatment(event)">
   <Panel title="{prescribe ? ' ' : 'Select Remedy'}" has_toolbar={true} >
     <div slot='toolbar'>
+      <span class="">
+        <button class="button is-primary" type="button" on:click="set({add_remedy: false, selected_remedies: []})">Cancel</button>
+      </span>
+      
       <button type="button" class="button is-warning" on:click="reset()" >
         <span class="icon is-small"><i class="fa fa-refresh"></i></span>
         Reset

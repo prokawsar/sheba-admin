@@ -26,22 +26,23 @@
           <div class="columns">
 
             <div class="column">        
-              <p class="title is-5">Remedy History
+              <!-- <p class="title is-5">Remedy History
                 <span class="is-pulled-right">
                   <button class="button is-primary" type="button" on:click="set({add_remedy: !add_remedy})">{add_remedy ? 'Cancel' : 'Add More'}</button>
                 </span>
-              </p>
+              </p> -->
               {#if add_remedy}
                 <AddTreatment
                   bind:remedy_names
                   bind:data
                   bind:selected_remedies
                   bind:tracker
+                  bind:add_remedy
                   prescribe={true}
                   on:saveTreatment
                />
               {:else}
-              <Timeline history="{prescribe_history}" on:editPrescription />
+              <Timeline history="{prescribe_history}" on:editPrescription bind:add_remedy />
               {/if}
             </div>
           </div>
