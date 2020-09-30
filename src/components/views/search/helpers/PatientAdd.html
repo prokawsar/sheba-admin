@@ -53,7 +53,8 @@
         <PatientSearch bind:active_pane bind:meta bind:p_data size="medium">
           <h1 slot="title" class="subtitle is-4">Patient Search</h1>
         </PatientSearch>
-
+        <br>
+        
         <PatientSearchResults {active_pane} bind:data="p_data" {meta} on:rowClick on:customerCreate />
 
       </Panel>
