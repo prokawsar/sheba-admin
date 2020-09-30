@@ -16,6 +16,13 @@
 
     <div class="columns">
       <div class="column">
+        {#if data.patient}
+          <p class="title is-5">Patient Details</p>
+
+          <PatientDetails data={data.patient} />
+        {/if}
+      </div>
+      <div class="column">
         <Message title="Records" color='light'>
           {#each Object.entries(data) as [key, value], i}
             {#if value && !omitted_field.includes(key)}
@@ -40,13 +47,14 @@
   import Router from '../../../services/router';
   import SearchResult from '../search/helpers/SearchResult.html';
   import RemedyFound from '../search/helpers/RemedyFound.html';
-
+  import PatientDetails from '../helpers/PatientDetails.html';
+  
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
       Notification, Message, SubmitButton, ConfirmButton,
-      Icon, Panel, SearchResult, RemedyFound
+      Icon, Panel, SearchResult, RemedyFound, PatientDetails
 
     },
     data() {
