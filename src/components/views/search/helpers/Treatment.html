@@ -28,7 +28,7 @@
     </div>
     
     <div class="columns">
-      <div class="column">
+      <!-- <div class="column">
         <div class="field is-grouped">
           <div class="select is-fullwidth {treatment.remedy == '' && !selected_remedies.length ? 'is-danger': ''}">
             {#if remedy_type == 'suggested'}
@@ -66,9 +66,80 @@
             <button class="button is-info" type="button" on:click="addRemedy()" disabled={disable_add}>Add</button>
           </div>
         </div>
-        
+      </div> -->
+      <div class="column">
+
+        <div class="field">
+          <div class="control">
+            <label class="label">Remedy name</label>
+            <div class="select is-fullwidth {treatment.remedy == '' && !selected_remedies.length ? 'is-danger': ''}">
+              {#if remedy_type == 'suggested'}
+                <select bind:value="treatment.remedy">
+                  <option value="">Select...</option>          
+                  {#each Object.entries(remedy_found) as [key, value], i }
+                    <option value="{key}">{key}</option>
+                  {/each}
+                </select>
+              {/if}
+              {#if remedy_type == 'all'}
+                <select bind:value="treatment.remedy">
+                  <option value="">Select...</option>          
+                  {#each remedy_names as key, i }
+                    <option value="{key}">{key}</option>
+                  {/each}
+                </select>
+              {/if}
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <div class="control">
+            <label class="label">Power</label>
+            <div class="select is-fullwidth">
+              <select bind:value="treatment.power">
+                {#each powers as power}
+                <option value="{power}">{power}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="column">
+        <div class="field">
+          <div class="control">
+            <label class="label">Taking rule</label>
+            <div class="select is-fullwidth">
+              <select bind:value="treatment.taking_rule">
+                {#each rules as rule}
+                <option value="{rule}">{rule}</option>
+                {/each}
+              </select>
+            </div>  
+          </div>
+        </div>
+        <div class="field">
+          <div class="control">
+            <label class="label">Quantity</label>
+            <div class="select is-fullwidth">
+              <select bind:value="treatment.quantity">
+                {#each quantities as rule}
+                <option value="{rule}">{rule}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <div class="control">
+            <label class="label">&nbsp;</label>
+              <button class="button is-info is-pulled-right" type="button" on:click="addRemedy()" disabled={disable_add}>Add</button>
+          </div>
+        </div>
       </div>
     </div>
+    
     <div class="columns">
       <div class="column">
         <table class="table has-background-warning-light">
@@ -132,6 +203,8 @@
       return{
         remedy_found: {},
         powers: ['1x', '3x', 6, 30, 200, '1m', '10m', '50m', 'cm'],
+        quantities: ['1d', '2d', 'half ounce', '1 ounce', '4 ounce'],
+        types: ['liquid', 'pill', 'biochemic', 'mother tencture'],
         rules: [
           '10-2',
           '10-3',
