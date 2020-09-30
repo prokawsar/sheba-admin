@@ -10,17 +10,23 @@
 
     <LabsTabs {tabs} bind:active_tab />
 
-    <SlidingPaneSet style="height:{pane_height}px">
-      <SlidingPane active={active_tab == 'static_view'} track_height on:heightChange>
+    <!-- <SlidingPaneSet style="height:{pane_height}px">
+      <SlidingPane active={active_tab == 'static_view'} track_height on:heightChange> -->
         <!-- <ViewHistoryStatic bind:is_error bind:error_message /> -->
-        Static
-      </SlidingPane>
+        {#if active_tab == 'static_view'}
+          <ViewHistoryStatic bind:is_error bind:error_message />
+       
+        {/if}
+      <!-- </SlidingPane>
       
-      <SlidingPane active={false} track_height on:heightChange>
+      <SlidingPane active={false} track_height on:heightChange> -->
         <!-- <ViewHistoryEdit bind:is_error bind:error_message /> -->
-        Edit        
-      </SlidingPane>
-    </SlidingPaneSet>
+        {#if active_tab == 'edit_view'}
+          <ViewHistoryEdit bind:is_error bind:error_message />
+       
+        {/if}
+      <!-- </SlidingPane>
+    </SlidingPaneSet> -->
 
   </ViewScaffold>
 </div>
