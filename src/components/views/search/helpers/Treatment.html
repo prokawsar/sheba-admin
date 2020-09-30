@@ -92,6 +92,22 @@
             </div>
           </div>
         </div>
+
+        <div class="field">
+          <div class="control">
+            <label class="label">Type</label>
+            <div class="select is-fullwidth">
+              <select bind:value="treatment.type">
+                {#each types as rule}
+                <option value="{rule}">{rule}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        
         <div class="field">
           <div class="control">
             <label class="label">Power</label>
@@ -104,9 +120,6 @@
             </div>
           </div>
         </div>
-
-      </div>
-      <div class="column">
         <div class="field">
           <div class="control">
             <label class="label">Taking rule</label>
@@ -119,13 +132,15 @@
             </div>  
           </div>
         </div>
+      </div>
+      <div class="column">
         <div class="field">
           <div class="control">
             <label class="label">Quantity</label>
             <div class="select is-fullwidth">
               <select bind:value="treatment.quantity">
-                {#each quantities as rule}
-                <option value="{rule}">{rule}</option>
+                {#each quantities as quantity}
+                <option value="{quantity}">{quantity}</option>
                 {/each}
               </select>
             </div>
@@ -148,15 +163,16 @@
             <th>Power</th>
             <th>Taking Rule</th>
             <th>Quantity</th>
-            <th></th>
+            <th>Type</th>
             <th></th>
           </tr>
-          {#each selected_remedies as {remedy, power, taking_rule}, i}
+          {#each selected_remedies as {remedy, power, taking_rule, quantity, type}, i}
             <tr>
               <td>{remedy}</td>
               <td>{power}</td>
               <td>{taking_rule}</td>
-              <td></td>
+              <td>{quantity}</td>
+              <td>{type}</td>
               <td></td>
               <td>
                 <span class="icon has-text-danger is-pulled-right" style="cursor:pointer" data-tooltip="Remove" on:click="deleteItem(i)"><i class="fa fa-trash"></i></span>
@@ -217,7 +233,7 @@
           power: 200,
           taking_rule: '10-2',
           type: 'Liquid',
-          quantity: ''
+          quantity: '1d'
         },
         selected_remedies: [],
         remedy_names: [],
