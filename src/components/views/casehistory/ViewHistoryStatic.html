@@ -9,68 +9,20 @@
   <ViewScaffold {is_loading} {is_error} {error_message}>
 
 
-  <Panel title="Cases" has_toolbar={true} >
+  <Panel title="Patient symptoms" has_toolbar={true} >
     <div slot='toolbar'>
-      <ConfirmButton
-          text="Reset"
-          color="danger"
-          size=""
-          icon="refresh"
-          icon_only="{false}"
-          disabled="{true}"
-          on:do="reset(event)"
-          
-        />
+      
     </div>
 
     <div class="columns">
       <div class="column">
-        {#if remedies.length}
-        <div class="columns">
-          <div class="column">
-            <label class="label">With Number</label>
-            <div class="field">
-              <span class="select is-fullwidth">
-                <select class="input" bind:value="selected_symptom" >
-                  <option value="">Select Type</option>
-                  {#each filterFields as key, index }
-                      <option value="{key}">{index+1} - {key}</option>
-                  {/each}
-                </select>
-              </span>
-            </div>
-
-          </div>
-          <div class="column">
-            <label class="label">Without Number</label>
-            <div class="field">
-              <span class="select is-fullwidth">
-                <select class="input" bind:value="selected_symptom" >
-                  <option value="">Select Type</option>
-                  {#each filterFields as key, index }
-                      <option value="{key}">{key}</option>
-                  {/each}
-                </select>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns">
-          <div class="column">
-            <div class="buttons">
-              {#each filterFields as key }
-                  <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize; margin-left: .6rem; margin-bottom: .6rem;">
-                    {#if data[key] }
-                      <span class="icon is-small"><i class="fa fa-check"></i></span>
-                    {/if}
-                    <span>{key}</span>
-                  </button>
-              {/each}
-              </div>
-          </div>
-        </div>
-        {/if}
+        <Message title="Records" color='light'>
+          {#each Object.entries(data) as [key, value], i}
+            {#if value && !omitted_field.includes(key)}
+            <p><span class="has-text-weight-bold is-size-5">{key}</span>: {value}</p> <br>
+            {/if}
+          {/each}
+        </Message>
       </div>
     </div>
   </Panel>
