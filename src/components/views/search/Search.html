@@ -22,13 +22,13 @@
       <Panel title="Patient Symptoms" has_toolbar={true} >
 
         <div class="columns">
-            <div class="column">
-              <Message title="Records" color='light'>
-                {#each Object.entries(data) as [key, value], i}
-                  <p><span class="has-text-weight-bold is-size-5">{key}</span>: {value}</p> <br>
-                {/each}
-              </Message>
-            </div>
+          <div class="column">
+            <Message title="Records" color='light'>
+              {#each Object.entries(data) as [key, value], i}
+                <p><span class="has-text-weight-bold is-size-5">{key}</span>: {value}</p> <br>
+              {/each}
+            </Message>
+          </div>
 
           <div class="column">
 
@@ -132,7 +132,7 @@
   
   {#if !has_searched}
  
-  <Panel title="Cases" has_toolbar={true} >
+  <Panel title="Sections" has_toolbar={true} >
     <div slot='toolbar'>
       <ConfirmButton
           text="Reset"
