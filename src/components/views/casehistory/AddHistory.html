@@ -17,11 +17,19 @@
 
     <PatientAdd bind:patient on:addPatient bind:data />
     <br>
-  {#if Object.keys(remedy_found).length === 0}
+  {#if !has_searched }
     <form on:submit="saveHistory(event)">
       <Panel title="Patient Symptoms" has_toolbar={true} >
 
         <div class="columns">
+          <div class="column">
+            <Message title="Records" color='light'>
+              {#each Object.entries(data) as [key, value], i}
+                <p><span class="has-text-weight-bold is-size-5">{key}</span>: {value}</p> <br>
+              {/each}
+            </Message>
+          </div>
+          
           <div class="column">
 
             <div class="field">
@@ -86,7 +94,7 @@
       <br>
   {/if}
 
-  {#if Object.keys(remedy_found).length !== 0}
+  {#if has_searched }
   <RemedyFound
     bind:tracker
     bind:remedy_found
@@ -100,7 +108,7 @@
   {/if}
 
 
-  <Panel title="Cases" has_toolbar={true} >
+  <Panel title="Sections" has_toolbar={true} >
     <div slot='toolbar'>
       <ConfirmButton
           text="Reset"
@@ -176,7 +184,7 @@
   import Remedies from '../../../models/remedies';
 
   import Router from '../../../services/router';
-  import { Icon, Notification, Panel } from '@kws3/helpers';
+  import { Icon, Notification, Panel, Message } from '@kws3/helpers';
   import { SubmitButton, ConfirmButton } from '@kws3/buttons';
   import SearchableSelect from '@kws3/searchable-select';
   import PatientAdd from '../search/helpers/PatientAdd.html';
@@ -187,7 +195,7 @@
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
-      Panel, Notification, SubmitButton, PatientSearch,
+      Panel, Notification, SubmitButton, PatientSearch, Message,
       SearchableSelect, ConfirmButton, PatientAdd, RemedyFound
     },
 
@@ -228,6 +236,7 @@
     },
     computed: {
       disabled: ({data, tracker}) => tracker.saving || tracker.saved || !Object.keys(data).length,
+      has_searched: ({remedy_found}) => Object.keys(remedy_found).length,
       user_role: ({ $user }) => $user && $user.role,
       filterFields: ({remedies, omitted_field, data}) => {
 
