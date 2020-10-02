@@ -12,13 +12,22 @@
     <Notification type="danger"> {error_message} </Notification>
     {/if}
     
-  {#if Object.keys(remedy_found).length === 0}
+  {#if !has_searched}
     <form on:submit="search(event)">
       <Panel title="Patient Symptoms" has_toolbar={true} >
 
         <div class="columns">
           <div class="column">
-
+            <Message title="Records" color='light'>
+              {#each Object.entries(data) as [key, value], i}
+                {#if value && !omitted_field.includes(key)}
+                <p><span class="has-text-weight-bold is-size-5">{key}</span>: {value}</p> <br>
+                {/if}
+              {/each}
+            </Message>
+          </div>
+          
+          <div class="column">
             <div class="field">
               <span class="select is-fullwidth">
                 <select class="input" bind:value="selected_symptom" >
@@ -81,7 +90,7 @@
       <br>
   {/if}
 
-  {#if Object.keys(remedy_found).length !== 0}
+  {#if has_searched}
   <!-- <RemedyFound
     bind:tracker
     bind:remedy_found
@@ -212,6 +221,7 @@
     },
     computed: {
       entityId: ({ $nav }) => $nav && $nav.params[0],
+      has_searched: ({remedy_found}) => Object.keys(remedy_found).length,
       filterFields: ({remedies, omitted_field}) => {
         
         let last = ['built', 'constitution', 'diathesis', 'miasm', 'temperament', 'temperature_and_weather',
