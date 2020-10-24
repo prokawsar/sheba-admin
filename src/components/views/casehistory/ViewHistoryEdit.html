@@ -77,10 +77,20 @@
                   />
               </p>
             </div>
-            <div class="field">
+            <div class="field is-grouped">
               <p class="control">
                 <label class="label">&nbsp;</label>
-                <SubmitButton disabled={true} classes="is-primary is-medium is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
+                <button type="button" on:click="save()" class="button is-primary is-medium" disabled="disabled" >
+                  <span class="icon">
+                    <i class="fa fa-save"></i>
+                  </span>
+                  <span>Save only</span>
+                </button>
+                </p>
+              
+              <p class="control">
+                <label class="label">&nbsp;</label>
+                <SubmitButton bind:disabled classes="is-primary is-medium is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
               </p>
             </div>
           </div>
@@ -91,7 +101,7 @@
   {/if}
 
   {#if has_searched}
-  <!-- <RemedyFound
+  <RemedyFound
     bind:tracker
     bind:remedy_found
     {field_name}
@@ -99,7 +109,7 @@
     on:back="back()"
     on:showSymptoms
     on:saveHistory="saveHistory()"
-  /> -->
+  />
   <br>
   {/if}
 
