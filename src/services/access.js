@@ -33,7 +33,7 @@ var Access = function(){
     'Dashboard', 'Profile', 'Remedies', 'Patients', 'History', 'Search', 'Prescriptions', 'Users', 'Settings'
   ];
   allowedMap[ROLE.CONTEXT_USER] = [
-    'Dashboard', 'Profile'
+    'Dashboard', 'Profile', 'Remedies', 'Patients', 'History', 'Search', 'Prescriptions', 'Users', 'Settings'
   ];
 
 
