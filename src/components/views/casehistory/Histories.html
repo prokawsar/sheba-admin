@@ -63,7 +63,8 @@
         has_additional_buttons: true,
         clickableRows: true,
         columns:{
-          'id':'ID',
+          'id': 'ID',
+          'p_id':' Patient ID',
           'name': 'Patient Name',
           'created': 'Last Visited Date',
         },
@@ -93,7 +94,7 @@
           return query.join(',');
         },
         valueTransformers:{
-          id(v, row){
+          p_id(v, row){
             return row.patient.id
           },
           name(v, row) {
