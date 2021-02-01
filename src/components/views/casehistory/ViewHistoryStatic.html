@@ -23,13 +23,15 @@
     <div class="columns">
       <div class="column">
         {#if data.patient}
-          <p class="title is-5">Patient Details</p>
+          <Message title="Records" color='info'>
+            <p class="title is-5">Patient Details</p>
 
-          <PatientDetails data={data.patient} />
+            <PatientDetails data={data.patient} />
+          </Message>
         {/if}
       </div>
       <div class="column">
-        <Message title="Records" color='light'>
+        <Message title="Records" color='info'>
           {#each Object.entries(data) as [key, value], i}
             {#if value && !omitted_field.includes(key)}
             <p><span class="has-text-weight-bold is-size-5">{key}</span>: {value}</p> <br>
