@@ -39,7 +39,8 @@
   import Model from '../../../models/histories';
   import { Icon } from '@kws3/helpers';
   import Router from '../../../services/router';
-  
+  import niceDate from '../../../utils/niceDate.js';
+
   export default {
     components:{
       Icon,
@@ -47,6 +48,9 @@
       DataList: '../../helpers/DataList.html',
       PageTitle: '../../helpers/PageTitle.html',
 
+    },
+    helpers: {
+      niceDate
     },
     data(){
       return {
@@ -100,6 +104,9 @@
           name(v, row) {
             return row.patient.name
           },
+          created(v, row) {
+            return niceDate(row.created)
+          }
         },
         classTransformers:{
           link(){
