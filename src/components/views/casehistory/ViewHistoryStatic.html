@@ -11,7 +11,13 @@
 
   <Panel title="Patient symptoms" has_toolbar={true} >
     <div slot='toolbar'>
-      
+      <ConfirmButton
+        text="Delete History"
+        color="danger"
+        icon="trash"
+        icon_only="{false}"
+        on:do="deleteHistory(event)"
+      />
     </div>
 
     <div class="columns">
@@ -178,6 +184,21 @@
         .catch( (r) => {
           console.log(r)
         })
+      },
+      deleteHistory(comp){
+
+        comp && comp.doing();
+        
+        Model.delete(this.get().entityId)
+        .then( (r) => {
+          comp.done();
+          Router.navigate('history');
+        })
+        .catch( () => {
+          comp.error();
+        });
+          
+        
       },
       save() {
         var {data, entityId, tracker} = this.get();
