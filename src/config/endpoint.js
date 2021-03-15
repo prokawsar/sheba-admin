@@ -2,7 +2,7 @@ var url = '';
 
 switch(K_ENV){
   case K_ENV_PROD:
-    url = 'http://localhost:500/v1';
+    url = 'http://sheba-api.herokuapp.com/v1';
   break;
   case K_ENV_TEST:
     url = '';
