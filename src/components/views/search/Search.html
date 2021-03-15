@@ -75,7 +75,7 @@
                   <SearchableSelect
                     data="{searchable_symp}"
                     placeholder="Choose..."
-                    bind:_name="selected_symp"
+                    bind:_name="selected_all_symp"
                     searchKey="name"
                     searchValue="id"
                   />
@@ -232,7 +232,7 @@
         error_message: '',
         is_active_case_modal: false,
         selected_symptom: '',
-        selected_symp: '',
+        selected_all_symp: '',
         selected_keyed_symp: '',
         result_symptoms: '',
         remedies: {},
@@ -357,12 +357,17 @@
     oncreate(){
 
       this.on('state', ({ changed, current, previous }) => {
-        let {data, selected_symptom} = this.get()
+        let {data, selected_symptom, selected_all_symp} = this.get()
 
         if(current.selected_keyed_symp != previous.selected_keyed_symp){
           // got it selected symptom
           data[selected_symptom] =  data[selected_symptom] ? data[selected_symptom]  + ', ' + current.selected_keyed_symp : current.selected_keyed_symp;
           this.set({data})
+        }
+
+        if(current.selected_all_symp != previous.selected_all_symp){
+          // got it selected symptom
+          console.log(selected_all_symp);
         }
 
       });
