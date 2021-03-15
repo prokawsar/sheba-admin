@@ -328,7 +328,7 @@
             for(let i in one){
               if(Array.isArray(one[i])){
                 for(let ind in one[i]){
-                  final[key].push({ id: total++, name: one[i][ind] })
+                  final[key].push({ id: total++, name: one[i][ind].trim() })
                 }
               }
             }
@@ -345,7 +345,7 @@
                 if(Array.isArray(one[i])){
                   for(let ind in one[i]){
                     let value = one[i][ind] + ' -> ' + item;
-                    final.push({ id: total++, name: value })
+                    final.push({ id: total++, name: value.trim() })
                   }
                 }
               }
@@ -366,7 +366,6 @@
         }
 
         if(current.selected_all_symp != previous.selected_all_symp){
-          // got it selected symptom
           console.log(selected_all_symp);
         }
 
