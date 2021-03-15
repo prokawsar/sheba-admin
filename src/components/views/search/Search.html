@@ -412,8 +412,6 @@
         this.set({ selected_symptom: key })
       },
       showSymptoms(value){
-        // let fields = value.field.split(', '),
-
         this.set({ result_symptoms: value.symptoms, field_name: value.field })
       },
       saveHistory(){
@@ -517,7 +515,6 @@
         //reducing null fields from payload
         for(let [key, value] of Object.entries(data)) {
           if(value && key != 'patient'){
-            console.log(value)
             _payload[key] = value.split(',')
           }
         }
