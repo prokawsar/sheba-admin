@@ -97,7 +97,7 @@
   {#if has_searched}
   <div class="columns">
     <div class="column">
-      <RemedyFound    
+      <RemedyFound
         bind:data
         bind:tracker
         bind:remedy_found
@@ -119,19 +119,19 @@
       />
     </div>
   </div>
-  
+
   <br>
   {/if}
-  
+
   {#if has_searched && !data.patient}
     <div class="columns is-centered">
       <label class="subtitle is-size-5 has-text-warning is-centered"> Selection patient is mendatory for saving Case History or Treatment ! </label>
-      
+
     </div>
   {/if}
-  
+
   {#if !has_searched}
- 
+
   <Panel title="Sections" has_toolbar={true} >
     <div slot='toolbar'>
       <ConfirmButton
@@ -207,7 +207,7 @@
   import Model from '../../../models/histories';
   import Remedies from '../../../models/remedies';
   import TreatmentModel from '../../../models/treatments';
-  
+
   import Router from '../../../services/router';
   import { Icon, Notification, Panel, Message } from '@kws3/helpers';
   import { SubmitButton, ConfirmButton } from '@kws3/buttons';
@@ -216,7 +216,7 @@
   import PatientAdd from './helpers/PatientAdd.html';
   import RemedyFound from './helpers/RemedyFound.html';
   import Treatment from './helpers/Treatment.html';
-  
+
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
@@ -288,7 +288,7 @@
       },
       remedy_names: ({remedies}) => {
         let _names= [];
-        
+
         for(let item in remedies){
           let single = remedies[item];
           _names.push(single.name);
@@ -298,7 +298,7 @@
       loadSymptoms: ({remedies}) => {
         let symptoms = {}, _symp = [];
         // let _symp = []
-        
+
         for(let i in remedies){
           Object.entries(remedies[i]).forEach(([key, value]) => {
           _symp[key] = []
@@ -335,16 +335,18 @@
           })
         return final
       },
-      searchable_symp({loadSymptoms}){
+      searchable_symp({loadSymptoms, omitted_field}){
         let final = [], total = 0;
         for(let item in loadSymptoms){
-          let one = loadSymptoms[item];
-          
-            for(let i in one){
-              if(Array.isArray(one[i])){
-                for(let ind in one[i]){
-                  let value = one[i][ind] + ' -> ' + item;
-                  final.push({ id: total++, name: value })
+          if(!omitted_field.includes(item)){
+            let one = loadSymptoms[item];
+
+              for(let i in one){
+                if(Array.isArray(one[i])){
+                  for(let ind in one[i]){
+                    let value = one[i][ind] + ' -> ' + item;
+                    final.push({ id: total++, name: value })
+                  }
                 }
               }
             }
@@ -364,11 +366,11 @@
         }
 
       });
-      
+
       this.on('saveTreatment', treatments => {
         this.saveTreatment(treatments)
       });
-      
+
       this.on('addPatient', patient => {
         let {data} = this.get();
         data.patient = patient;
@@ -467,7 +469,7 @@
             error: false
           }
         });
-        
+
         TreatmentModel.createWithCase({data: treatments, case: data})
         .then( (r) => {
           this.set({
@@ -482,13 +484,13 @@
             this.set({ tracker: { saved: false } });
             this.reset()
           }, 1500);
-          
+
         })
         .catch( (r) => {
           console.log(r)
         })
-        
-        
+
+
       },
       search(e) {
         e.preventDefault();
@@ -539,14 +541,7 @@
                   }
                 })
               }
-              // if(remedy[key].includes(value.trim())){ // currently matching with whole value
 
-              //   if(matched_remedies[remedy['name']]){
-              //     matched_remedies[remedy['name']]++
-              //   }else{
-              //     matched_remedies[remedy['name'].trim()] = 1;
-              //   }
-              // }
             })
           })
         }
