@@ -366,8 +366,8 @@
         }
 
         if(current.selected_all_symp != previous.selected_all_symp){
-          let section = selected_all_symp.split('> ');
-          let field = section[1], value = section[0].substring(0, section[0].length - 1);
+          let section = selected_all_symp.split(' -> ');
+          let field = section[1], value = section[0];
 
           data[field] = data[field] ? data[field]  + ', ' + value : value;
           this.set({data, selected_section: field, selected_keyed_symp: value})
