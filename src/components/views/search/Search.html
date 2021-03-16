@@ -25,7 +25,9 @@
           <div class="column">
             <Message title="Records" color='light'>
               {#each Object.entries(data) as [key, value], i}
-                <p><span class="has-text-weight-bold is-size-5">{key}</span>: {value}</p> <br>
+                {#if !omitted_field.includes(key)}
+                  <p><span class="has-text-weight-bold is-size-5">{key}</span>: {value}</p> <br>
+                {/if}
               {/each}
             </Message>
           </div>
