@@ -27,71 +27,90 @@
       </div>
     </div>
 
-    {#if patient.patient_type == 'old'}
-      {#if !data.patient}
-        <Panel>
-          <PatientSearch bind:active_pane bind:meta bind:p_data size="medium">
-            <h1 slot="title" class="subtitle is-4">Patient Search</h1>
-          </PatientSearch>
-          <br>
-          <PatientSearchResults {active_pane} bind:data="p_data" {meta} on:rowClick on:customerCreate />
-
-        </Panel>
-      {:else}
-        <PatientDetails data={data.patient} />
-
-      {/if}
-    {:elseif patient.patient_type == 'new'}
     <div class="columns">
       <div class="column">
+        <h1 class="subtitle is-4">Chief Complaint</h1>
         <div class="field">
           <p class="control">
-            <label class="label">Name</label>
-            <input class="input" type="text" required bind:value="patient.name" />
+            <label class="label" style="text-transform: capitalize;">Search Here</label>
+              <SearchableSelect
+                data="{searchable_symp}"
+                placeholder="Choose..."
+                bind:_name="selected_all_symp"
+                searchKey="name"
+                searchValue="id"
+              />
           </p>
         </div>
-        <div class="field">
-          <p class="control">
-            <label class="label">Phone</label>
-            <input class="input" type="text" bind:value="patient.phone" />
-          </p>
-        </div>
-        <div class="field">
-          <div class="control">
-            <label class="label">Gender</label>
-            <label class="radio">
-              <input type="radio" bind:group="patient.gender" value="m"> Male
-            </label>
-            <label class="radio">
-              <input type="radio" bind:group="patient.gender" value="f"> Female
-            </label>
-          </div>
-        </div>
+
+        <textarea class="textarea" placeholder="CC..." bind:value="data.cc"></textarea>
       </div>
 
       <div class="column">
-        <div class="field">
-          <p class="control">
-            <label class="label">Age</label>
-            <input class="input" type="number" required bind:value="patient.age" autocomplete="off" />
-          </p>
-        </div>
-        <div class="field">
-          <p class="control">
-            <label class="label">Address</label>
-            <input class="input" type="text" bind:value="patient.address" autocomplete="off" />
-          </p>
-        </div>
-        <div class="field">
-          <p class="control">
-            <label class="label">&nbsp;</label>
-            <span class="is-size-6 has-text-warning">This patient will be saved after saving the case history !</span>
-            <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Add Patient" disabled="{data.patient}" bind:tracker />
-          </p>
-        </div>
+        {#if patient.patient_type == 'old'}
+          {#if !data.patient}
+            <PatientSearch bind:active_pane bind:meta bind:p_data size="medium">
+              <h1 slot="title" class="subtitle is-4">Patient Search</h1>
+            </PatientSearch>
+            <br>
+            <PatientSearchResults {active_pane} bind:data="p_data" {meta} on:rowClick on:customerCreate />
+          {:else}
+            <PatientDetails data={data.patient} />
+
+          {/if}
+        {:elseif patient.patient_type == 'new'}
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <p class="control">
+                  <label class="label">Name</label>
+                  <input class="input" type="text" required bind:value="patient.name" />
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">Phone</label>
+                  <input class="input" type="text" bind:value="patient.phone" />
+                </p>
+              </div>
+              <div class="field">
+                <div class="control">
+                  <label class="label">Gender</label>
+                  <label class="radio">
+                    <input type="radio" bind:group="patient.gender" value="m"> Male
+                  </label>
+                  <label class="radio">
+                    <input type="radio" bind:group="patient.gender" value="f"> Female
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="column">
+              <div class="field">
+                <p class="control">
+                  <label class="label">Age</label>
+                  <input class="input" type="number" required bind:value="patient.age" autocomplete="off" />
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">Address</label>
+                  <input class="input" type="text" bind:value="patient.address" autocomplete="off" />
+                </p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <label class="label">&nbsp;</label>
+                  <span class="is-size-6 has-text-warning">This patient will be saved after saving the case history !</span>
+                  <SubmitButton classes="is-primary is-pulled-right" icon="plus" icon_size="small" text="Add Patient" disabled="{data.patient}" bind:tracker />
+                </p>
+              </div>
+            </div>
+          </div>
+        {/if}
       </div>
     </div>
-    {/if}
 
   </Panel>
 </form>
@@ -102,16 +121,19 @@
   import PatientSearch from '../../helpers/PatientSearch.html';
   import PatientSearchResults from '../../helpers/PatientSearchResults.html';
   import PatientDetails from '../../helpers/PatientDetails.html';
+  import SearchableSelect from '@kws3/searchable-select';
 
   export default {
     components: {
-      Panel, SubmitButton, PatientSearch, PatientSearchResults , PatientDetails
+      Panel, SubmitButton, PatientSearch, PatientSearchResults , PatientDetails,
+      SearchableSelect
     },
     data(){
       return {
         patient: {},
         data: {},
         meta: {},
+        searchable_symp: []
       }
     },
     methods: {
@@ -125,6 +147,19 @@
     oncreate(){
       this.on('rowClick', ({row}) => {
         this.fire('addPatient', row);
+
+      });
+
+      this.on('state', ({ changed, current, previous }) => {
+        let {data, selected_all_symp} = this.get()
+
+        if(current.selected_all_symp != previous.selected_all_symp){
+          let section = selected_all_symp.split(' -> ');
+          let value = section[0];
+
+          data['cc'] = data['cc'] ? data['cc']  + ', ' + value : value;
+          this.set({data})
+        }
 
       });
 
