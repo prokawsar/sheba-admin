@@ -19,7 +19,6 @@
     {#if active_tab == 'patient_cc'}
       <ViewScaffold {is_loading} {is_error} {error_message}>
         <PatientAdd bind:patient on:addPatient bind:data bind:p_data bind:searchable_symp/>
-        <br>
 
       </ViewScaffold>
 
@@ -103,7 +102,7 @@
               </div>
             </Panel>
           </form>
-            <br>
+          <br>
         {/if}
 
         {#if has_searched}
@@ -131,8 +130,8 @@
               />
             </div>
           </div>
-
           <br>
+
         {/if}
 
         {#if has_searched && !data.patient}
