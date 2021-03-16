@@ -133,7 +133,14 @@
   {/if}
 
   {#if !has_searched}
-    <Panel title="Sections" has_toolbar={true} >
+    <Sections
+      bind:data
+      bind:remedies
+      bind:filterFields
+      bind:selected_section
+      on:reset="reset(event)"
+    />
+    <!-- <Panel title="Sections" has_toolbar={true} >
       <div slot='toolbar'>
         <ConfirmButton
             text="Reset"
@@ -199,7 +206,7 @@
 
       </div>
 
-    </Panel>
+    </Panel> -->
   {/if}
 
   </ViewScaffold>
@@ -218,13 +225,14 @@
   import PatientAdd from './helpers/PatientAdd.html';
   import RemedyFound from './helpers/RemedyFound.html';
   import Treatment from './helpers/Treatment.html';
+  import Sections from './helpers/Sections.html';
   import LabsTabs from '../helpers/Tabs.html';
 
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
-      Panel, Notification, SubmitButton, Treatment, Message,
+      Panel, Notification, SubmitButton, Treatment, Message, Sections,
       SearchableSelect, ConfirmButton, PatientAdd, RemedyFound, LabsTabs
     },
 
