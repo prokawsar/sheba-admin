@@ -16,132 +16,146 @@
     {/if}
     <LabsTabs {tabs} bind:active_tab />
 
-    <PatientAdd bind:patient on:addPatient bind:data bind:p_data bind:searchable_symp/>
-    <br>
-  {#if !has_searched}
-    <form on:submit="search(event)">
-      <Panel title="Patient Symptoms" has_toolbar={true} >
+    {#if active_tab == 'patient_cc'}
+      <ViewScaffold {is_loading} {is_error} {error_message}>
+        <PatientAdd bind:patient on:addPatient bind:data bind:p_data bind:searchable_symp/>
+        <br>
 
-        <div class="columns">
-          <div class="column">
-            <Message title="Records" color='light'>
-              {#each Object.entries(data) as [key, value], i}
-                {#if !omitted_field.includes(key)}
-                  <p><span class="has-text-weight-bold is-size-5">{key}</span>: {value}</p> <br>
-                {/if}
-              {/each}
-            </Message>
+      </ViewScaffold>
+
+    {/if}
+    {#if active_tab == 'case_history'}
+      <ViewScaffold {is_loading} {is_error} {error_message}>
+
+        {#if !has_searched}
+          <form on:submit="search(event)">
+            <Panel title="Patient Symptoms" has_toolbar={true} >
+
+              <div class="columns">
+                <div class="column">
+                  <Message title="Records" color='light'>
+                    {#each Object.entries(data) as [key, value], i}
+                      {#if !omitted_field.includes(key)}
+                        <p><span class="has-text-weight-bold is-size-5">{key}</span>: {value}</p> <br>
+                      {/if}
+                    {/each}
+                  </Message>
+                </div>
+
+                <div class="column">
+
+                  <div class="field">
+                    <span class="select is-fullwidth">
+                      <select class="input" bind:value="selected_section" >
+                        <option value="">Select Type</option>
+                        {#each Object.entries(data) as [key, value], i}
+                          {#if !omitted_field.includes(key)}
+                            <option value="{key}">{key}</option>
+                          {/if}
+                        {/each}
+                      </select>
+                    </span>
+                  </div>
+
+                  <div class="field">
+                    <p class="control">
+                      <label class="label" style="text-transform: capitalize;">{selected_section}</label>
+                      <textarea class="textarea" placeholder="{selected_section}..." bind:value="data[selected_section]" style="height: 15rem;"></textarea>
+                    </p>
+                  </div>
+
+                </div>
+                <div class="column">
+                  <p class="title is-5">Suggestions</p>
+
+                  <div class="field">
+                    <p class="control">
+                      <label class="label" style="text-transform: capitalize;">{selected_section} Symptoms in the System</label>
+                        <SearchableSelect
+                          data="{searchable_withkey[selected_section]}"
+                          placeholder="Choose..."
+                          bind:_name="selected_keyed_symp"
+                          searchKey="name"
+                          searchValue="id"
+                        />
+                    </p>
+                  </div>
+
+                  <div class="field">
+                    <p class="control">
+                      <label class="label" style="text-transform: capitalize;">All Symptoms in the System</label>
+                        <SearchableSelect
+                          data="{searchable_symp}"
+                          placeholder="Choose..."
+                          bind:_name="selected_all_symp"
+                          searchKey="name"
+                          searchValue="id"
+                        />
+                    </p>
+                  </div>
+                  <div class="field">
+                    <p class="control">
+                      <label class="label">&nbsp;</label>
+                      <SubmitButton classes="is-primary is-medium is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Panel>
+          </form>
+            <br>
+        {/if}
+
+        {#if has_searched}
+          <div class="columns">
+            <div class="column">
+              <RemedyFound
+                bind:data
+                bind:tracker
+                bind:remedy_found
+                {field_name}
+                {result_symptoms}
+                on:back="back()"
+                on:showSymptoms
+                on:saveHistory="saveHistory()"
+              />
+            </div>
+            <div class="column">
+              <Treatment
+                bind:remedy_names
+                bind:data
+                bind:tracker
+                bind:remedy_found
+                {result_symptoms}
+                on:saveTreatment
+              />
+            </div>
           </div>
 
-          <div class="column">
+          <br>
+        {/if}
 
-            <div class="field">
-              <span class="select is-fullwidth">
-                <select class="input" bind:value="selected_section" >
-                  <option value="">Select Type</option>
-                  {#each Object.entries(data) as [key, value], i}
-                    {#if !omitted_field.includes(key)}
-                      <option value="{key}">{key}</option>
-                    {/if}
-                  {/each}
-                </select>
-              </span>
-            </div>
-
-            <div class="field">
-              <p class="control">
-                <label class="label" style="text-transform: capitalize;">{selected_section}</label>
-                <textarea class="textarea" placeholder="{selected_section}..." bind:value="data[selected_section]" style="height: 15rem;"></textarea>
-              </p>
-            </div>
-
+        {#if has_searched && !data.patient}
+          <div class="columns is-centered">
+            <label class="subtitle is-size-5 has-text-warning is-centered"> Selection patient is mendatory for saving Case History or Treatment ! </label>
           </div>
-          <div class="column">
-            <p class="title is-5">Suggestions</p>
+        {/if}
 
-            <div class="field">
-              <p class="control">
-                <label class="label" style="text-transform: capitalize;">{selected_section} Symptoms in the System</label>
-                  <SearchableSelect
-                    data="{searchable_withkey[selected_section]}"
-                    placeholder="Choose..."
-                    bind:_name="selected_keyed_symp"
-                    searchKey="name"
-                    searchValue="id"
-                  />
-              </p>
-            </div>
+        {#if !has_searched}
+          <Sections
+            bind:data
+            bind:remedies
+            bind:filterFields
+            bind:selected_section
+            on:reset="reset(event)"
+          />
 
-            <div class="field">
-              <p class="control">
-                <label class="label" style="text-transform: capitalize;">All Symptoms in the System</label>
-                  <SearchableSelect
-                    data="{searchable_symp}"
-                    placeholder="Choose..."
-                    bind:_name="selected_all_symp"
-                    searchKey="name"
-                    searchValue="id"
-                  />
-              </p>
-            </div>
-            <div class="field">
-              <p class="control">
-                <label class="label">&nbsp;</label>
-                <SubmitButton classes="is-primary is-medium is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
-              </p>
-            </div>
-          </div>
-        </div>
-      </Panel>
-    </form>
-      <br>
-  {/if}
+        {/if}
 
-  {#if has_searched}
-  <div class="columns">
-    <div class="column">
-      <RemedyFound
-        bind:data
-        bind:tracker
-        bind:remedy_found
-        {field_name}
-        {result_symptoms}
-        on:back="back()"
-        on:showSymptoms
-        on:saveHistory="saveHistory()"
-      />
-    </div>
-    <div class="column">
-      <Treatment
-        bind:remedy_names
-        bind:data
-        bind:tracker
-        bind:remedy_found
-        {result_symptoms}
-        on:saveTreatment
-      />
-    </div>
-  </div>
 
-  <br>
-  {/if}
+      </ViewScaffold>
+    {/if}
 
-  {#if has_searched && !data.patient}
-    <div class="columns is-centered">
-      <label class="subtitle is-size-5 has-text-warning is-centered"> Selection patient is mendatory for saving Case History or Treatment ! </label>
-    </div>
-  {/if}
-
-  {#if !has_searched}
-    <Sections
-      bind:data
-      bind:remedies
-      bind:filterFields
-      bind:selected_section
-      on:reset="reset(event)"
-    />
-
-  {/if}
 
   </ViewScaffold>
 </div>
@@ -179,6 +193,7 @@
         selected_section: '',
         selected_all_symp: '',
         selected_keyed_symp: '',
+        active_tab: 'patient_cc',
         result_symptoms: '',
         remedies: {},
         data: {},
