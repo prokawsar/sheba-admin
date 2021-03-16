@@ -6,10 +6,10 @@
         <button type="button" on:click="fire('changePatient')" class="button is-text " >
           <span class="icon is-small">
              <i class="fa fa-pencil"></i>
-         </span> 
+         </span>
          <span>Change patient</span>
         </button>
-        
+
         <span class="tag is-success">Patient Added</span>
         {:else}
         <div class="control">
@@ -28,42 +28,19 @@
     </div>
 
     {#if patient.patient_type == 'old'}
-    <!-- <div class="columns">
-      <div class="column">
-        <div class="field has-addons has-addons-centered">
-          <p class="control is-expanded">
-            <input class="input" type="text" bind:value="patient.name" placeholder="Name..." />
-          </p>
+      {#if !data.patient}
+        <Panel>
+          <PatientSearch bind:active_pane bind:meta bind:p_data size="medium">
+            <h1 slot="title" class="subtitle is-4">Patient Search</h1>
+          </PatientSearch>
+          <br>
+          <PatientSearchResults {active_pane} bind:data="p_data" {meta} on:rowClick on:customerCreate />
 
-          <p class="control is-expanded">
-            <input class="input" type="text" bind:value="patient.phone" placeholder="Phone..." />
-          </p>
+        </Panel>
+      {:else}
+        <PatientDetails data={data.patient} />
 
-          <p class="control">
-            <button type="button" class="button is-primary">
-              <span class="icon"><i class="fa fa-search"></i></span>
-              <span>Search</span>
-            </button>
-          </p>
-        </div>
-      </div>
-    </div> -->
-    {#if !data.patient}
-      <Panel>
-        <PatientSearch bind:active_pane bind:meta bind:p_data size="medium">
-          <h1 slot="title" class="subtitle is-4">Patient Search</h1>
-        </PatientSearch>
-        <br>
-        
-        <PatientSearchResults {active_pane} bind:data="p_data" {meta} on:rowClick on:customerCreate />
-
-      </Panel>
-    {:else}
-
-     <PatientDetails data={data.patient} />
-     
-      
-    {/if}
+      {/if}
     {:elseif patient.patient_type == 'new'}
     <div class="columns">
       <div class="column">
@@ -125,7 +102,7 @@
   import PatientSearch from '../../helpers/PatientSearch.html';
   import PatientSearchResults from '../../helpers/PatientSearchResults.html';
   import PatientDetails from '../../helpers/PatientDetails.html';
-  
+
   export default {
     components: {
       Panel, SubmitButton, PatientSearch, PatientSearchResults , PatientDetails
@@ -150,7 +127,7 @@
         this.fire('addPatient', row);
 
       });
-      
+
       this.on('changePatient', () => {
         this.set({
           patient: {
