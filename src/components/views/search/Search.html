@@ -15,7 +15,7 @@
     </Notification>
     {/if}
 
-    <PatientAdd bind:patient on:addPatient bind:data bind:p_data />
+    <PatientAdd bind:patient on:addPatient bind:data bind:p_data bind:searchable_symp/>
     <br>
   {#if !has_searched}
     <form on:submit="search(event)">
