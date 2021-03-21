@@ -24,7 +24,7 @@
           <div class="column">
             <div class="field">
               <span class="select is-fullwidth">
-                <select class="input" bind:value="selected_symptom" >
+                <select class="input" bind:value="selected_section" >
                   <option value="">Select Type</option>
                   {#each Object.entries(data) as [key, value], i}
                     {#if !omitted_field.includes(key)}
@@ -37,8 +37,8 @@
 
             <div class="field">
               <p class="control">
-                <label class="label" style="text-transform: capitalize;">{selected_symptom}</label>
-                <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="data[selected_symptom]" style="height: 15rem;"></textarea>
+                <label class="label" style="text-transform: capitalize;">{selected_section}</label>
+                <textarea class="textarea" placeholder="{selected_section}..." bind:value="data[selected_section]" style="height: 15rem;"></textarea>
               </p>
             </div>
 
@@ -48,9 +48,9 @@
 
             <div class="field">
               <p class="control">
-                <label class="label" style="text-transform: capitalize;">{selected_symptom} Symptoms in the System</label>
+                <label class="label" style="text-transform: capitalize;">{selected_section} Symptoms in the System</label>
                   <SearchableSelect
-                    data="{searchable_withkey[selected_symptom]}"
+                    data="{searchable_withkey[selected_section]}"
                     placeholder="Choose..."
                     bind:_name="selected_keyed_symp"
                     searchKey="name"
@@ -65,7 +65,7 @@
                   <SearchableSelect
                     data="{searchable_symp}"
                     placeholder="Choose..."
-                    bind:_name="selected_symp"
+                    bind:_name="selected_all_symp"
                     searchKey="name"
                     searchValue="id"
                   />
@@ -74,7 +74,7 @@
             <div class="field is-grouped is-pulled-right">
               <p class="control">
                 <label class="label">&nbsp;</label>
-                <button type="button" on:click="save()" class="button is-primary is-medium" disabled="disabled" >
+                <button type="button" on:click="save()" class="button is-primary is-medium" disabled="{disabled}" >
                   <span class="icon">
                     <i class="fa fa-save"></i>
                   </span>
@@ -129,7 +129,7 @@
             <label class="label">With Number</label>
             <div class="field">
               <span class="select is-fullwidth">
-                <select class="input" bind:value="selected_symptom" >
+                <select class="input" bind:value="selected_section" >
                   <option value="">Select Type</option>
                   {#each filterFields as key, index }
                       <option value="{key}">{index+1} - {key}</option>
@@ -143,7 +143,7 @@
             <label class="label">Without Number</label>
             <div class="field">
               <span class="select is-fullwidth">
-                <select class="input" bind:value="selected_symptom" >
+                <select class="input" bind:value="selected_section" >
                   <option value="">Select Type</option>
                   {#each filterFields as key, index }
                       <option value="{key}">{key}</option>
@@ -158,7 +158,7 @@
           <div class="column">
             <div class="buttons">
               {#each filterFields as key }
-                  <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="set({ selected_symptom: key })" style="text-transform: capitalize; margin-left: .6rem; margin-bottom: .6rem;">
+                  <button type="button" class="button is-medium is-{ (key == selected_section) ? 'success' : data[key] ? '' : 'info' } " on:click="set({ selected_section: key })" style="text-transform: capitalize; margin-left: .6rem; margin-bottom: .6rem;">
                     {#if data[key] }
                       <span class="icon is-small"><i class="fa fa-check"></i></span>
                     {/if}
@@ -201,8 +201,8 @@
         is_loading: false,
         is_error: false,
         error_message: '',
-        selected_symptom: '',
-        selected_symp: '',
+        selected_section: '',
+        selected_all_symp: '',
         selected_keyed_symp: '',
         result_symptoms: '',
         remedies: {},
@@ -225,6 +225,7 @@
     },
     computed: {
       entityId: ({ $nav }) => $nav && $nav.params[0],
+      disabled: ({data}) => console.log(data),
       has_searched: ({remedy_found}) => Object.keys(remedy_found).length,
       filterFields: ({remedies, omitted_field}) => {
 
@@ -293,12 +294,30 @@
       var { entityId } = this.get();
 
       this.on('state', ({ changed, current, previous }) => {
+        let {data, selected_section, selected_all_symp} = this.get()
+
+        if(current.selected_keyed_symp != previous.selected_keyed_symp){
+          // got it selected symptom
+          data[selected_section] =  data[selected_section] ? data[selected_section]  + ', ' + current.selected_keyed_symp : current.selected_keyed_symp;
+          this.set({data})
+          console.log(data)
+        }
+
+        if(current.selected_all_symp != previous.selected_all_symp){
+          let section = selected_all_symp.split(' -> ');
+          let field = section[1], value = section[0];
+
+          data[field] = data[field] ? data[field]  + ', ' + value : value;
+          this.set({data, selected_section: field, selected_keyed_symp: value})
+        }
+
         if (changed['$nav']) {
           var { $nav } = current;
           if ($nav.activeView == '_COMPONENT_') {
             this.load();
           }
         }
+
       });
 
       this.load();
@@ -316,7 +335,6 @@
 
         Model && Model.getOne(entityId)
         .then((r) => {
-          console.log(r)
           this.set({
             is_loading: false,
             meta: r._meta,
