@@ -1,0 +1,463 @@
+<div class="page-content">
+
+  <ViewScaffold {is_loading} {is_error} {error_message}>
+
+
+    {#if is_admin_user}
+      <!-- <AdminLinks {sections} /> -->
+    {:else}
+      <div class="columns is-multiline">
+        <div class="column is-12">
+          <Panel title="Buttons" collapsible collapsed>
+            <div class="columns">
+              {#each buttons as type}
+                <div class="column">
+                  {#each type as color}
+                    <h3 class="title is-4">{color} buttons</h3>
+                    <div class="buttons">
+                      <button class="button is-{color} is-loading">{color}</button>
+                      <button class="button is-{color}">{color}</button>
+                      <button class="button is-{color} is-focused">{color} F</button>
+                      <button class="button is-{color} is-active">{color} A</button>
+                      <button class="button is-{color}" disabled>{color} D</button>
+                      <button class="button is-{color}">
+                        <span class="icon">
+                          <i class="fa fa-github"></i>
+                        </span>
+                      </button>
+                      <button class="button is-{color} is-focused">
+                        <span class="icon">
+                          <i class="fa fa-github"></i>
+                        </span>
+                      </button>
+                      <button class="button is-{color} is-active">
+                        <span class="icon">
+                          <i class="fa fa-github"></i>
+                        </span>
+                      </button>
+                      <button class="button is-{color}" disabled>
+                        <span class="icon">
+                          <i class="fa fa-github"></i>
+                        </span>
+                      </button>
+                    </div>
+                    <div class="buttons">
+                      <button class="button is-{color} is-outlined is-loading">{color}</button>
+                      <button class="button is-{color} is-outlined">{color}</button>
+                      <button class="button is-{color} is-outlined is-focused">{color} F</button>
+                      <button class="button is-{color} is-outlined is-active">{color} A</button>
+                      <button class="button is-{color}" disabled>{color} D</button>
+                      <button class="button is-{color} is-outlined">
+                        <span class="icon">
+                          <i class="fa fa-github"></i>
+                        </span>
+                      </button>
+                      <button class="button is-{color} is-outlined is-focused">
+                        <span class="icon">
+                          <i class="fa fa-github"></i>
+                        </span>
+                      </button>
+                      <button class="button is-{color} is-outlined is-active">
+                        <span class="icon">
+                          <i class="fa fa-github"></i>
+                        </span>
+                      </button>
+                      <button class="button is-{color} is-outlined" disabled>
+                        <span class="icon">
+                          <i class="fa fa-github"></i>
+                        </span>
+                      </button>
+                    </div>
+                    <div class="buttons">
+                      <button class="button is-{color} is-inverted is-loading">{color}</button>
+                      <button class="button is-{color} is-inverted">{color}</button>
+                      <button class="button is-{color} is-inverted is-focused">{color} F</button>
+                      <button class="button is-{color} is-inverted is-active">{color} A</button>
+                      <button class="button is-{color}" disabled>{color} D</button>
+                      <button class="button is-{color} is-inverted">
+                        <span class="icon">
+                          <i class="fa fa-github"></i>
+                        </span>
+                      </button>
+                      <button class="button is-{color} is-inverted is-focused">
+                        <span class="icon">
+                          <i class="fa fa-github"></i>
+                        </span>
+                      </button>
+                      <button class="button is-{color} is-inverted is-active">
+                        <span class="icon">
+                          <i class="fa fa-github"></i>
+                        </span>
+                      </button>
+                      <button class="button is-{color} is-inverted" disabled>
+                        <span class="icon">
+                          <i class="fa fa-github"></i>
+                        </span>
+                      </button>
+                    </div>
+                  {/each}
+                </div>
+              {/each}
+            </div>
+
+            <div class="buttons has-addons">
+              <button class="button is-success is-selected">Yes</button>
+              <button class="button">Maybe</button>
+              <button class="button">No</button>
+            </div>
+          </Panel>
+        </div>
+        <div class="column is-6">
+          <Panel title="Demo Panel">
+            <h1>This is a demo panel</h1>
+            <p>Lorem ipsum dolor sit amet consectetur.</p>
+          </Panel>
+
+          <Panel title="Collapsible Panel" collapsible={true}>
+            <h1>This is a demo panel</h1>
+            <p>Lorem ipsum dolor sit amet consectetur.</p>
+          </Panel>
+
+          <Panel title="Toolbar Panel" has_toolbar={true} relative="true">
+            <div slot='toolbar'>
+              <div class="field">
+                <div class="control">
+                  <label class="checkbox"><input bind:checked='show_loader' type="checkbox" /> Show Loader</label>
+                </div>
+              </div>
+            </div>
+            <div slot="center">
+              <span class="tag is-dark">
+                id: 123
+              </span>
+            </div>
+
+            <h1>This is a demo panel</h1>
+            <p>Lorem ipsum dolor sit amet consectetur.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sint voluptas natus vitae obcaecati ut unde aspernatur repudiandae quas. Mollitia deleniti quo excepturi dolores ad. Temporibus dolores enim odio aliquam deserunt?</p>
+
+            {#if show_loader}
+              <div class="is-overlay"><Loader large_loader color="danger" /></div>
+            {/if}
+
+          </Panel>
+
+          <Panel title="Notifications/ Message">
+            <Notification color="primary">
+              <p>Your have 41 primary notifications.</p>
+            </Notification>
+            <Notification color="info">
+              <p>Your have 41 info notifications.</p>
+            </Notification>
+            <Notification color="warning">
+              <p>Your have 41 warning notifications.</p>
+            </Notification>
+            <Notification color="success">
+              <p>Your have 41 success notifications.</p>
+            </Notification>
+            <Notification color="danger">
+              <p>Your have 41 danger notifications.</p>
+            </Notification>
+            <Notification color="dark">
+              <p>Your have 41 dark notifications.</p>
+            </Notification>
+            <Notification color="light">
+              <p>Your have 41 light notifications.</p>
+            </Notification>
+
+            <Message color='primary'>
+              <h1>This is a primary Heading</h1>
+            </Message>
+            <Message color='info'>
+              <h1>This is a info Heading</h1>
+            </Message>
+            <Message color='warning'>
+              <h1>This is a warning Heading</h1>
+            </Message>
+            <Message color='success'>
+              <h1>This is a success Heading</h1>
+            </Message>
+            <Message color='danger'>
+              <h1>This is a danger Heading</h1>
+            </Message>
+            <Message color='dark'>
+              <h1>This is a dark Heading</h1>
+            </Message>
+            <Message color='light'>
+              <h1>This is a light Heading</h1>
+            </Message>
+
+          </Panel>
+
+        </div>
+
+        <div class="column is-6">
+
+          <Panel title="Form Element">
+            <div class="field">
+              <div class="control">
+                <ConfirmButton
+                  text="Confirm"
+                  color="primary"
+                  size=""
+                  icon_only="{false}"
+                  disabled="{false}"
+                />
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <!-- <Toggle
+                  color="success"
+                  on_text=""
+                  off_text=""
+                  disabled="{false}"
+                /> -->
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <input class="input is-small is-primary" type="text" placeholder="Small input">
+              </div>
+            </div>
+            <div class="field">
+              <div class="control is-loading">
+                <input class="input is-primary" type="text" placeholder="Normal input">
+              </div>
+            </div>
+            <div class="field">
+              <p class="control has-icons-left">
+                <input class="input is-medium" type="password" placeholder="Password">
+                <span class="icon is-small is-left">
+                  <i class="fa fa-lock"></i>
+                </span>
+              </p>
+            </div>
+            <div class="field">
+              <div class="control">
+                <input class="input is-large is-primary" type="text" placeholder="Large input">
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <label class="checkbox">
+                  <input type="checkbox">
+                  Remember me
+                </label>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="answer">
+                  Yes
+                </label>
+                <label class="radio">
+                  <input type="radio" name="answer">
+                  No
+                </label>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control">
+                <div class="select is-primary">
+                  <select>
+                    <option>Select dropdown</option>
+                    <option>With options</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="control has-icons-left">
+                <div class="select">
+                  <select>
+                    <option selected>Country</option>
+                    <option>Select dropdown</option>
+                    <option>With options</option>
+                  </select>
+                </div>
+                <div class="icon is-small is-left">
+                  <i class="fa fa-globe"></i>
+                </div>
+              </div>
+            </div>
+          </Panel>
+
+          <Panel title="Tags">
+
+            <span class="tag is-black">Black</span>
+            <span class="tag is-medium is-dark">Dark</span>
+            <span class="tag is-light">Light</span>
+            <span class="tag is-white">White</span>
+            <span class="tag is-primary">Primary</span>
+            <span class="tag is-link is-light">Link</span>
+
+            <div class="field"></div>
+            <div class="field is-grouped is-grouped-multiline">
+              <div class="control">
+                <div class="tags has-addons">
+                  <span class="tag is-dark">npm</span>
+                  <span class="tag is-info">0.7.0</span>
+                </div>
+              </div>
+
+              <div class="control">
+                <div class="tags has-addons">
+                  <span class="tag is-dark">build</span>
+                  <span class="tag is-success">passing</span>
+                </div>
+              </div>
+            </div>
+          </Panel>
+
+          <Panel title="Icons / Loader">
+            <Icon icon="check" color="" size="" />
+            <Icon icon="plus" color="" size="" />
+            <Icon icon="minus-circle" color="" size="" />
+            <Icon icon="save" color="" size="" />
+
+            <Loader
+              color="transparent"
+              size="small"
+              type=""
+              large_loader="false"
+            />
+
+          </Panel>
+
+          <Panel title="Searchable select">
+            <SearchableSelect
+              data="{brands}"
+              placeholder="Choose a Brand..."
+              bind:value="selected_brand"
+              searchKey="name"
+              searchValue="id"
+            />
+
+          </Panel>
+
+
+        </div>
+        {#each sections as section, k}
+          {#if section.visible !== false && section.name != 'Dashboard' }
+            <div class="column is-3">
+              <a class="card is-block" href="#{section.url}">
+                <div class="card-content has-text-centered" style="padding-top:2rem">
+                  <Icon icon="{section.icon}" size="medium" icon_class="title is-4"/>
+                  <span class="title is-4 is-block">Manage {section.title}</span>
+                </div>
+              </a>
+            </div>
+          {/if}
+        {/each}
+      </div>
+
+      <div class="columns">
+        <div class="column is-12">
+
+          <GridView
+            {data}
+            {columns}
+          />
+
+          <Pagination {meta} entityName="{entity_name}" on:paginate on:setLimit />
+
+        </div>
+      </div>
+    {/if}
+
+  </ViewScaffold>
+</div>
+
+<script type="text/javascript">
+
+  import Model from '../../models/dashboard';
+  import Access from '../../services/access';
+  import Datepicker from '@kws3/datepicker';
+  import SearchableSelect from '@kws3/searchable-select';
+
+  import {ConfirmButton, SubmitButton, Toggle } from '@kws3/buttons';
+  import { Icon, Panel, Notification, Loader, Message } from '@kws3/helpers';
+  import ViewScaffold from '../helpers/ViewScaffold.html';
+
+  import {GridView, TileView, Pagination} from '@kws3/datagrid';
+
+  export default {
+    components: {
+      ViewScaffold, GridView, Pagination, Icon, Panel, Notification, Loader, Message, ConfirmButton, Toggle,
+      SearchableSelect
+    },
+    data:function(){
+      return {
+        tracker: {
+          saving: false,
+          saved: false,
+          error: false
+        },
+        brands: [
+          { id: 1, name: 'LG'},
+          { id: 2, name: 'Samsung'},
+          { id: 3, name: 'Xiaomi'},
+        ],
+        is_loading: true,
+        is_error: false,
+        meta:{},
+        error_message: '',
+        new_date: '',
+        entity_name: 'Records',
+        meta:{
+          offset: 0,
+          count: 20,
+          limit: 20,
+          total: 100,
+        },
+        data:[
+          {id: 1, name: 'John', email: 'email@m.com', phone: '1101010101'},
+          {id: 2, name: 'John', email: 'email@m.com', phone: '1101010101'},
+          {id: 3, name: 'John', email: 'email@m.com', phone: '1101010101'},
+          {id: 4, name: 'John', email: 'email@m.com', phone: '1101010101'},
+          {id: 5, name: 'John', email: 'email@m.com', phone: '1101010101'},
+          {id: 6, name: 'John', email: 'email@m.com', phone: '1101010101'},
+        ],
+        columns:{
+          'id':'ID',
+          'name': 'Name',
+          'email': 'Email',
+          'phone': 'Phone',
+        },
+        buttons:[
+          ['primary', 'info', 'success', 'danger', 'warning'],
+          ['dark', 'light', 'link', 'text', 'default']
+        ]
+      };
+    },
+    computed: {
+      is_admin_user:({ $role }) => $role == 'A' || $role == 'U',
+      sections({ $mainSections }) {
+        var ret = [];
+        for (var k in $mainSections) {
+          if ($mainSections.hasOwnProperty(k)) {
+            var element = $mainSections[k];
+            ret.push({
+              'name': k,
+              'title': element.title ? element.title : k,
+              'url': element.url,
+              'icon': element.icon,
+              'visible': element.visible
+            });
+          }
+        }
+        return ret;
+      }
+    },
+    oncreate: function(){
+      var self = this;
+      self.set({is_loading: false})
+    }
+  }
+</script>
