@@ -158,7 +158,7 @@
           <div class="column">
             <div class="buttons">
               {#each filterFields as key }
-                  <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize; margin-left: .6rem; margin-bottom: .6rem;">
+                  <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="set({ selected_symptom: key })" style="text-transform: capitalize; margin-left: .6rem; margin-bottom: .6rem;">
                     {#if data[key] }
                       <span class="icon is-small"><i class="fa fa-check"></i></span>
                     {/if}
@@ -306,10 +306,6 @@
       this.loadRemedies();
     },
     methods: {
-
-      select_symptom(key){
-        this.set({ selected_symptom: key })
-      },
       load() {
         var { entityId } = this.get();
 
