@@ -1,17 +1,11 @@
 <div class="page-content">
-  <!-- <PageTitle page="{page}">
-    <a class="button is-info is-pulled-right" href="#history">
-      <Icon icon="long-arrow-left" size="small" />
-      <span>Back to All Histories</span>
-    </a>
-  </PageTitle> -->
 
   <ViewScaffold {is_loading} {is_error} {error_message}>
 
     {#if tracker.error}
     <Notification type="danger"> {error_message} </Notification>
     {/if}
-    
+
   {#if !has_searched}
     <form on:submit="search(event)">
       <Panel title="Patient Symptoms" has_toolbar={true} >
@@ -26,7 +20,7 @@
               {/each}
             </Message>
           </div>
-          
+
           <div class="column">
             <div class="field">
               <span class="select is-fullwidth">
@@ -87,7 +81,7 @@
                   <span>Save only</span>
                 </button>
                 </p>
-              
+
               <p class="control">
                 <label class="label">&nbsp;</label>
                 <SubmitButton bind:disabled classes="is-primary is-medium is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
@@ -123,7 +117,7 @@
           icon_only="{false}"
           disabled="{true}"
           on:do="reset(event)"
-          
+
         />
     </div>
 
@@ -233,7 +227,7 @@
       entityId: ({ $nav }) => $nav && $nav.params[0],
       has_searched: ({remedy_found}) => Object.keys(remedy_found).length,
       filterFields: ({remedies, omitted_field}) => {
-        
+
         let last = ['built', 'constitution', 'diathesis', 'miasm', 'temperament', 'temperature_and_weather',
         'thermal_sensitivity', 'sensation', 'tendency_take_cold', 'desires', 'aversions', 'birth_history_milestones',
         'tissues', 'stages_and_states', 'attacks_and_side', 'ailments_from', 'affections', 'clinical', 'modalities',
@@ -308,11 +302,11 @@
       });
 
       this.load();
-      
+
       this.loadRemedies();
     },
     methods: {
-      
+
       select_symptom(key){
         this.set({ selected_symptom: key })
       },
