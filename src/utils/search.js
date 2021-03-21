@@ -1,10 +1,11 @@
 export default function(data, remedies){
-  let _payload = [];
-  let matched_remedies = {};
+  let _payload = [],
+      matched_remedies = {},
+      omitted_field = [ 'id', 'name', 'created', 'modified', 'deleted', 'patient', 'treatments', 'book_references', 'total_data_size'];
 
   //reducing null fields from payload
   for(let [key, value] of Object.entries(data)) {
-    if(value && key != 'patient'){
+    if(value && !omitted_field.includes(key)){
       _payload[key] = value.split(',')
     }
   }
