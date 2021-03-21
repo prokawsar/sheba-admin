@@ -174,6 +174,7 @@
   import Treatment from './helpers/Treatment.html';
   import Sections from './helpers/Sections.html';
   import LabsTabs from '../helpers/Tabs.html';
+  import _search from '../../../utils/search.js';
 
   export default {
     components: {
@@ -182,7 +183,9 @@
       Panel, Notification, SubmitButton, Treatment, Message, Sections,
       SearchableSelect, ConfirmButton, PatientAdd, RemedyFound, LabsTabs
     },
-
+    helpers: {
+      _search
+    },
     data() {
       return {
         is_loading: false,
@@ -463,12 +466,8 @@
       },
       search(e) {
         e.preventDefault();
-
         var { data, valid, remedies }  = this.get();
-        let _payload = [];
         let matched_remedies = {};
-
-        console.log(data)
 
         this.set({
           tracker: {
@@ -478,41 +477,7 @@
           }
         });
 
-
-        //reducing null fields from payload
-        for(let [key, value] of Object.entries(data)) {
-          if(value && key != 'patient'){
-            _payload[key] = value.split(',')
-          }
-        }
-        // console.log(_payload)
-
-        for(let [key, values] of Object.entries(_payload)) { // values are array of symptoms
-          values.forEach( (value) => {
-            remedies.forEach( (remedy) => {
-              if(remedy[key] != '' && remedy[key] ){
-                remedy[key].split(',').forEach( (symptom) =>{ // matching with each symptoms for remedy
-
-                  if(symptom.trim() === value.trim() && value.trim() != ''){
-                    if( matched_remedies.hasOwnProperty(remedy['name']) ){
-                      matched_remedies[remedy['name']].mark++;
-                      matched_remedies[remedy['name']].field += ', ' + key;
-                      matched_remedies[remedy['name']].symptoms += ', ' + value.trim();
-
-                    }else{
-                      matched_remedies[remedy['name']] = {};
-                      matched_remedies[remedy['name']].field = key;
-                      matched_remedies[remedy['name']].mark = 1;
-                      matched_remedies[remedy['name']].symptoms = value.trim();
-
-                    }
-                  }
-                })
-              }
-
-            })
-          })
-        }
+        matched_remedies = _search(data, remedies);
         this.set({ remedy_found: matched_remedies})
 
         setTimeout( () => {
