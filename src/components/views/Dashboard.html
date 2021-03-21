@@ -4,7 +4,11 @@
     <div class="columns is-multiline">
       <div class="column is-12">
         <Panel title="Symptoms Writting Guideline">
-
+          <Message color="info">
+            {#each Object.entries(short_meanings) as [key, value]}
+              {key} = {value}
+            {/each}
+          </Message>
         </Panel>
       </div>
     </div>
@@ -35,7 +39,9 @@
         is_error: false,
         meta:{},
         error_message: '',
-
+        short_meanings: {
+          'Aggravation': 'agg.'
+        }
       };
     },
     computed: {
