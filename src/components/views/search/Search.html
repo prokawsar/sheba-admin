@@ -38,6 +38,9 @@
                         <p><span class="has-text-weight-bold is-size-5">{key}</span>: {value}</p> <br>
                       {/if}
                     {/each}
+                    {#if !Object.entries(data).length}
+                      No records yet
+                    {/if}
                   </Message>
                 </div>
 
