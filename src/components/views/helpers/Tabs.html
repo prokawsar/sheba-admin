@@ -20,7 +20,7 @@
     },
     computed: {
       tabs : ({ link, tabs, id, is_detailed_route }) => {
-        if(link) 
+        if(link)
         {
           tabs.forEach(e => {
             if(e.default_route) {
@@ -34,7 +34,6 @@
         return tabs;
       },
       is_detailed_route: ({ $nav }) => {
-        console.log($nav)
         if ($nav && typeof $nav.params[1] != 'undefined') {
           return $nav.params[1];
         }
