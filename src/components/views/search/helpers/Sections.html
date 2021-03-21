@@ -6,7 +6,7 @@
         size=""
         icon="refresh"
         icon_only="{false}"
-        disabled="{false}"
+        disabled="{reset_disabled}"
         on:do="fire('reset', event)"
       />
   </div>
@@ -80,8 +80,8 @@
         remedies: [],
         filterFields: [],
         data: {},
-        selected_section: ''
-
+        selected_section: '',
+        reset_disabled: false,
       }
     }
   }
