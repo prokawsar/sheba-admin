@@ -74,7 +74,7 @@
             <div class="field is-grouped is-pulled-right">
               <p class="control">
                 <label class="label">&nbsp;</label>
-                <button type="button" on:click="save()" class="button is-primary is-medium" disabled="{disabled}" >
+                <button type="button" on:click="save()" class="button is-primary is-medium" >
                   <span class="icon">
                     <i class="fa fa-save"></i>
                   </span>
@@ -172,7 +172,6 @@
     },
     computed: {
       entityId: ({ $nav }) => $nav && $nav.params[0],
-      disabled: ({data}) => console.log(data),
       has_searched: ({remedy_found}) => Object.keys(remedy_found).length,
       filterFields: ({remedies, omitted_field}) => {
 
