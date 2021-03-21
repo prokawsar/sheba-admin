@@ -236,6 +236,24 @@
           })
         return final
       },
+      searchable_symp({loadSymptoms, omitted_field}){
+        let final = [], total = 0;
+        for(let item in loadSymptoms){
+          if(!omitted_field.includes(item)){
+            let one = loadSymptoms[item];
+
+              for(let i in one){
+                if(Array.isArray(one[i])){
+                  for(let ind in one[i]){
+                    let value = one[i][ind] + ' -> ' + item;
+                    final.push({ id: total++, name: value.trim() })
+                  }
+                }
+              }
+            }
+          }
+        return final
+      }
     },
     oncreate() {
       var { entityId } = this.get();
