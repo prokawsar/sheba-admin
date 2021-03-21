@@ -95,16 +95,32 @@
   {/if}
 
   {#if has_searched}
-  <RemedyFound
-    bind:tracker
-    bind:remedy_found
-    {field_name}
-    {result_symptoms}
-    on:back="back()"
-    on:showSymptoms
-    on:saveHistory="saveHistory()"
-  />
-  <br>
+    <div class="columns">
+      <div class="column">
+        <RemedyFound
+          bind:data
+          bind:tracker
+          bind:remedy_found
+          {field_name}
+          {result_symptoms}
+          on:back="back()"
+          on:showSymptoms
+          on:saveHistory="saveHistory()"
+        />
+      </div>
+      <div class="column">
+        <!-- <Treatment
+          bind:remedy_names
+          bind:data
+          bind:tracker
+          bind:remedy_found
+          {result_symptoms}
+          on:saveTreatment
+        /> -->
+      </div>
+    </div>
+    <br>
+
   {/if}
 
   {#if !has_searched}
@@ -134,6 +150,7 @@
   import SearchResult from '../search/helpers/SearchResult.html';
   import RemedyFound from '../search/helpers/RemedyFound.html';
   import Sections from '../search/helpers/Sections.html';
+  import _search from '../../../utils/search.js';
 
   export default {
     components: {
@@ -142,6 +159,9 @@
       Notification, Message, SearchableSelect, SubmitButton, ConfirmButton,
       Icon, Panel, SearchResult, RemedyFound, Sections
 
+    },
+    helpers: {
+      _search
     },
     data() {
       return {
@@ -370,7 +390,34 @@
             this.set({tracker: {error: false}});
           }, 1500);
         });
-      }
+      },
+      back(){
+        this.set({ remedy_found: {} })
+        this.set({ result_symptoms: {} })
+
+      },
+      search(e) {
+        e.preventDefault();
+        var { data, valid, remedies }  = this.get();
+        let matched_remedies = {};
+
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
+
+        matched_remedies = _search(data, remedies);
+        this.set({ remedy_found: matched_remedies})
+
+        setTimeout( () => {
+          this.set({ tracker: { saved: false } });
+          // Router.navigate('search');
+        }, 1000);
+
+      },
     }
   }
 </script>
