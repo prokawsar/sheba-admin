@@ -49,19 +49,19 @@
   import Model from '../../../models/histories';
   import Remedies from '../../../models/remedies';
 
-  import {Icon, Notification, Panel, Message} from '@kws3/helpers';
+  import {Icon, Panel, Message} from '@kws3/helpers';
   import { SubmitButton, ConfirmButton } from '@kws3/buttons';
 
   import Router from '../../../services/router';
   import SearchResult from '../search/helpers/SearchResult.html';
   import RemedyFound from '../search/helpers/RemedyFound.html';
   import PatientDetails from '../helpers/PatientDetails.html';
-  
+
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
-      Notification, Message, SubmitButton, ConfirmButton,
+      Message, SubmitButton, ConfirmButton,
       Icon, Panel, SearchResult, RemedyFound, PatientDetails
 
     },
@@ -95,7 +95,7 @@
     computed: {
       entityId: ({ $nav }) => $nav && $nav.params[0],
       filterFields: ({remedies, omitted_field}) => {
-        
+
         let last = ['built', 'constitution', 'diathesis', 'miasm', 'temperament', 'temperature_and_weather',
         'thermal_sensitivity', 'sensation', 'tendency_take_cold', 'desires', 'aversions', 'birth_history_milestones',
         'tissues', 'stages_and_states', 'attacks_and_side', 'ailments_from', 'affections', 'clinical', 'modalities',
@@ -147,7 +147,7 @@
       this.load();
     },
     methods: {
-      
+
       load() {
         var { entityId } = this.get();
 
@@ -190,7 +190,7 @@
       deleteHistory(comp){
 
         comp && comp.doing();
-        
+
         Model.delete(this.get().entityId)
         .then( (r) => {
           comp.done();
@@ -199,8 +199,8 @@
         .catch( () => {
           comp.error();
         });
-          
-        
+
+
       },
       save() {
         var {data, entityId, tracker} = this.get();

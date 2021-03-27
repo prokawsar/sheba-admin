@@ -11,18 +11,18 @@
     {#if tracker.error}
     <Notification type="danger"> {error_message} </Notification>
     {/if}
-    
+
     <Panel title="Prescription Details" has_toolbar={true} >
       <div slot='toolbar'>
-       
+
         <a type="button" class="button is-gray" href="/#history/view/{entityId}" >
           <span class="icon is-small"><i class="fa fa-eye"></i></span>
           <span>
-            View case history            
+            View case history
           </span>
         </a>
       </div>
-      
+
       <div class="columns">
         <div class="column">
         {#if data.patient}
@@ -33,9 +33,9 @@
         </div>
         <div class="column">
           <div class="columns">
-            <div class="column">   
+            <div class="column">
               <Message color="light" size="large">
-                 
+
               <!-- <p class="title is-5">Remedy History
                 <span class="is-pulled-right">
                   <button class="button is-primary" type="button" on:click="set({add_remedy: !add_remedy})">{add_remedy ? 'Cancel' : 'Add More'}</button>
@@ -54,15 +54,15 @@
               {:else}
               <Timeline history="{prescribe_history}" on:editPrescription bind:add_remedy />
               {/if}
-              
+
             </Message>
             </div>
           </div>
-        
+
         </div>
       </div>
     </Panel>
-    
+
   </ViewScaffold>
 </div>
 
@@ -71,19 +71,19 @@
   import Remedies from '../../../models/remedies';
   import TreatmentModel from '../../../models/treatments';
   import {Icon, Notification, Panel, Message} from '@kws3/helpers';
-  import { SubmitButton, ConfirmButton } from '@kws3/buttons';
+  import { ConfirmButton } from '@kws3/buttons';
   import Router from '../../../services/router';
   import SearchableSelect from '@kws3/searchable-select';
   import PatientDetails from '../helpers/PatientDetails.html';
   import Timeline from '../helpers/Timeline.html';
   import niceDate from '../../../utils/niceDate.js';
   import AddTreatment from '../search/helpers/Treatment.html';
-  
+
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
-      Notification, Message, SearchableSelect, SubmitButton, ConfirmButton,
+      Notification, Message, SearchableSelect, ConfirmButton,
       Icon, Panel, PatientDetails, Timeline, AddTreatment,
 
     },
@@ -117,7 +117,7 @@
     computed: {
       entityId: ({ $nav }) => $nav && $nav.params[0],
       filterFields: ({remedies, omitted_field}) => {
-        
+
         let last = ['built', 'constitution', 'diathesis', 'miasm', 'temperament', 'temperature_and_weather',
         'thermal_sensitivity', 'sensation', 'tendency_take_cold', 'desires', 'aversions', 'birth_history_milestones',
         'tissues', 'stages_and_states', 'attacks_and_side', 'ailments_from', 'affections', 'clinical', 'modalities',
@@ -144,7 +144,7 @@
           // this gives an object with dates as keys
           const groups = values.reduce((groups, remedy) => {
             const date = niceDate(remedy.created);
-  
+
             if (!groups[date]) {
               groups[date] = [];
             }
@@ -166,7 +166,7 @@
       },
       remedy_names: ({remedies}) => {
         let _names= [];
-        
+
         for(let item in remedies){
           let single = remedies[item];
           _names.push(single.name);
@@ -176,11 +176,11 @@
     },
     oncreate() {
       var { entityId } = this.get();
-      
+
       this.on('saveTreatment', treatments => {
         this.savePrescription(treatments);
       });
-      
+
       this.on('editPrescription', remedies => {
         console.log(remedies)
         this.set({
@@ -188,12 +188,12 @@
           selected_remedies: remedies
         })
       })
-      
+
       this.load();
       this.loadRemedies();
     },
     methods: {
-      
+
       select_symptom(key){
         this.set({ selected_symptom: key })
       },
@@ -207,7 +207,7 @@
 
         Model && Model.getOne(entityId)
         .then((r) => {
-          
+
           this.set({
             is_loading: false,
             meta: r._meta,
@@ -238,7 +238,7 @@
       },
       savePrescription(treatments) {
         let {data, entityId} = this.get();
-        
+
         let structured = {
           prescribe: {
             id: entityId,
@@ -246,7 +246,7 @@
           },
           data: treatments
         };
-        
+
         this.set({
           tracker: {
             saving: true,
@@ -254,7 +254,7 @@
             error: false
           }
         });
-        
+
         TreatmentModel.createWithCase(structured)
         .then( (r) => {
           this.set({
@@ -269,7 +269,7 @@
             this.set({ tracker: { saved: false }, add_remedy: false });
             this.load();
           }, 1500);
-          
+
         })
         .catch( (r) => {
           console.log(r)
