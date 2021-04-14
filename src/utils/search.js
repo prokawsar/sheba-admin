@@ -22,14 +22,30 @@ export default function(data, remedies){
             if( value.trim() != '' && symptom.trim().includes(value.trim())){
               if( matched_remedies.hasOwnProperty(remedy['name']) ){
                 matched_remedies[remedy['name']].mark++;
-                matched_remedies[remedy['name']].field += ', ' + key;
-                matched_remedies[remedy['name']].symptoms += ', ' + symptom.trim();
+                // matched_remedies[remedy['name']].field += ', ' + key;
+                // matched_remedies[remedy['name']].symptoms += ', ' + symptom.trim();
+
+                if( !matched_remedies[remedy['name']].fields[key] ){
+                  matched_remedies[remedy['name']].fields[key] = [];
+                }
+                matched_remedies[remedy['name']].fields[key].push({
+                  matched: symptom.trim(),
+                  query: value.trim()
+                });
 
               }else{
                 matched_remedies[remedy['name']] = {};
-                matched_remedies[remedy['name']].field = key;
                 matched_remedies[remedy['name']].mark = 1;
-                matched_remedies[remedy['name']].symptoms = symptom.trim();
+                // matched_remedies[remedy['name']].field = key;
+                // matched_remedies[remedy['name']].symptoms = symptom.trim();
+
+                matched_remedies[remedy['name']].fields = {};
+                matched_remedies[remedy['name']].fields[key] = [];
+                matched_remedies[remedy['name']].fields[key].push({
+                  matched: symptom.trim(),
+                  query: value.trim()
+                });
+
 
               }
             }
