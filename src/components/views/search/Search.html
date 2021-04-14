@@ -116,7 +116,7 @@
                 bind:tracker
                 bind:remedy_found
                 {field_name}
-                {result_symptoms}
+                {result_matched_fields}
                 on:back="back()"
                 on:showSymptoms
                 on:saveHistory="saveHistory()"
@@ -128,7 +128,6 @@
                 bind:data
                 bind:tracker
                 bind:remedy_found
-                {result_symptoms}
                 on:saveTreatment
               />
             </div>
@@ -199,7 +198,7 @@
         selected_all_symp: '',
         selected_keyed_symp: '',
         active_tab: 'patient_cc',
-        result_symptoms: '',
+        result_matched_fields: [],
         remedies: {},
         data: {},
         remedy_found: {},
@@ -378,11 +377,11 @@
       },
       back(){
         this.set({ remedy_found: {} })
-        this.set({ result_symptoms: {} })
+        this.set({ result_matched_fields: {} })
 
       },
       showSymptoms(value){
-        this.set({ result_symptoms: value.symptoms, field_name: value.field })
+        this.set({ result_matched_fields: value.fields })
       },
       saveHistory(){
         let {data} = this.get();
