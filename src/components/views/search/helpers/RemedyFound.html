@@ -18,10 +18,13 @@
           </button>
         {/each}
         </div>
-        <label class="label">{field_name ? field_name : ''}</label>
-        <div>
-          <textarea class="textarea" readonly>{result_symptoms ? result_symptoms : '' }</textarea>
-        </div>
+
+        {#each Object.entries(result_matched_fields) as [key, value], i }
+          <label class="label title">{key}</label>
+          {#each value as item}
+            <p class="label"> {item.matched} </p>
+          {/each}
+        {/each}
 
         <div class="field">
           <p class="control">
@@ -48,7 +51,7 @@
       return{
         remedy_found: {},
         field_name: '',
-        result_symptoms: '',
+        result_matched_fields: [],
         tracker: {}
       }
     },
