@@ -6,7 +6,9 @@ export default function(data, remedies){
   //reducing null fields from payload
   for(let [key, value] of Object.entries(data)) {
     if(value && !omitted_field.includes(key)){
-      _payload[key] = value.split(',')
+      _payload[key] = value.split(',').filter( (e) => {
+        return e != null && e.trim() != '';
+      })
     }
   }
   // console.log(_payload)
