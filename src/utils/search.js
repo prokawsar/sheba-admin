@@ -21,13 +21,13 @@ export default function(data, remedies){
               if( matched_remedies.hasOwnProperty(remedy['name']) ){
                 matched_remedies[remedy['name']].mark++;
                 matched_remedies[remedy['name']].field += ', ' + key;
-                matched_remedies[remedy['name']].symptoms += ', ' + value.trim();
+                matched_remedies[remedy['name']].symptoms += ', ' + symptom.trim();
 
               }else{
                 matched_remedies[remedy['name']] = {};
                 matched_remedies[remedy['name']].field = key;
                 matched_remedies[remedy['name']].mark = 1;
-                matched_remedies[remedy['name']].symptoms = value.trim();
+                matched_remedies[remedy['name']].symptoms = symptom.trim();
 
               }
             }
