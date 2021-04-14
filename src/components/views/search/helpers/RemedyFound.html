@@ -19,12 +19,18 @@
         {/each}
         </div>
 
-        {#each Object.entries(result_matched_fields) as [key, value], i }
-          <label class="label title">{key}</label>
-          {#each value as item}
-            <p class="label"> {item.matched} </p>
+        <div class="columns is-multiline">
+          {#each Object.entries(result_matched_fields) as [key, value], i }
+            <div class="column is-4">
+              <!-- <Transition transition="{true}" type="fly" x="{-30}" delay={50*i}> -->
+                <label class="label title is-size-4">{key}</label>
+                {#each value as item}
+                  <p class="is-size-5" style="line-height: 1.7rem;"> {item.matched} </p>
+                {/each}
+              <!-- </Transition> -->
+            </div>
           {/each}
-        {/each}
+        </div>
 
         <div class="field">
           <p class="control">
