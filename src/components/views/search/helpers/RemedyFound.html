@@ -1,6 +1,12 @@
 <form on:submit="saveHistory(event)">
   <Panel title="Matches Remedy" has_toolbar={true} >
     <div slot='toolbar'>
+      {#if remedy_id}
+        <a class="button is-text " href="#remedies/singleview/{remedy_id}" target="_blank">
+          <span class="icon is-small"><i class="fa fa-eye"></i></span>
+        <span>View selected Remedy</span>
+        </a>
+      {/if}
       <button type="button" class="button is-info" on:click="fire('back')" >
         <span class="icon is-small"><i class="fa fa-arrow-left"></i></span>
         <span>Back to Search</span>
@@ -12,7 +18,7 @@
         <div class="buttons">
         {#each Object.entries(remedy_found) as [key, value], i }
 
-          <button type="button" class="button is-medium is-light" on:click="fire('showSymptoms', value)" style="text-transform: capitalize;">
+          <button type="button" class="button is-medium is-light" on:click="showSymptoms(value)" style="text-transform: capitalize;">
             <span>{key} </span>
             <span class="tag is-danger is-medium"> {value.mark} </span>
           </button>
@@ -61,6 +67,7 @@
     },
     data(){
       return{
+        remedy_id: null,
         remedy_found: {},
         field_name: '',
         result_matched_fields: [],
@@ -71,6 +78,12 @@
       disabled: ({data}) => !data.patient,
     },
     methods: {
+      showSymptoms(value){
+        if(value){
+          this.set({ remedy_id: value.id});
+          this.fire('showSymptoms', value);
+        }
+      },
       saveHistory(e){
         e.preventDefault();
         this.fire('saveHistory');
