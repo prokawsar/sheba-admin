@@ -1,6 +1,17 @@
+/*
+return resut as array of objects
+[
+  {
+    id: remedy id,
+    name: remedy name,
+    mark: remedy gets matched mark
+    fields: matched fields name and queries
+  }
+]
+*/
 export default function(data, remedies){
   let _payload = [],
-      matched_remedies = {},
+      matched_remedies = [],
       omitted_field = [ 'id', 'name', 'created', 'modified', 'deleted', 'patient', 'treatments', 'book_references', 'total_data_size'];
 
   //reducing null fields from payload
@@ -20,30 +31,64 @@ export default function(data, remedies){
           remedy[key].split(',').forEach( (symptom) =>{ // matching with each symptoms for remedy
 
             if( value.trim() != '' && symptom.trim().includes(value.trim())){
-              if( matched_remedies.hasOwnProperty(remedy['name']) ){
-                matched_remedies[remedy['name']].mark++;
+              var is_remedy_exist = matched_remedies.find(obj => {
+                return obj.name === remedy['name']
+              })
 
-                if( !matched_remedies[remedy['name']].fields[key] ){
-                  matched_remedies[remedy['name']].fields[key] = [];
+              if(is_remedy_exist){
+                let objIndex = matched_remedies.findIndex((obj => obj.id == is_remedy_exist.id));
+                matched_remedies[objIndex].mark++;
+                if(!matched_remedies[objIndex].fields[key]){
+                  matched_remedies[objIndex].fields[key] = [];
+                  matched_remedies[objIndex].fields[key].push({
+                    matched: symptom.trim(),
+                    query: value.trim()
+                  });
+                }else{
+                  matched_remedies[objIndex].fields[key].push({
+                    matched: symptom.trim(),
+                    query: value.trim()
+                  });
                 }
-                matched_remedies[remedy['name']].fields[key].push({
-                  matched: symptom.trim(),
-                  query: value.trim()
-                });
-
               }else{
-                matched_remedies[remedy['name']] = {};
-                matched_remedies[remedy['name']].id = remedy['id'];
-                matched_remedies[remedy['name']].mark = 1;
-
-                matched_remedies[remedy['name']].fields = {};
-                matched_remedies[remedy['name']].fields[key] = [];
-                matched_remedies[remedy['name']].fields[key].push({
+                let fields = {};
+                fields[key] = [];
+                fields[key].push({
                   matched: symptom.trim(),
                   query: value.trim()
                 });
 
+                matched_remedies.push({
+                  id: remedy.id,
+                  name: remedy.name,
+                  mark: 1,
+                  fields
+                })
               }
+              // if( matched_remedies.hasOwnProperty(remedy['name']) ){
+              //   matched_remedies[remedy['name']].mark++;
+
+              //   if( !matched_remedies[remedy['name']].fields[key] ){
+              //     matched_remedies[remedy['name']].fields[key] = [];
+              //   }
+              //   matched_remedies[remedy['name']].fields[key].push({
+              //     matched: symptom.trim(),
+              //     query: value.trim()
+              //   });
+
+              // }else{
+              //   matched_remedies[remedy['name']] = {};
+              //   matched_remedies[remedy['name']].id = remedy['id'];
+              //   matched_remedies[remedy['name']].mark = 1;
+
+              //   matched_remedies[remedy['name']].fields = {};
+              //   matched_remedies[remedy['name']].fields[key] = [];
+              //   matched_remedies[remedy['name']].fields[key].push({
+              //     matched: symptom.trim(),
+              //     query: value.trim()
+              //   });
+
+              // }
             }
           })
         }
