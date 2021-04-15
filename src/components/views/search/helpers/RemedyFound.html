@@ -15,26 +15,26 @@
 
     <div class="columns">
       <div class="column">
-        <div class="buttons">
-        {#each Object.entries(remedy_found) as [key, value], i }
-
-          <button type="button" class="button is-medium is-light" on:click="showSymptoms(value)" style="text-transform: capitalize;">
-            <span>{value.name} </span>
-            <span class="tag is-danger is-medium"> {value.mark} </span>
-          </button>
+        <div class="columns is-multiline">
+          {#each Object.entries(remedy_found) as [key, value], i }
+            <div class="column is-4" style="border-radius: 4px; background-color: {remedy_id == value.id ? '#E6E6FA' : ''};">
+              <p class="is-size-5" style="line-height: 1.2rem; cursor: pointer;" on:click="showSymptoms(value)" > {value.name}
+                <span class="tag is-success is-medium is-pulled-right">{value.mark}</span>
+              </p>
+            </div>
         {/each}
         </div>
-
+        <hr >
         <div class="columns is-multiline">
           {#each Object.entries(result_matched_fields) as [key, value], i }
             <div class="column is-4">
-              <!-- <Transition transition="{true}" type="fly" x="{-30}" delay={50*i}> -->
+              <Transition transition="{true}" type="fly" x="{30}" delay={50*10}>
                 <label class="label title is-size-4">{key}</label>
                 {#each value as item}
                   <p class="is-size-5" style="line-height: 1.2rem;"> {@html matched_color(item.matched, item.query)}. </p>
                   <hr class="is-small">
                 {/each}
-              <!-- </Transition> -->
+              </Transition>
             </div>
           {/each}
         </div>
@@ -55,10 +55,11 @@
 
   import { Panel } from '@kws3/helpers';
   import { SubmitButton } from '@kws3/buttons';
+  import Transition from '@kws3/transitions';
 
   export default {
     components: {
-      Panel, SubmitButton
+      Panel, SubmitButton, Transition
     },
     helpers: {
       matched_color(original, query){
