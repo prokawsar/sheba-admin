@@ -18,12 +18,10 @@ export default function(data, remedies){
       remedies.forEach( (remedy) => {
         if(remedy[key] != '' && remedy[key] ){
           remedy[key].split(',').forEach( (symptom) =>{ // matching with each symptoms for remedy
-            // if(symptom.trim() === value.trim() && value.trim() != ''){
+
             if( value.trim() != '' && symptom.trim().includes(value.trim())){
               if( matched_remedies.hasOwnProperty(remedy['name']) ){
                 matched_remedies[remedy['name']].mark++;
-                // matched_remedies[remedy['name']].field += ', ' + key;
-                // matched_remedies[remedy['name']].symptoms += ', ' + symptom.trim();
 
                 if( !matched_remedies[remedy['name']].fields[key] ){
                   matched_remedies[remedy['name']].fields[key] = [];
@@ -37,8 +35,6 @@ export default function(data, remedies){
                 matched_remedies[remedy['name']] = {};
                 matched_remedies[remedy['name']].id = remedy['id'];
                 matched_remedies[remedy['name']].mark = 1;
-                // matched_remedies[remedy['name']].field = key;
-                // matched_remedies[remedy['name']].symptoms = symptom.trim();
 
                 matched_remedies[remedy['name']].fields = {};
                 matched_remedies[remedy['name']].fields[key] = [];
@@ -46,7 +42,6 @@ export default function(data, remedies){
                   matched: symptom.trim(),
                   query: value.trim()
                 });
-
 
               }
             }
