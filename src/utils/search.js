@@ -35,6 +35,7 @@ export default function(data, remedies){
 
               }else{
                 matched_remedies[remedy['name']] = {};
+                matched_remedies[remedy['name']].id = remedy['id'];
                 matched_remedies[remedy['name']].mark = 1;
                 // matched_remedies[remedy['name']].field = key;
                 // matched_remedies[remedy['name']].symptoms = symptom.trim();
