@@ -114,28 +114,6 @@
     },
     computed: {
       entityId: ({ $nav }) => $nav && $nav.params[0],
-      filterFields: ({remedies, omitted_field}) => {
-
-        let last = ['built', 'constitution', 'diathesis', 'miasm', 'temperament', 'temperature_and_weather',
-        'thermal_sensitivity', 'sensation', 'tendency_take_cold', 'desires', 'aversions', 'birth_history_milestones',
-        'tissues', 'stages_and_states', 'attacks_and_side', 'ailments_from', 'affections', 'clinical', 'modalities',
-        'mental_state_and_disorders', 'appearance_and_behavior', 'attention_and_concentration', 'expression',
-        'consciousness', 'mood_and_affect', 'memory', 'speech', 'thoughts_and_ideas', 'perception', 'intelligence',
-        'judgment', 'fear_and_live_alone', 'boring', 'peaceful', 'anger', 'hobby', 'habit', 'addiction', 'nutrition',
-        'anaemia', 'cyanosis', 'dehydration', 'jaundice', 'pulse', 'breathing', 'peculiar_rare_symptoms'
-        ];
-
-        let filtered = [];
-        if(remedies.length){
-          for(let [key, value] of Object.entries(remedies[0])) {
-            if( !last.includes(key) && !omitted_field.includes(key)){
-              filtered.push(key)
-            }
-          }
-          filtered.push(...last)
-          return filtered
-        }
-      },
       prescribe_history: ({data}) => {
         if(data.treatments){
           let values = data.treatments;
