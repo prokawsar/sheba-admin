@@ -94,7 +94,6 @@
         is_loading: false,
         is_error: false,
         error_message: '',
-        selected_symptom: '',
         remedies: {},
         data: {},
         meta: {},
@@ -192,10 +191,6 @@
       this.loadRemedies();
     },
     methods: {
-
-      select_symptom(key){
-        this.set({ selected_symptom: key })
-      },
       load() {
         var { entityId } = this.get();
 
