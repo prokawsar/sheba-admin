@@ -1,7 +1,9 @@
 <p class="title is-5">Remedy History
+  {#if !is_static}
   <span class="is-pulled-right">
     <button class="button is-primary" type="button" on:click="set({add_remedy: !add_remedy})">{add_remedy ? 'Cancel' : 'Add More'}</button>
   </span>
+  {/if}
 </p>
 
 <div>
@@ -10,7 +12,7 @@
       {#each history as item}
         <li>
           <span class="description"><strong>{item.date}</strong>
-            {#if item.date == niceDate(today) }
+            {#if item.date == niceDate(today) && !is_static }
             <span class="is-pulled-right">
               <button type="button" class="button is-small" on:click="edit(item.remedies)" >
                 <span class="icon is-small"><i class="fa fa-pencil"></i></span>
@@ -66,6 +68,7 @@ export default {
       showAll: false,
       filter: '',
       add_remedy: false,
+      is_static: false,
     }
   },
   helpers:{
