@@ -52,7 +52,7 @@
                   on:saveTreatment
                />
               {:else}
-              <Timeline history="{prescribe_history}" on:editPrescription bind:add_remedy />
+              <Timeline bind:data on:editPrescription bind:add_remedy />
               {/if}
 
             </Message>
@@ -97,7 +97,6 @@
         remedies: {},
         data: {},
         meta: {},
-        omitted_field: [ 'id', 'name', 'created', 'modified', 'deleted', 'patient', 'treatments'],
         add_remedy: false,
         tracker: {
           saving: false,
@@ -114,32 +113,6 @@
     },
     computed: {
       entityId: ({ $nav }) => $nav && $nav.params[0],
-      prescribe_history: ({data}) => {
-        if(data.treatments){
-          let values = data.treatments;
-          // this gives an object with dates as keys
-          const groups = values.reduce((groups, remedy) => {
-            const date = niceDate(remedy.created);
-
-            if (!groups[date]) {
-              groups[date] = [];
-            }
-            groups[date].push(remedy);
-            return groups;
-          }, {});
-
-          // Edit: to add it in the array format instead
-          const groupArrays = Object.keys(groups).map((date) => {
-            return {
-              date,
-              remedies: groups[date]
-            };
-          });
-
-          return groupArrays
-        }
-        return []
-      },
       remedy_names: ({remedies}) => {
         let _names= [];
 

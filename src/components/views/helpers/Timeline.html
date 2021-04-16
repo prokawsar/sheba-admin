@@ -19,7 +19,7 @@
             {/if}
           </span>
           <span class="description">
-            
+
             <table class="table has-background-warning-light">
               {#each item.remedies as {remedy, power, taking_rule}, i}
                 <tr>
@@ -31,7 +31,7 @@
                 </tr>
               {/each}
             </table>
-            
+
             <br>
           </span>
         </li>
@@ -54,7 +54,7 @@ import { Icon, Panel } from '@kws3/helpers';
 import fuzzysearch from 'fuzzysearch';
 import {nl2br} from '../../../utils/templateHelpers.js';
 import niceDate from '../../../utils/niceDate.js';
- 
+
 export default {
   components:{
     Icon, Panel
@@ -74,6 +74,32 @@ export default {
   },
   computed:{
     today: ({history}) => new Date(),
+    history: ({data}) => {
+        if(data.treatments){
+          let values = data.treatments;
+          // this gives an object with dates as keys
+          const groups = values.reduce((groups, remedy) => {
+            const date = niceDate(remedy.created);
+
+            if (!groups[date]) {
+              groups[date] = [];
+            }
+            groups[date].push(remedy);
+            return groups;
+          }, {});
+
+          // Edit: to add it in the array format instead
+          const groupArrays = Object.keys(groups).map((date) => {
+            return {
+              date,
+              remedies: groups[date]
+            };
+          });
+
+          return groupArrays
+        }
+        return []
+      },
     // _history({history, visible, showAll, filter, has_filter}){
     //   var _history = (history || []).slice();
     //   if(has_filter)
