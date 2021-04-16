@@ -19,7 +19,7 @@
           {#each Object.entries(remedy_found) as [key, value], i }
             <div class="column is-4" style="border-radius: 4px; background-color: {remedy_id == value.id ? '#E6E6FA' : ''};">
               <p class="is-size-5" style="line-height: 1.2rem; cursor: pointer;" on:click="showSymptoms(value)" > {value.name}
-                <span class="tag is-success is-medium is-pulled-right">{value.mark}</span>
+                <span class="tag is-{i == 0 ? 'link' : 'success'} is-medium is-pulled-right">{value.mark}</span>
               </p>
             </div>
         {/each}
@@ -79,7 +79,7 @@
       disabled: ({data}) => !data.patient,
       remedy_found: ({remedy_found}) => {
         let sortable = remedy_found.sort((a, b) => (a.mark < b.mark) ? 1 : -1)
-        return sortable;
+        return sortable.slice(0, 10);
       }
     },
     methods: {
