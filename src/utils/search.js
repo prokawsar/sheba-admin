@@ -5,7 +5,12 @@ return resut as array of objects
     id: remedy id,
     name: remedy name,
     mark: remedy gets matched mark
-    fields: matched fields name and queries
+    fields:[ array of matched symptoms and queries
+      {
+        matched:
+        query:
+      }
+    ]
   }
 ]
 */
