@@ -77,10 +77,6 @@
     },
     computed: {
       disabled: ({data}) => !data.patient,
-      remedy_found: ({remedy_found}) => {
-        let sortable = remedy_found.sort((a, b) => (a.mark < b.mark) ? 1 : -1)
-        return sortable.slice(0, 10);
-      }
     },
     methods: {
       showSymptoms(value){

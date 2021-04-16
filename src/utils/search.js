@@ -101,5 +101,7 @@ export default function(data, remedies){
       })
     })
   }
-  return matched_remedies;
+  let sortable = matched_remedies.sort((a, b) => (a.mark < b.mark) ? 1 : -1)
+  return sortable.slice(0, 10);
+
 }
