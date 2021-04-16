@@ -2,7 +2,7 @@
   <Panel title="Matches Remedy" has_toolbar={true} >
     <div slot='toolbar'>
       {#if remedy_id}
-        <a class="button is-text " href="#remedies/singleview/{remedy_id}" target="_blank">
+        <a class="button is-text " href="#remedies/singleview/{remedy_id}" data-tooltip="View {selected_remedy}" target="_blank">
           <span class="icon is-small"><i class="fa fa-eye"></i></span>
         <span>View selected Remedy</span>
         </a>
@@ -73,6 +73,7 @@
     data(){
       return{
         remedy_id: null,
+        selected_remedy: '',
         remedy_found: {},
         field_name: '',
         result_matched_fields: [],
@@ -85,7 +86,7 @@
     methods: {
       showSymptoms(value){
         if(value){
-          this.set({ remedy_id: value.id});
+          this.set({ remedy_id: value.id, selected_remedy: value.name});
           this.fire('showSymptoms', value);
         }
       },
