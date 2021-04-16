@@ -23,10 +23,15 @@
     <div class="columns">
       <div class="column is-5">
         {#if data.patient}
-          <Message title="Records" color='info'>
+          <Message color='info'>
             <p class="title is-5">Patient Details</p>
-
             <PatientDetails data={data.patient} />
+          </Message>
+        {/if}
+
+        {#if data.treatments}
+          <Message color='info'>
+            <Timeline bind:data is_static="true" />
           </Message>
         {/if}
       </div>
@@ -48,20 +53,19 @@
 <script>
   import Model from '../../../models/histories';
   import Remedies from '../../../models/remedies';
-
   import {Icon, Panel, Message} from '@kws3/helpers';
   import { SubmitButton, ConfirmButton } from '@kws3/buttons';
-
   import Router from '../../../services/router';
   import SearchResult from '../search/helpers/SearchResult.html';
   import RemedyFound from '../search/helpers/RemedyFound.html';
   import PatientDetails from '../helpers/PatientDetails.html';
+  import Timeline from '../helpers/Timeline.html';
 
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
-      Message, SubmitButton, ConfirmButton,
+      Message, SubmitButton, ConfirmButton, Timeline,
       Icon, Panel, SearchResult, RemedyFound, PatientDetails
 
     },
