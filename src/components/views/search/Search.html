@@ -62,7 +62,12 @@
                   <div class="field">
                     <p class="control">
                       <label class="label" style="text-transform: capitalize;">{selected_section}</label>
-                      <textarea class="textarea" placeholder="{selected_section}..." bind:value="data[selected_section]" style="height: 15rem;"></textarea>
+                      {#if data[selected_section]}
+                        <textarea class="textarea" placeholder="{selected_section}..." bind:value="data[selected_section]" style="height: 15rem;"></textarea>
+                      {:else}
+                        <textarea class="textarea" placeholder="{selected_section}..." style="height: 15rem;"></textarea>
+                      {/if}
+
                     </p>
                   </div>
 
