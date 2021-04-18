@@ -23,6 +23,7 @@
       {classTransformers}
       {styleTransformers}
       {clickableRows}
+      {filter_label_map}
       on:rowClick
       >
       <a  slot="additionalButtons" href="#history/add" class="button is-success">
@@ -73,6 +74,9 @@
           'created': 'Last Visited Date',
         },
         search_placeholder: 'Name',
+        filter_label_map: {
+          'deleted': 'History'
+        },
         page:{
           title: 'Case Histories',
           icon: 'building-o',
