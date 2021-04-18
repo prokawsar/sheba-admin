@@ -18,7 +18,7 @@
 
     {#if active_tab == 'patient_cc'}
       <ViewScaffold {is_loading} {is_error} {error_message}>
-        <PatientAdd bind:patient on:addPatient bind:data bind:p_data bind:searchable_symp/>
+        <PatientAdd bind:patient on:addPatient bind:data bind:p_data bind:searchable_symp bind:case_id />
 
       </ViewScaffold>
 
@@ -355,6 +355,11 @@
 
       this.on('addPatient', patient => {
         let {data} = this.get();
+        if(patient.case_histories){
+          let case_id = patient.case_histories[0].id;
+          this.set({ case_id });
+
+        }
         data.patient = patient;
         this.set({data});
       });

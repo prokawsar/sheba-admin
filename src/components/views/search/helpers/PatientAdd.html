@@ -58,7 +58,7 @@
             <br>
             <PatientSearchResults {active_pane} bind:data="p_data" {meta} on:rowClick on:customerCreate />
           {:else}
-            <PatientDetails data={data.patient} />
+            <PatientDetails data={data.patient} {case_id} />
 
           {/if}
         {:elseif patient.patient_type == 'new'}
