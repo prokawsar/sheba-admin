@@ -63,9 +63,9 @@
                     <p class="control">
                       <label class="label" style="text-transform: capitalize;">{selected_section}</label>
                       {#if data[selected_section]}
-                        <textarea class="textarea" placeholder="{selected_section}..." bind:value="data[selected_section]" style="height: 15rem;"></textarea>
+                        <textarea class="textarea" readonly placeholder="{selected_section}..." bind:value="data[selected_section]" style="height: 15rem;"></textarea>
                       {:else}
-                        <textarea class="textarea" placeholder="{selected_section}..." style="height: 15rem;"></textarea>
+                        <textarea class="textarea" readonly placeholder="{selected_section}..." style="height: 15rem;"></textarea>
                       {/if}
 
                     </p>
@@ -334,7 +334,8 @@
 
         if(current.selected_keyed_symp != previous.selected_keyed_symp){
           // got it selected symptom
-          data[selected_section] =  data[selected_section] ? data[selected_section]  + ', ' + current.selected_keyed_symp : current.selected_keyed_symp;
+          data[selected_section] =  data[selected_section] ? data[selected_section]  + ', ' + current.selected_keyed_symp : ', ' + current.selected_keyed_symp;
+          data[selected_section] = Array.from(new Set(data[selected_section].split(','))).toString();
           this.set({data})
         }
 
