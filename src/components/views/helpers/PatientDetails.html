@@ -19,12 +19,22 @@
 </span>
 
 
+{#if case_id}
+<div class="column">
+  <Message color="info">
+  <p> This patient has already case history:
+    <a class="" href="/#history/view/{case_id}">View case history</a>
+  </p>
+</Message>
+</div>
+{/if}
+
 <script>
-  import {Icon} from '@kws3/helpers';
+  import {Icon, Message} from '@kws3/helpers';
 
     export default {
     components:{
-      Icon
+      Icon, Message
     },
     data(){
       return {
