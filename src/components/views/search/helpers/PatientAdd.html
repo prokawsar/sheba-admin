@@ -42,8 +42,11 @@
               />
           </p>
         </div>
-
-        <textarea class="textarea" placeholder="CC..." bind:value="data.cc"></textarea>
+        {#if data.cc}
+          <textarea class="textarea" placeholder="CC..." bind:value="data.cc"></textarea>
+        {:else}
+          <textarea class="textarea" placeholder="CC..."></textarea>
+        {/if}
       </div>
 
       <div class="column">
