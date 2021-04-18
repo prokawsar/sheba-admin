@@ -73,7 +73,7 @@
           'name': 'Patient Name',
           'created': 'Last Visited Date',
         },
-        search_placeholder: 'Name',
+        search_placeholder: 'Patient ID',
         filter_label_map: {
           'deleted': 'History'
         },
@@ -87,7 +87,7 @@
           query = [];
 
           if(qparts[0] != ''){
-            query.push('name[lk]:'+qparts[0]);
+            query.push('patient[lk]:'+qparts[0]);
           }
 
           qparts.shift();
