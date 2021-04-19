@@ -1,8 +1,10 @@
 <div class="page-content">
 
+  {#if !edit_case}
   <PageTitle page="{page}">
     <LabsTabs {tabs} bind:active_tab />
   </PageTitle>
+  {/if}
 
   <ViewScaffold {is_loading} {is_error} {error_message} class="has-fullpage-tabs has-multilevel-tabs">
 
@@ -26,7 +28,7 @@
                 <div class="column">
                   <Message title="Records" color='light'>
                     {#each Object.entries(data) as [key, value], i}
-                      {#if !omitted_field.includes(key)}
+                      {#if value && !omitted_field.includes(key)}
                         <p><span class="has-text-weight-bold is-size-5">{key}</span>: {value}</p> <br>
                       {/if}
                     {/each}
@@ -187,6 +189,7 @@
       return {
         is_loading: false,
         is_error: false,
+        edit_case: false,
         error_message: '',
         is_active_case_modal: false,
         selected_section: '',
@@ -215,7 +218,7 @@
         page: {
           title: 'Search Remedy',
           icon: 'search',
-          icon_badge: 'plus'
+          icon_badge: ''
         },
         tabs: [
           {icon: 'info-circle', name: 'patient_cc', title: 'Patient/CC'},
@@ -227,6 +230,7 @@
     computed: {
       has_searched: ({remedy_found}) => Object.keys(remedy_found).length,
       user_role: ({ $user }) => $user && $user.role,
+      active_tab: ({edit_case}) => edit_case ? 'case_history' : 'patient_cc',
       filterFields: ({remedies, omitted_field}) => {
 
         let last = ['built', 'constitution', 'diathesis', 'miasm', 'temperament', 'temperature_and_weather',
@@ -482,7 +486,7 @@
 
         setTimeout( () => {
           this.set({ tracker: { saved: false } });
-          Router.navigate('search');
+          // Router.navigate('search');
         }, 1500);
 
       },
