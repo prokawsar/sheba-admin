@@ -29,12 +29,12 @@
               {/each}
             </Message>
           </div>
-          
+
           <div class="column">
 
             <div class="field">
               <span class="select is-fullwidth">
-                <select class="input" bind:value="selected_symptom" >
+                <select class="input" bind:value="selected_section" >
                   <option value="">Select Type</option>
                   {#each Object.entries(data) as [key, value], i}
                     {#if !omitted_field.includes(key)}
@@ -47,8 +47,8 @@
 
             <div class="field">
               <p class="control">
-                <label class="label" style="text-transform: capitalize;">{selected_symptom}</label>
-                <textarea class="textarea" placeholder="{selected_symptom}..." bind:value="data[selected_symptom]" style="height: 15rem;"></textarea>
+                <label class="label" style="text-transform: capitalize;">{selected_section}</label>
+                <textarea class="textarea" placeholder="{selected_section}..." bind:value="data[selected_section]" style="height: 15rem;"></textarea>
               </p>
             </div>
 
@@ -58,9 +58,9 @@
 
             <div class="field">
               <p class="control">
-                <label class="label" style="text-transform: capitalize;">{selected_symptom} Symptoms in the System</label>
+                <label class="label" style="text-transform: capitalize;">{selected_section} Symptoms in the System</label>
                   <SearchableSelect
-                    data="{searchable_withkey[selected_symptom]}"
+                    data="{searchable_withkey[selected_section]}"
                     placeholder="Choose..."
                     bind:_name="selected_keyed_symp"
                     searchKey="name"
@@ -94,87 +94,18 @@
       <br>
   {/if}
 
-  {#if has_searched }
-  <RemedyFound
-    bind:tracker
-    bind:remedy_found
-    {field_name}
-    {result_symptoms}
-    on:back="back()"
-    on:showSymptoms
-    on:saveHistory="saveHistory()"
-  />
-  <br>
+
+
+  {#if !has_searched}
+    <Sections
+      bind:data
+      bind:remedies
+      bind:filterFields
+      bind:selected_section
+      on:reset="reset(event)"
+    />
+
   {/if}
-
-
-  <Panel title="Sections" has_toolbar={true} >
-    <div slot='toolbar'>
-      <ConfirmButton
-          text="Reset"
-          color="danger"
-          size=""
-          icon="refresh"
-          icon_only="{false}"
-          disabled="{false}"
-          on:do="reset(event)"
-        />
-    </div>
-
-    <div class="columns">
-      <div class="column">
-        {#if remedies.length}
-        <div class="columns">
-          <div class="column">
-            <label class="label">With Number</label>
-            <div class="field">
-              <span class="select is-fullwidth">
-                <select class="input" bind:value="selected_symptom" >
-                  <option value="">Select Type</option>
-                  {#each filterFields as key, index }
-                      <option value="{key}">{index+1} - {key}</option>
-                  {/each}
-                </select>
-              </span>
-            </div>
-
-          </div>
-          <div class="column">
-            <label class="label">Without Number</label>
-            <div class="field">
-              <span class="select is-fullwidth">
-                <select class="input" bind:value="selected_symptom" >
-                  <option value="">Select Type</option>
-                  {#each filterFields as key, index }
-                      <option value="{key}">{key}</option>
-                  {/each}
-                </select>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div class="columns">
-          <div class="column">
-            <div class="buttons">
-              {#each filterFields as key }
-                  <button type="button" class="button is-medium is-{ (key == selected_symptom) ? 'success' : data[key] ? '' : 'info' } " on:click="select_symptom(key)" style="text-transform: capitalize; margin-left: .6rem; margin-bottom: .6rem;">
-                    {#if data[key] }
-                      <span class="icon is-small"><i class="fa fa-check"></i></span>
-                    {/if}
-                    <span>{key}</span>
-                  </button>
-              {/each}
-              </div>
-
-          </div>
-        </div>
-        {/if}
-      </div>
-
-    </div>
-
-  </Panel>
 
   </ViewScaffold>
 </div>
@@ -188,15 +119,15 @@
   import { SubmitButton, ConfirmButton } from '@kws3/buttons';
   import SearchableSelect from '@kws3/searchable-select';
   import PatientAdd from '../search/helpers/PatientAdd.html';
-  import RemedyFound from '../search/helpers/RemedyFound.html';
   import PatientSearch from '../helpers/PatientSearch.html';
-  
+  import Sections from '../search/helpers/Sections.html';
+
   export default {
     components: {
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
       Panel, Notification, SubmitButton, PatientSearch, Message,
-      SearchableSelect, ConfirmButton, PatientAdd, RemedyFound
+      SearchableSelect, ConfirmButton, PatientAdd, Sections
     },
 
     data() {
@@ -205,7 +136,7 @@
         is_error: false,
         error_message: '',
         is_active_case_modal: false,
-        selected_symptom: '',
+        selected_section: '',
         selected_symp: '',
         selected_keyed_symp: '',
         result_symptoms: '',
@@ -259,7 +190,7 @@
           filtered.push(...last)
           // filtered.forEach( (field) => {
           //   data[field] = null;
-          // })  
+          // })
           return filtered
         }
       },
@@ -320,13 +251,13 @@
       }
     },
     oncreate(){
-      
+
       this.on('state', ({ changed, current, previous }) => {
-        let {data, selected_symptom} = this.get()
-        
+        let {data, selected_section} = this.get()
+
         if(current.selected_keyed_symp != previous.selected_keyed_symp){
           // got it selected symptom
-          data[selected_symptom] =  data[selected_symptom] ? data[selected_symptom]  + ', ' + current.selected_keyed_symp : current.selected_keyed_symp;
+          data[selected_section] =  data[selected_section] ? data[selected_section]  + ', ' + current.selected_keyed_symp : current.selected_keyed_symp;
           this.set({data})
         }
 
@@ -343,7 +274,7 @@
       })
 
       this.loadRemedies();
-      
+
     },
     methods: {
       loadRemedies(){
@@ -367,7 +298,7 @@
 
       },
       select_symptom(key){
-        this.set({ selected_symptom: key })
+        this.set({ selected_section: key })
       },
       showSymptoms(value){
         // let fields = value.field.split(', '),
