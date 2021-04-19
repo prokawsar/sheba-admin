@@ -1,10 +1,7 @@
 <div class="page-content">
 
   <PageTitle page="{page}">
-    <!-- <a class="button is-info is-pulled-right" href="#remedies">
-      <Icon icon="long-arrow-left" size="small" />
-      <span>Back to All Remedies</span>
-    </a> -->
+    <LabsTabs {tabs} bind:active_tab />
   </PageTitle>
 
   <ViewScaffold {is_loading} {is_error} {error_message} class="has-fullpage-tabs has-multilevel-tabs">
@@ -14,18 +11,13 @@
       {error_message}
     </Notification>
     {/if}
-    <LabsTabs {tabs} bind:active_tab />
 
     {#if active_tab == 'patient_cc'}
-      <ViewScaffold {is_loading} {is_error} {error_message}>
-        <PatientAdd bind:patient on:addPatient bind:data bind:p_data bind:searchable_symp bind:case_id />
-
-      </ViewScaffold>
+      <PatientAdd bind:patient on:addPatient bind:data bind:p_data bind:searchable_symp bind:case_id />
 
     {/if}
     {#if active_tab == 'case_history'}
-      <ViewScaffold {is_loading} {is_error} {error_message}>
-
+      <div class="content">
         {#if !has_searched}
           <form on:submit="search(event)">
             <Panel title="Patient Symptoms" has_toolbar={true} >
@@ -157,10 +149,8 @@
           />
 
         {/if}
-
-
-      </ViewScaffold>
-    {/if}
+      </div>
+   {/if}
 
 
   </ViewScaffold>
