@@ -88,6 +88,7 @@
       return {
         is_loading: false,
         is_error: false,
+        edit_remedies: false,
         error_message: '',
         remedies: {},
         data: {},
@@ -129,6 +130,7 @@
         console.log(remedies)
         this.set({
           add_remedy: true,
+          edit_remedies: true,
           selected_remedies: remedies
         })
       })
@@ -177,14 +179,15 @@
         })
       },
       savePrescription(treatments) {
-        let {data, entityId} = this.get();
+        let {data, entityId, edit_remedies} = this.get();
 
         let structured = {
           prescribe: {
             id: entityId,
             patient: data.patient.id
           },
-          data: treatments
+          data: treatments,
+          edit_remedies
         };
 
         this.set({
