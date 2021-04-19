@@ -12,7 +12,6 @@
 
     <!-- <SlidingPaneSet style="height:{pane_height}px">
       <SlidingPane active={active_tab == 'static_view'} track_height on:heightChange> -->
-        <!-- <ViewHistoryStatic bind:is_error bind:error_message /> -->
         {#if active_tab == 'static_view'}
           <ViewHistoryStatic bind:is_error bind:error_message />
 
@@ -20,9 +19,7 @@
       <!-- </SlidingPane>
 
       <SlidingPane active={false} track_height on:heightChange> -->
-        <!-- <ViewHistoryEdit bind:is_error bind:error_message /> -->
         {#if active_tab == 'edit_view'}
-          <!-- <ViewHistoryEdit bind:is_error bind:error_message /> -->
           <Search edit_case={true} bind:data bind:tracker on:save="save()" on:saveTreatment />
 
         {/if}
@@ -40,7 +37,6 @@
   import {SlidingPaneSet, SlidingPane} from '@kws3/sliding-panes';
   import LabsTabs from '../helpers/Tabs.html';
   import ViewHistoryStatic from './ViewHistoryStatic.html';
-  import ViewHistoryEdit from './ViewHistoryEdit.html';
   import Search from '../search/Search.html';
 
   export default {
@@ -48,8 +44,7 @@
       ViewScaffold: '../../helpers/ViewScaffold.html',
       PageTitle: '../../helpers/PageTitle.html',
       Notification, SubmitButton, ConfirmButton,
-      Icon, Panel, LabsTabs,
-      ViewHistoryStatic, ViewHistoryEdit,
+      Icon, Panel, LabsTabs, ViewHistoryStatic,
       SlidingPaneSet, SlidingPane, Search,
     },
     data() {
