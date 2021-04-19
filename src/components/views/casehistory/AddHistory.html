@@ -1,10 +1,7 @@
 <div class="page-content">
 
   <PageTitle page="{page}">
-    <!-- <a class="button is-info is-pulled-right" href="#remedies">
-      <Icon icon="long-arrow-left" size="small" />
-      <span>Back to All Remedies</span>
-    </a> -->
+
   </PageTitle>
 
   <ViewScaffold {is_loading} {is_error} {error_message}>
@@ -48,7 +45,11 @@
             <div class="field">
               <p class="control">
                 <label class="label" style="text-transform: capitalize;">{selected_section}</label>
-                <textarea class="textarea" placeholder="{selected_section}..." bind:value="data[selected_section]" style="height: 15rem;"></textarea>
+                {#if data[selected_section]}
+                  <textarea class="textarea" readonly placeholder="{selected_section}..." bind:value="data[selected_section]" style="height: 15rem;"></textarea>
+                {:else}
+                  <textarea class="textarea" readonly placeholder="{selected_section}..." style="height: 15rem;"></textarea>
+                {/if}
               </p>
             </div>
 
@@ -292,17 +293,7 @@
         this.set({ remedy_found: {} })
         comp && comp.done();
       },
-      back(){
-        this.set({ remedy_found: {} })
-        this.set({ result_symptoms: {} })
-
-      },
-      select_symptom(key){
-        this.set({ selected_section: key })
-      },
       showSymptoms(value){
-        // let fields = value.field.split(', '),
-
         this.set({ result_symptoms: value.symptoms, field_name: value.field })
       },
       saveHistory(){
@@ -353,74 +344,6 @@
 
         });
       },
-      search(e) {
-        e.preventDefault();
-
-        var { data, valid, remedies }  = this.get();
-        let _payload = [];
-        let matched_remedies = {};
-
-        console.log(data)
-
-        this.set({
-          tracker: {
-            saving: true,
-            saved: false,
-            error: false
-          }
-        });
-
-
-        //reducing null fields from payload
-        for(let [key, value] of Object.entries(data)) {
-          if(value && key != 'patient'){
-            _payload[key] = value.split(',')
-          }
-        }
-        // console.log(_payload)
-
-        for(let [key, values] of Object.entries(_payload)) { // values are array of symptoms
-          values.forEach( (value) => {
-            remedies.forEach( (remedy) => {
-              if(remedy[key] != '' && remedy[key] ){
-                remedy[key].split(',').forEach( (symptom) =>{ // matching with each symptoms for remedy
-
-                  if(symptom.trim() === value.trim() && value.trim() != ''){
-                    if( matched_remedies.hasOwnProperty(remedy['name']) ){
-                      matched_remedies[remedy['name']].mark++;
-                      matched_remedies[remedy['name']].field += ', ' + key;
-                      matched_remedies[remedy['name']].symptoms += ', ' + value.trim();
-
-                    }else{
-                      matched_remedies[remedy['name']] = {};
-                      matched_remedies[remedy['name']].field = key;
-                      matched_remedies[remedy['name']].mark = 1;
-                      matched_remedies[remedy['name']].symptoms = value.trim();
-
-                    }
-                  }
-                })
-              }
-              // if(remedy[key].includes(value.trim())){ // currently matching with whole value
-
-              //   if(matched_remedies[remedy['name']]){
-              //     matched_remedies[remedy['name']]++
-              //   }else{
-              //     matched_remedies[remedy['name'].trim()] = 1;
-              //   }
-              // }
-            })
-          })
-        }
-        this.set({ remedy_found: matched_remedies})
-
-        setTimeout( () => {
-          this.set({ tracker: { saved: false } });
-          Router.navigate('search');
-        }, 1500);
-
-      },
-
     }
   }
 
