@@ -38,7 +38,7 @@
                 <select bind:value="treatment.remedy">
                   <option value="">Select...</option>
                   {#each Object.entries(remedy_found) as [key, value], i }
-                    <option value="{key}">{key}</option>
+                    <option value="{value.name}">{value.name}</option>
                   {/each}
                 </select>
               {/if}
