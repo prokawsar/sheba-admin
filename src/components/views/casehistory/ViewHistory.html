@@ -22,7 +22,8 @@
       <SlidingPane active={false} track_height on:heightChange> -->
         <!-- <ViewHistoryEdit bind:is_error bind:error_message /> -->
         {#if active_tab == 'edit_view'}
-          <ViewHistoryEdit bind:is_error bind:error_message />
+          <!-- <ViewHistoryEdit bind:is_error bind:error_message /> -->
+          <Search edit_case={true} bind:data />
 
         {/if}
       <!-- </SlidingPane>
@@ -32,12 +33,14 @@
 </div>
 
 <script>
+  import Model from '../../../models/histories';
   import {Icon, Notification, Panel} from '@kws3/helpers';
   import { SubmitButton, ConfirmButton } from '@kws3/buttons';
   import {SlidingPaneSet, SlidingPane} from '@kws3/sliding-panes';
   import LabsTabs from '../helpers/Tabs.html';
   import ViewHistoryStatic from './ViewHistoryStatic.html';
   import ViewHistoryEdit from './ViewHistoryEdit.html';
+  import Search from '../search/Search.html';
 
   export default {
     components: {
@@ -46,7 +49,7 @@
       Notification, SubmitButton, ConfirmButton,
       Icon, Panel, LabsTabs,
       ViewHistoryStatic, ViewHistoryEdit,
-      SlidingPaneSet, SlidingPane,
+      SlidingPaneSet, SlidingPane, Search,
     },
     data() {
       return {
@@ -82,14 +85,43 @@
         this.set({pane_height: height})
       });
 
-      var { entityId } = this.get();
-
       this.on('state', ({ changed, current, previous }) => {
         console.log(current)
       });
 
+      this.load();
+
     },
     methods: {
+      load() {
+        var { entityId } = this.get();
+
+        this.set({
+          is_loading: true,
+          is_error: false
+        });
+
+        Model && Model.getOne(entityId)
+        .then((r) => {
+          this.set({
+            is_loading: false,
+            meta: r._meta,
+            data: r.response
+          });
+
+        })
+        .catch((r) => {
+          var user_message = '';
+          if (typeof r != 'undefined' && typeof r.response != 'undefined' && typeof r.response.records != 'undefined') {
+            user_message = r.response.records.userMessage;
+          }
+          this.set({
+            'is_error': true,
+            'is_loading': false,
+            'error_message': user_message
+          });
+        });
+      },
     }
   }
 </script>
