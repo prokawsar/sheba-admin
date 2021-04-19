@@ -23,7 +23,7 @@
         <!-- <ViewHistoryEdit bind:is_error bind:error_message /> -->
         {#if active_tab == 'edit_view'}
           <!-- <ViewHistoryEdit bind:is_error bind:error_message /> -->
-          <Search edit_case={true} bind:data />
+          <Search edit_case={true} bind:data bind:tracker on:save="save()"/>
 
         {/if}
       <!-- </SlidingPane>
@@ -120,6 +120,50 @@
             'is_loading': false,
             'error_message': user_message
           });
+        });
+      },
+      save() {
+        var {data, entityId, tracker} = this.get();
+
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
+
+        Model.save(entityId, data)
+        .then(r => {
+          this.set({
+            data: r.response,
+            tracker: {
+              saving: false,
+              saved: true,
+              error: false
+            }
+          });
+
+          setTimeout(() => {
+            tracker.saved = false;
+            this.set({tracker});
+          }, 1500);
+        })
+        .catch(r => {
+          console.log(r)
+          this.set({error_message: 'There was an error updating history'});
+
+          this.set({
+            tracker: {
+              saving: false,
+              saved: false,
+              error: true
+            }
+          });
+
+          setTimeout(() => {
+            this.set({tracker: {error: false}});
+          }, 1500);
         });
       },
     }
