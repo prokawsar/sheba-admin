@@ -85,8 +85,8 @@
       this.on('heightChange', ({height}) => {
         this.set({pane_height: height})
       });
-      this.on('saveTreatment', (treatment) => {
-        this.saveTreatment(treatment);
+      this.on('saveTreatment', (treatments) => {
+        this.saveTreatment(event, treatments);
       });
 
       this.on('state', ({ changed, current, previous }) => {
@@ -170,8 +170,9 @@
           }, 1500);
         });
       },
-      saveTreatment(treatments) {
-      let {data, entityId} = this.get();
+      saveTreatment(event, treatments) {
+        event.preventDefault();
+        let {data, entityId} = this.get();
 
         let structured = {
           prescribe: {
@@ -201,7 +202,7 @@
 
           setTimeout( () => {
             this.set({ tracker: { saved: false } });
-            this.load();
+            // this.load();
           }, 1500);
 
         })
