@@ -23,7 +23,7 @@
         <!-- <ViewHistoryEdit bind:is_error bind:error_message /> -->
         {#if active_tab == 'edit_view'}
           <!-- <ViewHistoryEdit bind:is_error bind:error_message /> -->
-          <Search edit_case={true} bind:data bind:tracker on:save="save()"/>
+          <Search edit_case={true} bind:data bind:tracker on:save="save()" on:saveTreatment />
 
         {/if}
       <!-- </SlidingPane>
@@ -34,6 +34,7 @@
 
 <script>
   import Model from '../../../models/histories';
+  import TreatmentModel from '../../../models/treatments';
   import {Icon, Notification, Panel} from '@kws3/helpers';
   import { SubmitButton, ConfirmButton } from '@kws3/buttons';
   import {SlidingPaneSet, SlidingPane} from '@kws3/sliding-panes';
@@ -84,9 +85,12 @@
       this.on('heightChange', ({height}) => {
         this.set({pane_height: height})
       });
+      this.on('saveTreatment', (treatment) => {
+        this.saveTreatment(treatment);
+      });
 
       this.on('state', ({ changed, current, previous }) => {
-        console.log(current)
+        // console.log(current)
       });
 
       this.load();
@@ -165,6 +169,45 @@
             this.set({tracker: {error: false}});
           }, 1500);
         });
+      },
+      saveTreatment(treatments) {
+      let {data, entityId} = this.get();
+
+        let structured = {
+          prescribe: {
+            id: entityId,
+            patient: data.patient.id
+          },
+          data: treatments
+        };
+
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
+
+        TreatmentModel && TreatmentModel.createWithCase(structured)
+        .then( (r) => {
+          this.set({
+            tracker: {
+              saving: false,
+              saved: true,
+              error: false
+            }
+          });
+
+          setTimeout( () => {
+            this.set({ tracker: { saved: false } });
+            this.load();
+          }, 1500);
+
+        })
+        .catch( (r) => {
+          console.log(r)
+        })
       },
     }
   }

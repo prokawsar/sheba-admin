@@ -449,7 +449,12 @@
         });
       },
       saveTreatment(treatments){
-        let {data} = this.get();
+        let {data, edit_case} = this.get();
+        if(edit_case){
+          this.fire('saveTreatment', treatments);
+          return;
+        }
+
         this.set({
           tracker: {
             saving: true,
