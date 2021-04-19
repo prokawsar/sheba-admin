@@ -40,10 +40,13 @@
         </div>
 
         <div class="field">
-          <p class="control">
-            <label class="label"> &nbsp; </label>
-            <SubmitButton bind:disabled classes="is-primary is-pulled-right" icon="save" icon_size="small" text="Save History" bind:tracker />
-          </p>
+          {#if !edit_case}
+            <p class="control">
+              <label class="label"> &nbsp; </label>
+              <SubmitButton bind:disabled classes="is-primary is-pulled-right" icon="save" icon_size="small" text="Save History" bind:tracker />
+            </p>
+          {/if}
+
           <p class="control is-pulled-left has-text-grey">
             <span class="icon"><i class="fa fa-info"></i></span>
             Matched text with query are in colored text.
@@ -72,6 +75,7 @@
     },
     data(){
       return{
+        edit_case: false,
         remedy_id: null,
         selected_remedy: '',
         remedy_found: {},

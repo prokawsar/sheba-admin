@@ -22,7 +22,8 @@
       <SlidingPane active={false} track_height on:heightChange> -->
         <!-- <ViewHistoryEdit bind:is_error bind:error_message /> -->
         {#if active_tab == 'edit_view'}
-          <ViewHistoryEdit bind:is_error bind:error_message />
+          <!-- <ViewHistoryEdit bind:is_error bind:error_message /> -->
+          <Search edit_case={true} bind:data bind:tracker on:save="save()" on:saveTreatment />
 
         {/if}
       <!-- </SlidingPane>
@@ -32,12 +33,15 @@
 </div>
 
 <script>
+  import Model from '../../../models/histories';
+  import TreatmentModel from '../../../models/treatments';
   import {Icon, Notification, Panel} from '@kws3/helpers';
   import { SubmitButton, ConfirmButton } from '@kws3/buttons';
   import {SlidingPaneSet, SlidingPane} from '@kws3/sliding-panes';
   import LabsTabs from '../helpers/Tabs.html';
   import ViewHistoryStatic from './ViewHistoryStatic.html';
   import ViewHistoryEdit from './ViewHistoryEdit.html';
+  import Search from '../search/Search.html';
 
   export default {
     components: {
@@ -46,7 +50,7 @@
       Notification, SubmitButton, ConfirmButton,
       Icon, Panel, LabsTabs,
       ViewHistoryStatic, ViewHistoryEdit,
-      SlidingPaneSet, SlidingPane,
+      SlidingPaneSet, SlidingPane, Search,
     },
     data() {
       return {
@@ -81,15 +85,131 @@
       this.on('heightChange', ({height}) => {
         this.set({pane_height: height})
       });
-
-      var { entityId } = this.get();
+      this.on('saveTreatment', (treatments) => {
+        this.saveTreatment(event, treatments);
+      });
 
       this.on('state', ({ changed, current, previous }) => {
-        console.log(current)
+        // console.log(current)
       });
+
+      this.load();
 
     },
     methods: {
+      load() {
+        var { entityId } = this.get();
+
+        this.set({
+          is_loading: true,
+          is_error: false
+        });
+
+        Model && Model.getOne(entityId)
+        .then((r) => {
+          this.set({
+            is_loading: false,
+            meta: r._meta,
+            data: r.response
+          });
+
+        })
+        .catch((r) => {
+          var user_message = '';
+          if (typeof r != 'undefined' && typeof r.response != 'undefined' && typeof r.response.records != 'undefined') {
+            user_message = r.response.records.userMessage;
+          }
+          this.set({
+            'is_error': true,
+            'is_loading': false,
+            'error_message': user_message
+          });
+        });
+      },
+      save() {
+        var {data, entityId, tracker} = this.get();
+
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
+
+        Model.save(entityId, data)
+        .then(r => {
+          this.set({
+            data: r.response,
+            tracker: {
+              saving: false,
+              saved: true,
+              error: false
+            }
+          });
+
+          setTimeout(() => {
+            tracker.saved = false;
+            this.set({tracker});
+          }, 1500);
+        })
+        .catch(r => {
+          console.log(r)
+          this.set({error_message: 'There was an error updating history'});
+
+          this.set({
+            tracker: {
+              saving: false,
+              saved: false,
+              error: true
+            }
+          });
+
+          setTimeout(() => {
+            this.set({tracker: {error: false}});
+          }, 1500);
+        });
+      },
+      saveTreatment(event, treatments) {
+        event.preventDefault();
+        let {data, entityId} = this.get();
+
+        let structured = {
+          prescribe: {
+            id: entityId,
+            patient: data.patient.id
+          },
+          data: treatments
+        };
+
+        this.set({
+          tracker: {
+            saving: true,
+            saved: false,
+            error: false
+          }
+        });
+
+        TreatmentModel && TreatmentModel.createWithCase(structured)
+        .then( (r) => {
+          this.set({
+            tracker: {
+              saving: false,
+              saved: true,
+              error: false
+            }
+          });
+
+          setTimeout( () => {
+            this.set({ tracker: { saved: false } });
+            // this.load();
+          }, 1500);
+
+        })
+        .catch( (r) => {
+          console.log(r)
+        })
+      },
     }
   }
 </script>

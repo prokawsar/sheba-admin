@@ -1,8 +1,10 @@
 <div class="page-content">
 
+  {#if !edit_case}
   <PageTitle page="{page}">
     <LabsTabs {tabs} bind:active_tab />
   </PageTitle>
+  {/if}
 
   <ViewScaffold {is_loading} {is_error} {error_message} class="has-fullpage-tabs has-multilevel-tabs">
 
@@ -26,7 +28,7 @@
                 <div class="column">
                   <Message title="Records" color='light'>
                     {#each Object.entries(data) as [key, value], i}
-                      {#if !omitted_field.includes(key)}
+                      {#if value && !omitted_field.includes(key)}
                         <p><span class="has-text-weight-bold is-size-5">{key}</span>: {value}</p> <br>
                       {/if}
                     {/each}
@@ -92,7 +94,18 @@
                         />
                     </p>
                   </div>
-                  <div class="field">
+                  <div class="field is-grouped is-pulled-right">
+                    {#if edit_case}
+                    <p class="control">
+                      <label class="label">&nbsp;</label>
+                      <button type="button" class="button  is-{tracker.saving ? 'loading' : ''} is-primary is-medium" on:click="fire('save')" >
+                        <span class="icon"> <i class="fa fa-{tracker.saved ? 'check' : 'save'}"></i> </span>
+                        <span>Save only</span>
+                      </button>
+
+                    </p>
+                    {/if}
+
                     <p class="control">
                       <label class="label">&nbsp;</label>
                       <SubmitButton classes="is-primary is-medium is-pulled-right" icon="search" icon_size="small" text="Search" bind:tracker />
@@ -112,6 +125,7 @@
                 bind:data
                 bind:tracker
                 bind:remedy_found
+                bind:edit_case
                 {field_name}
                 {result_matched_fields}
                 on:back="back()"
@@ -187,6 +201,7 @@
       return {
         is_loading: false,
         is_error: false,
+        edit_case: false,
         error_message: '',
         is_active_case_modal: false,
         selected_section: '',
@@ -215,7 +230,7 @@
         page: {
           title: 'Search Remedy',
           icon: 'search',
-          icon_badge: 'plus'
+          icon_badge: ''
         },
         tabs: [
           {icon: 'info-circle', name: 'patient_cc', title: 'Patient/CC'},
@@ -227,6 +242,7 @@
     computed: {
       has_searched: ({remedy_found}) => Object.keys(remedy_found).length,
       user_role: ({ $user }) => $user && $user.role,
+      active_tab: ({edit_case}) => edit_case ? 'case_history' : 'patient_cc',
       filterFields: ({remedies, omitted_field}) => {
 
         let last = ['built', 'constitution', 'diathesis', 'miasm', 'temperament', 'temperature_and_weather',
@@ -408,7 +424,7 @@
 
           setTimeout( () => {
             this.set({ tracker: { saved: false } });
-            this.reset()
+            Router.navigate('history');
           }, 1500);
 
         })
@@ -433,7 +449,12 @@
         });
       },
       saveTreatment(treatments){
-        let {data} = this.get();
+        let {data, edit_case} = this.get();
+        if(edit_case){
+          this.fire('saveTreatment', treatments);
+          return;
+        }
+
         this.set({
           tracker: {
             saving: true,
@@ -454,7 +475,7 @@
 
           setTimeout( () => {
             this.set({ tracker: { saved: false } });
-            this.reset()
+            Router.navigate('history');
           }, 1500);
 
         })
@@ -482,7 +503,7 @@
 
         setTimeout( () => {
           this.set({ tracker: { saved: false } });
-          Router.navigate('search');
+          // Router.navigate('search');
         }, 1500);
 
       },
