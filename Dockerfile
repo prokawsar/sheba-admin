@@ -1,12 +1,12 @@
 
-FROM node:16.16.0-alpine3.16 AS builder
+FROM node:12.12.0-alpine AS builder
 WORKDIR /app
 COPY package.json ./
 RUN npm i
 COPY . .
 RUN npm run build:dist
 
-FROM node:16.16.0-alpine3.16
+FROM node:12.12.0-alpine
 # USER node:node
 WORKDIR /app
 COPY --from=builder /app/package*.json ./
