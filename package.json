@@ -4,8 +4,7 @@
   "dependencies": {
     "bulma": "0.6.2",
     "grapnel": "~0.6.3",
-    "microevent": "git://github.com/ekhaled/microevent.js.git",
-    "nanoajax": "git://github.com/ekhaled/nanoajax.git",
+    "nanoajax": "0.4.3",
     "promis": "^1.1.4",
     "store2": "^2.5.2"
   },
@@ -33,7 +32,6 @@
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-copy": "^0.7.0",
     "grunt-gitinfo": "^0.1.7",
-    "grunt-manifest": "git://github.com/gunta/grunt-manifest.git",
     "grunt-rename-util": "^1.0.0",
     "grunt-sftp-deploy": "^0.2.5",
     "grunt-text-replace": "^0.4.0",
@@ -58,7 +56,6 @@
     "svelte-extras": "^2.0.2",
     "svelte-loader": "^2.11.0",
     "svelte-transitions": "^1.1.1",
-    "svelte-transitions-scale": "git://github.com/ekhaled/svelte-transitions-scale.git#v0.9.0",
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.1",
     "webpack-dev-server": "^3.1.9"
@@ -91,5 +88,6 @@
     "cypress:run": "cypress run",
     "test:ui": "npm-run-all -s build:dev cypress:open",
     "test": "npm-run-all -s build:dev cypress:run"
-  }
+  },
+  "microevent": "git://github.com/ekhaled/microevent.js.git"
 }
